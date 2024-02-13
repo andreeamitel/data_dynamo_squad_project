@@ -11,9 +11,9 @@ resource "aws_s3_bucket" "processed_bucket" {
   bucket_prefix = "processed-bucket-"
 }
 
-# resource "aws_s3_object" "lambda_code" {
-#   bucket = aws_s3_bucket.code_bucket.id
-#   key = "s3_file_reader/function.zip"
-#   source = "${path.module}/../function.zip"
-# }
+resource "aws_s3_object" "lambda_code" {
+  bucket = aws_s3_bucket.code_bucket.id
+  key = "lambda_code/function.zip"
+  source = "${path.module}/../dummy_function/function.zip"
+}
 
