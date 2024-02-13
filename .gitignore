@@ -1,4 +1,7 @@
 # created by virtualenv automatically
 *venv
 *__pycache__
+.terraform
+
 connection.py
+
