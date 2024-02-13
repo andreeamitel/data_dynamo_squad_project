@@ -1,5 +1,5 @@
 resource "aws_iam_role" "lambda_role"{
-    name_prefix = "role-lambda-"
+    name_prefix = "role-lambda"
     assume_role_policy = <<EOF
 {
     "Version": "2012-10-17",
@@ -32,7 +32,6 @@ data "aws_iam_policy_document" "cloud_watch_create" {
     effect= "Allow"
     resources = [
       "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:/aws/lambda/${var.lambda_name}:*"
-      #need to change  ^^^^^^
     ]
   }
 }
@@ -44,7 +43,7 @@ resource "aws_iam_policy" "cloud_watch_policy" {
 
 resource "aws_iam_role_policy_attachment" "lambda_cw_attachment"{
     role = aws_iam_role.lambda_role.name
-    policy_arn = aws_iam_policy_document.cloud_watch_policy.arn
+    policy_arn = aws_iam_policy.cloud_watch_policy.arn
 }
 
 data "aws_iam_policy_document" "s3_document_get" {
@@ -53,8 +52,7 @@ data "aws_iam_policy_document" "s3_document_get" {
     effect= "Allow"
     resources = [
       "${aws_s3_bucket.code_bucket.arn}/*",
-      "${aws_s3_bucket.ingestion_bucket.arn}/*",
-      #may need to change names ^^^^^^
+      "${aws_s3_bucket.ingested_bucket.arn}/*",
     ]
   }
 }
@@ -67,7 +65,7 @@ resource "aws_iam_policy" "s3_get_policy" {
 
 resource "aws_iam_role_policy_attachment" "lambda_s3_read_attachment"{
     role = aws_iam_role.lambda_role.name
-    policy_arn = aws_iam_policy_document.s3_get_policy.arn
+    policy_arn = aws_iam_policy.s3_get_policy.arn
 }
 
 
@@ -79,7 +77,7 @@ data "aws_iam_policy_document" "s3_write_policy"{
           "s3:PutObjectAcl",
         ]
         effect = "Allow"
-        resources= "${aws_s3_bucket.ingestion_bucket.arn}/*"
+        resources= ["${aws_s3_bucket.ingested_bucket.arn}/*"]
         # may have to change name ^^^^^^
     }
 }
@@ -91,7 +89,8 @@ resource "aws_iam_policy" "s3_put_policy" {
 
 resource "aws_iam_role_policy_attachment" "lambda_s3_write_attachment"{
     role = aws_iam_role.lambda_role.name
-    policy_arn = aws_iam_policy_document.s3_put_policy.arn
+    policy_arn = aws_iam_policy.s3_put_policy.arn
 }
+
 
 
