@@ -1,7 +1,6 @@
 from pg8000.native import Connection
 
-def extract_data():
-    con = pg8000.native.Connection("postgres", password="cpsnow")
+def extract_data(table_name, db_conn):
     """
     This function extracts the data from a table in totesys database.
 
@@ -12,4 +11,6 @@ def extract_data():
     A list of dictionaries of all the data in the table input.
   
     """
-    pass
+    rows = db_conn.run(f"SELECT * FROM table WHERE {table_name}")
+    
+    return [{}]
