@@ -3,6 +3,7 @@ from unittest.mock import Mock
 from datetime import datetime
 from src.extract.extract_data import extract_data
 from pg8000.native import Connection
+from pg8000.exceptions import DatabaseError
 import os
 from dotenv import load_dotenv
 
@@ -36,8 +37,8 @@ def test_returns_dictionary():
 @pytest.mark.it("return correct message when running sql query causes error")
 def test_returns_error():
     my_mock = Mock()
-    with pytest.raises(Exception):
-        extract_data("currency", my_mock, datetime.now())
+    my_mock.run.side_effect = Exception
+    assert extract_data("currency", my_mock, datetime.now()) == "Error when running SQL query in extract_data function"
 
 @pytest.mark.describe("extract_data")
 @pytest.mark.it("return list of dictionaries with last_updated and created_at greater than last_run argument")
