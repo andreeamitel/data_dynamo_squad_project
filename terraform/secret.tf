@@ -1,9 +1,13 @@
-resource "aws_secretsmanager_secret" "example_secret" {
-    name= "database_secret"
+resource "aws_secretsmanager_secret" "database_creds_secret" {
+    name= "database_creds"
 
 }
 
-resource "aws_secretsmanager_secret_version" "example_secret_value" {
-  secret_id     = aws_secretsmanager_secret.example_secret.id
-  secret_string = "example-string-to-protect"
-}
+
+
+# need to input database creds each time run terraform plan and apply, 
+# will be set up to auto when workflow set up
+# resource "aws_secretsmanager_secret_version" "database_creds_values" {
+#   secret_id     = aws_secretsmanager_secret.example_secret.id
+#   secret_string = var.database_creds_var
+# }
