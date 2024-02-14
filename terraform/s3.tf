@@ -7,9 +7,7 @@ resource "aws_s3_bucket" "code_bucket" {
 resource "aws_s3_bucket" "ingested_bucket" {
   bucket_prefix = "ingested-bucket-"
 }
-resource "aws_s3_bucket" "processed_bucket" {
-  bucket_prefix = "processed-bucket-"
-}
+#needs to be changed to actual code when complete 
 
 resource "aws_s3_object" "lambda_code" {
   bucket = aws_s3_bucket.code_bucket.id
