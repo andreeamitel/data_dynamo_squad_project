@@ -1,4 +1,6 @@
-
+import boto3
+import json
+from datetime import datetime 
 def lambda_handler():
     """
     ### Args:
@@ -22,4 +24,9 @@ def lambda_handler():
         - Exception
     ### Examples:
     """
-    pass
+    s3 = boto3.client("s3")
+    date_time = datetime.now().isoformat()
+    with open("./src/extract/Last_Ingested.json", "w") as f:
+        json.dump({'last_ingested_time': date_time,"new_data_found" : True}, f)
+    s3.upload_file("./src/extract/Last_Ingested.json", "ingested-bucket-20240213151611822700000004","Last_Ingested.json")
+    
