@@ -3,6 +3,6 @@ variable "lambda_name" {
     default = "ingest_lambda"
 }
 
-# variable "database_creds_var" {
-#     type = string
-# }
+variable "database_creds_var" {
+    type = string
+}
