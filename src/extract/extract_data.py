@@ -5,8 +5,9 @@ def extract_data(table_name, db_conn, last_ingested_time):
     This function extracts the data from a table in totesys database.
 
     Args:
-    table_name:string
-    db_conn: 
+    `table_name`: `string`
+    `db_conn`: `func` = `pg8000.native.Connection()`
+    `last_ingested_time`: `string` of `timestamp`
 
     Returns:
     A list of dictionaries of all the data in the table input.
