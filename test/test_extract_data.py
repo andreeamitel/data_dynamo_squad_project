@@ -13,9 +13,9 @@ load_dotenv()
 @pytest.mark.it("function extract_data returns a list of dictionaries")
 def test_returns_list_of_dictionaries():
     my_mock = Mock()
-    my_mock.run.return_value = [[[{"currency_id": 1, 
-                                   "currency_code": "GBP", 
-                                   "created_at": "2024-02-13", 
+    my_mock.run.return_value = [[[{"currency_id": 1,
+                                   "currency_code": "GBP",
+                                   "created_at": "2024-02-13",
                                    "last_updated": "2024-02-13"
                                    }]]]
     result1 = type(extract_data("currency", my_mock, datetime.now()))
@@ -26,7 +26,8 @@ def test_returns_list_of_dictionaries():
 
 
 @pytest.mark.describe("extract_data")
-@pytest.mark.it("function extract_data returns a dictionary with the correct keys as column names")
+@pytest.mark.it("""function extract_data returns a dictionary 
+                with the correct keys as column names""")
 def test_returns_dictionary():
     my_mock = Mock()
     my_mock.run.return_value = [[[{"currency_id": 1, "currency_code": "GBP", "created_at": "2024-02-13", "last_updated": "2024-02-13"
