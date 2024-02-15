@@ -4,6 +4,7 @@ from datetime import datetime
 from pg8000.native import Connection
 from src.extract.check_for_changes import check_for_changes
 from src.extract.extract_data import extract_data
+from pprint import pprint
 def data_conversion():
     pass
 def lambda_handler():
@@ -29,6 +30,18 @@ def lambda_handler():
         - Exception
     ### Examples:
     """
+    secretsmanager = boto3.client("secretsmanager")
+    secret=secretsmanager.get_secret_value(SecretId = "database_creds")
+    secret_string=json.loads(secret["SecretString"])
+
+    conn = Connection(
+    host = secret_string["hostname"],
+    port = secret_string["port"],
+    user = secret_string["username"],
+    password = secret_string["password"],
+    database=secret_string["database"],
+)
+
     s3 = boto3.client("s3")
     date_time = datetime.now().isoformat()
     with open("./src/extract/Last_Ingested.json", "w") as f:
