@@ -30,7 +30,11 @@ def lambda_handler():
         - Exception
     ### Examples:
     """
+    s3 = boto3.client("s3")
     secretsmanager = boto3.client("secretsmanager")
+    timestamps3.get_object(Bucket = "ingested-bucket-20240213151611822700000004",
+    Key = "Last_Ingested.json")
+    last_ingested_timestamp = json.load(result["Body"])
     secret=secretsmanager.get_secret_value(SecretId = "database_creds")
     secret_string=json.loads(secret["SecretString"])
 
@@ -40,9 +44,12 @@ def lambda_handler():
     user = secret_string["username"],
     password = secret_string["password"],
     database=secret_string["database"],
-)
+    )
+    
+    check_for_changes(conn, last_ingested_timestamp)
+    test_extract = extract_data("staff", conn, "2022-02-14 16:54:36")
+    test_conversion = data_conversion()
 
-    s3 = boto3.client("s3")
     date_time = datetime.now().isoformat()
     with open("./src/extract/Last_Ingested.json", "w") as f:
         json.dump({'last_ingested_time': date_time,"new_data_found" : True}, f)
