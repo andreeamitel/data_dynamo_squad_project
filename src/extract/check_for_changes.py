@@ -1,4 +1,5 @@
-from connection import conn, identifier, DatabaseError
+# from connection import conn, identifier, DatabaseError
+from pg8000.native import Connection as conn, identifier, DatabaseError
 from datetime import datetime
 
 
