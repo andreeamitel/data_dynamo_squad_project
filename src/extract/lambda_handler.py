@@ -5,8 +5,7 @@ from pg8000.native import Connection
 from src.extract.check_for_changes import check_for_changes
 from src.extract.extract_data import extract_data
 from pprint import pprint
-def data_conversion():
-    pass
+from src.extract.conversion_and_write_data import convert_and_write_data
 def lambda_handler():
     """
     ### Args:
@@ -29,15 +28,24 @@ def lambda_handler():
         - AWS Errors - S3, SecretsManager, Trigger Errors
         - Exception
     ### Examples:
+
     """
+
     s3 = boto3.client("s3")
     secretsmanager = boto3.client("secretsmanager")
-    timestamp = s3.get_object(Bucket = "ingested-bucket-20240213151611822700000004",
+    obj = s3.head_object(Bucket = "ingested-bucket-20240213151611822700000004",
     Key = "Last_Ingested.json")
+    print(obj)
+    if s3.head_object(Bucket = "ingested-bucket-20240213151611822700000004",
+    Key = "Last_Ingested.json"):
+        timestamp = s3.get_object(Bucket = "ingested-bucket-20240213151611822700000004",
+        Key = "Last_Ingested.json")
+    else:
+        timestamp = "2000-02-14 16:54:36.774180"
     last_ingested_timestamp_obj = json.load(timestamp["Body"])
     last_ingested_timestamp = last_ingested_timestamp_obj["last_ingested_time"]
 
-    secret=secretsmanager.get_secret_value(SecretId = "database_creds")
+    secret=secretsmanager.get_secret_value(SecretId = "database_creds_test")
     secret_string=json.loads(secret["SecretString"])
 
     conn = Connection(
@@ -51,7 +59,7 @@ def lambda_handler():
     needs_fetching_tables = check_for_changes(conn, last_ingested_timestamp)
     for table in needs_fetching_tables:
         table_data = extract_data(table, conn, last_ingested_timestamp)
-        data_conversion(table_data)
+        convert_and_write_data(table_data, table)
     
     
 
@@ -60,4 +68,5 @@ def lambda_handler():
     with open("./src/extract/Last_Ingested.json", "w") as f:
         json.dump({'last_ingested_time': date_time,"new_data_found" : True}, f)
     s3.upload_file("./src/extract/Last_Ingested.json", "ingested-bucket-20240213151611822700000004","Last_Ingested.json")
-    
+
+lambda_handler()

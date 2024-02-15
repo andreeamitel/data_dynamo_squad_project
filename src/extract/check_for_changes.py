@@ -1,7 +1,7 @@
 from pg8000.native import Connection as conn, identifier, DatabaseError
 from datetime import datetime
 
-=======
+
 '''
 Contains functions that check for updated or new data in the database.
 Functions:\n
@@ -9,8 +9,7 @@ Functions:\n
     check_table_for_last_updated
 
 '''
-from datetime import datetime
-from connection import conn, identifier, DatabaseError
+
 def check_for_changes(db_conn, last_ingested_time):
     '''
     This functions goes through the tables in the database 
@@ -25,7 +24,7 @@ def check_for_changes(db_conn, last_ingested_time):
     '''
     try:
         format_to_use = "%Y-%m-%d %H:%M:%S.%f"
-        date_time = datetime.strptime(last_ingested_time, format_to_use)
+        #date_time = datetime.strptime(last_ingested_time, format_to_use)
         table_names = [
             "address",
             "staff",
@@ -38,7 +37,7 @@ def check_for_changes(db_conn, last_ingested_time):
         result = [
             table
             for table in table_names
-            if check_table_for_last_updated(table, date_time, db_conn)
+            if check_table_for_last_updated(table, last_ingested_time, db_conn)
         ]
 
         return result

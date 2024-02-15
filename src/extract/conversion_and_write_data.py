@@ -27,7 +27,7 @@ def convert_and_write_data(list_of_selection, table_name):
         s3 = boto3.client('s3')
         s3.put_object(
             Body=f'{json.dumps(list_of_selection)}',
-            Bucket='ingested-bucket',
+            Bucket='ingested-bucket-20240213151611822700000004',
             Key=f'{file_name}',
         )
     except Exception as err:
