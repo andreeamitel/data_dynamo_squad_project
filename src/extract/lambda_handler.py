@@ -33,17 +33,15 @@ def lambda_handler():
 
     s3 = boto3.client("s3")
     secretsmanager = boto3.client("secretsmanager")
-    obj = s3.head_object(Bucket = "ingested-bucket-20240213151611822700000004",
-    Key = "Last_Ingested.json")
-    print(obj)
-    if s3.head_object(Bucket = "ingested-bucket-20240213151611822700000004",
-    Key = "Last_Ingested.json"):
+    obj = s3.list_objects_v2(Bucket = "ingested-bucket-20240213151611822700000004")["Contents"]
+    test = [object["Key"] for object in obj if object["Key"] == "Last_Ingested.json"]
+    if test != []:
         timestamp = s3.get_object(Bucket = "ingested-bucket-20240213151611822700000004",
         Key = "Last_Ingested.json")
+        last_ingested_timestamp_obj = json.load(timestamp["Body"])
+        last_ingested_timestamp = last_ingested_timestamp_obj["last_ingested_time"]
     else:
-        timestamp = "2000-02-14 16:54:36.774180"
-    last_ingested_timestamp_obj = json.load(timestamp["Body"])
-    last_ingested_timestamp = last_ingested_timestamp_obj["last_ingested_time"]
+        last_ingested_timestamp = "2000-02-14 16:54:36.774180"
 
     secret=secretsmanager.get_secret_value(SecretId = "database_creds_test")
     secret_string=json.loads(secret["SecretString"])
