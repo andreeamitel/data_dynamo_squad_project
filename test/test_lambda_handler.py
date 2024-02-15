@@ -21,6 +21,14 @@ def create_bucket1(aws_s3):
     CreateBucketConfiguration = {
         'LocationConstraint': 'eu-west-2'
     })
+
+@pytest.fixture
+def create_object(create_bucket1):
+    with open("./test/Last_Ingested.json", "w") as f:
+        json.dump({'last_ingested_time': "2022-02-14 16:54:36.774180","new_data_found" : True}, f)
+    boto3.client("s3").upload_file("test/Last_Ingested.json", "ingested-bucket-20240213151611822700000004","Last_Ingested.json")
+
+
 @pytest.fixture
 def secretmanager(aws_secrets):
     boto3.client("secretsmanager").create_secret(Name = "database_creds", 
@@ -37,7 +45,7 @@ def mock_conn():
 @pytest.mark.it("Test that a json file gets written to the ingestion bucket in aws")
 @patch("src.extract.lambda_handler.datetime")
 @mock_aws
-def test_write_json_file(mock_time,create_bucket1,secretmanager, mock_conn):
+def test_write_json_file(mock_time,create_bucket1,secretmanager, mock_conn, create_object):
     mock_time.now().isoformat.return_value = "2024-02-14 16:54:36.774180"
     lambda_handler()
     result = boto3.client("s3").get_object(Bucket = "ingested-bucket-20240213151611822700000004",
@@ -49,30 +57,29 @@ def test_write_json_file(mock_time,create_bucket1,secretmanager, mock_conn):
 @pytest.mark.describe("lambda_handler")
 @pytest.mark.it("Test that a connection has been established to a database - using secretsmanager")
 @mock_aws
-def test_database_conn(mock_conn, create_bucket1, secretmanager):
+def test_database_conn(mock_conn, create_bucket1, secretmanager,create_object):
     lambda_handler()
     mock_conn.assert_called_with(host="example_host.com",port= "4321", database = "example_database", user= "project_team_0", password = "EXAMPLE-PASSWORD")
   
 @pytest.mark.describe("lambda_handler")
 @pytest.mark.it("Test that all internal functions are called")
-@patch("src.extract.lambda_handler.check_for_changes")
+@patch("src.extract.lambda_handler.check_for_changes", return_value = ["currency", "staff"])
 @patch("src.extract.lambda_handler.extract_data")
 @patch("src.extract.lambda_handler.data_conversion")
-def test_functions_are_called(mock_data_conv, mock_extract_data, mock_check_changes, mock_conn, create_bucket1, secretmanager):
+def test_functions_are_called(mock_data_conv, mock_extract_data, mock_check_changes, mock_conn, create_bucket1, secretmanager, create_object):
     lambda_handler()
-    mock_data_conv.assert_called()
-    mock_extract_data.assert_called()
-    mock_check_changes.assert_called()
+    print(dir(mock_check_changes))
+    assert mock_data_conv.call_count == 2
+    assert mock_extract_data.call_count == 2
+    mock_check_changes.assert_called_once()
 
 @pytest.mark.describe("lambda_handler")
 @pytest.mark.it("Test that check_for_changes uses last_ingested_time stored in bucket json")
 @patch("src.extract.lambda_handler.check_for_changes")
 @patch("src.extract.lambda_handler.extract_data")
 @patch("src.extract.lambda_handler.data_conversion")
-def test_functions_are_called(mock_data_conv, mock_extract_data, mock_check_changes, mock_conn, create_bucket1, secretmanager):
-    with open("./test/Last_Ingested.json", "w") as f:
-        json.dump({'last_ingested_time': "2022-02-14 16:54:36.774180","new_data_found" : True}, f)
-    boto3.client("s3").upload_file("./src/extract/Last_Ingested.json", "ingested-bucket-20240213151611822700000004","Last_Ingested.json")
+@mock_aws
+def test_check_changes_uses_correct_date(mock_data_conv, mock_extract_data, mock_check_changes, mock_conn, create_bucket1, secretmanager, create_object):
     lambda_handler()
     mock_check_changes.assert_called_with(mock_conn(),"2022-02-14 16:54:36.774180")
 
