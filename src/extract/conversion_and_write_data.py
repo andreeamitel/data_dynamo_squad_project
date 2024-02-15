@@ -1,20 +1,35 @@
-from extract_data import extract_data
+'''
+Conatains a function that converts data to json.
+Functions:\n
+    conversion_and_write_data
+'''
+
+import json
+from datetime import datetime
+import boto3
 
 
-"""
-This function should convert the data from a list to json file and write this in a bucket
+def convert_and_write_data(list_of_selection, table_name):
+    """
+    This function should convert the data from a list of dictionaries to 
+    json, write it in a file and put it in the ingested-bucket.
 
-Args:
-list of dictionaries
+    Args:\n
+        list of dictionaries
+        table_name(str)
 
-
-{
-    "address": [[], [], []],
-    "staff": [[],[]]
-}
-"""
-
-def convert_and_write_data(list_of_selection):
-
-    pass
-
+    Returns:\n
+        None
+    """
+    try:
+        date_time = datetime.now().strftime("%Y-%m-%d %H:%M")
+        file_name = f'{table_name}-{date_time}.json'
+        s3 = boto3.client('s3')
+        s3.put_object(
+            Body=f'{json.dumps(list_of_selection)}',
+            Bucket='ingested-bucket',
+            Key=f'{file_name}',
+        )
+    except Exception as err:
+        print(err)
+        raise err
