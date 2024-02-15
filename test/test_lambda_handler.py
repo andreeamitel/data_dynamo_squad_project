@@ -60,9 +60,23 @@ def test_database_conn(mock_conn, create_bucket1, secretmanager):
 @patch("src.extract.lambda_handler.data_conversion")
 def test_functions_are_called(mock_data_conv, mock_extract_data, mock_check_changes, mock_conn, create_bucket1, secretmanager):
     lambda_handler()
-    result_list = [mock_data_conv.assert_called(), 
-                   mock_extract_data.assert_called(), mock_check_changes.assert_called()]
-    assert all(result_list)
+    mock_data_conv.assert_called()
+    mock_extract_data.assert_called()
+    mock_check_changes.assert_called()
+
+@pytest.mark.describe("lambda_handler")
+@pytest.mark.it("Test that check_for_changes uses last_ingested_time stored in bucket json")
+@patch("src.extract.lambda_handler.check_for_changes")
+@patch("src.extract.lambda_handler.extract_data")
+@patch("src.extract.lambda_handler.data_conversion")
+def test_functions_are_called(mock_data_conv, mock_extract_data, mock_check_changes, mock_conn, create_bucket1, secretmanager):
+    with open("./test/Last_Ingested.json", "w") as f:
+        json.dump({'last_ingested_time': "2022-02-14 16:54:36.774180","new_data_found" : True}, f)
+    boto3.client("s3").upload_file("./src/extract/Last_Ingested.json", "ingested-bucket-20240213151611822700000004","Last_Ingested.json")
+    lambda_handler()
+    mock_check_changes.assert_called_with(mock_conn(),"2022-02-14 16:54:36.774180")
+
+
 
 
 @pytest.mark.describe("lambda_handler")
