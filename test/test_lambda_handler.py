@@ -3,7 +3,7 @@ import pytest
 import boto3
 from datetime import datetime 
 from moto import mock_aws 
-from unittest.mock import patch
+from unittest.mock import patch, Mock
 import json
 
 @pytest.fixture(scope="function")
@@ -28,7 +28,7 @@ def secretmanager(aws_secrets):
 
 @pytest.fixture
 def mock_conn():
-    with patch("src.extract.lambda_handler.Connection", return_value = True) as conn:
+    with patch("src.extract.lambda_handler.Connection") as conn:
         yield conn
         
 
@@ -48,23 +48,22 @@ def test_write_json_file(mock_time,create_bucket1,secretmanager, mock_conn):
 
 @pytest.mark.describe("lambda_handler")
 @pytest.mark.it("Test that a connection has been established to a database - using secretsmanager")
-@patch("src.extract.lambda_handler.Connection")
 @mock_aws
 def test_database_conn(mock_conn, create_bucket1, secretmanager):
     lambda_handler()
     mock_conn.assert_called_with(host="example_host.com",port= "4321", database = "example_database", user= "project_team_0", password = "EXAMPLE-PASSWORD")
-    
-
-
-
-
+  
 @pytest.mark.describe("lambda_handler")
 @pytest.mark.it("Test that all internal functions are called")
 @patch("src.extract.lambda_handler.check_for_changes")
 @patch("src.extract.lambda_handler.extract_data")
 @patch("src.extract.lambda_handler.data_conversion")
-def test_functions_are_called(mock_data_conv, mock_extract_data, mock_check_changes):
-    pass
+def test_functions_are_called(mock_data_conv, mock_extract_data, mock_check_changes, mock_conn, create_bucket1, secretmanager):
+    lambda_handler()
+    result_list = [mock_data_conv.assert_called(), 
+                   mock_extract_data.assert_called(), mock_check_changes.assert_called()]
+    assert all(result_list)
+
 
 @pytest.mark.describe("lambda_handler")
 @pytest.mark.it("Integration test - Test that data_conversion gets called with outputs from extract_data and appears in bucket")

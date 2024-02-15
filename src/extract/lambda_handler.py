@@ -40,7 +40,11 @@ def lambda_handler():
     user = secret_string["username"],
     password = secret_string["password"],
     database=secret_string["database"],
-)
+    )
+
+    test_check = check_for_changes(conn, "2022-02-14 16:54:36.774180")
+    test_extract = extract_data("staff", conn, "2022-02-14 16:54:36")
+    test_conversion = data_conversion()
 
     s3 = boto3.client("s3")
     date_time = datetime.now().isoformat()
