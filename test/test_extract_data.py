@@ -75,36 +75,35 @@ def test_returns_error():
     )
 
 
-# @pytest.mark.describe("extract_data")
-# @pytest.mark.it(
-#     """return list of dictionaries
-#                 with last_updated and created_at
-#                 greater than last_run argument"""
-# )
-# def test_returns_using_timestamp_query():
-#     user = os.environ["PGUSER"]
-#     # pg_password = os.environ["PGPASSWORD"]
-#     test_database = Connection(user,
-#                                database="test_sales_orders")
-#     result = extract_data("currency", test_database, "2024-02-13 00:00:00")
-#     test_database.close()
-#     assert result == [
-#         {
-#             "currency_id": 2,
-#             "currency_code": "EUR",
-#             "created_at": "2024-02-14T09:00:00",
-#             "last_updated": "2024-02-14T09:00:00",
-#         },
-#         {
-#             "currency_id": 3,
-#             "currency_code": "USD",
-#             "created_at": "1999-01-08T04:05:06",
-#             "last_updated": "2024-02-14T09:00:00",
-#         },
-#         {
-#             "currency_id": 4,
-#             "currency_code": "AUD",
-#             "created_at": "2024-02-14T09:00:00",
-#             "last_updated": "1999-01-08T04:05:06",
-#         },
-#     ]
+@pytest.mark.describe("extract_data")
+@pytest.mark.it(
+    """return list of dictionaries
+                with last_updated and created_at
+                greater than last_run argument"""
+)
+def test_returns_using_timestamp_query():
+    db_user = f"{os.environ['PGUSER']}"
+    db_database_name = f"{os.environ['PGDATABASE']}"
+    conn = Connection(db_user, database = db_database_name)
+    result = extract_data("currency", conn, "2024-02-13 00:00:00")
+    # test_database.close()
+    assert result == [
+        {
+            "currency_id": 2,
+            "currency_code": "EUR",
+            "created_at": "2024-02-14T09:00:00",
+            "last_updated": "2024-02-14T09:00:00",
+        },
+        {
+            "currency_id": 3,
+            "currency_code": "USD",
+            "created_at": "1999-01-08T04:05:06",
+            "last_updated": "2024-02-14T09:00:00",
+        },
+        {
+            "currency_id": 4,
+            "currency_code": "AUD",
+            "created_at": "2024-02-14T09:00:00",
+            "last_updated": "1999-01-08T04:05:06",
+        },
+    ]
