@@ -98,7 +98,7 @@ def test_return_true_when_table_was_updated(mock_conn):
     expected = True
     assert result == expected
 
-
+#TODO review this one
 @patch("src.extract.check_for_changes.conn")
 def test_return_false_when_table_was_not_updated(mock_conn):
     mock_conn.run.return_value = [
