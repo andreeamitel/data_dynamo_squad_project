@@ -21,6 +21,27 @@ def test_write_json_file(mock_time):
     Key = "Last_Ingested.json")
     #need to finish assert
     print((result["Body"].read()))
-    assert result['ResponseMetadata']['HTTPStatusCode']==200
+    assert result["Body"].read()=={"last_ingested_time": "2024-02-14 16:54:36.774180", "new_data_found": true}
 
-lambda_handler()
+@pytest.mark.describe("lambda_handler")
+@pytest.mark.it("Test that a connection has been established to a database - using secretsmanager")
+@patch("src.extract.lambda_handler.Connection")
+@mock_aws
+def test_database_conn(mock_conn):
+    pass
+
+@pytest.mark.describe("lambda_handler")
+@pytest.mark.it("Test that all internal functions are called")
+@patch("src.extract.lambda_handler.check_for_changes")
+@patch("src.extract.lambda_handler.extract_data")
+@patch("src.extract.lambda_handler.data_conversion")
+def test_functions_are_called(mock_data_conv, mock_extract_data, mock_check_changes):
+    pass
+
+@pytest.mark.describe("lambda_handler")
+@pytest.mark.it("Integration test - Test that data_conversion gets called with outputs from extract_data and appears in bucket")
+@patch("src.extract.lambda_handler.check_for_changes")
+@patch("src.extract.lambda_handler.extract_data")
+@mock_aws
+def test_data_conversion(mock_extract_data, mock_check_changes):
+    pass
