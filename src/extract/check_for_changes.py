@@ -1,6 +1,4 @@
-import boto3
-from pprint import pprint
-from connection import conn, identifier, literal, DatabaseError
+from connection import conn, identifier, DatabaseError
 from datetime import datetime
 
 
@@ -30,9 +28,10 @@ def check_for_changes(db_conn, last_ingested_time):
 
 def check_table_for_last_updated(table_name, last_ingested_time, conn):
     try:
-        table_lists = conn.run(f"SELECT last_updated FROM {identifier(table_name)};")
+        table_lists = conn.run(
+            f"SELECT last_updated FROM {identifier(table_name)};"
+            )
         for time in table_lists:
-            print(time[0], last_ingested_time)
             if time[0] != last_ingested_time:
                 return True
         return False
