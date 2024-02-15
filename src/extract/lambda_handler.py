@@ -1,6 +1,12 @@
 import boto3
 import json
 from datetime import datetime 
+from pg8000.native import Connection
+from src.extract.check_for_changes import check_for_changes
+from src.extract.extract_data import extract_data
+from pprint import pprint
+def data_conversion():
+    pass
 def lambda_handler():
     """
     ### Args:
@@ -25,6 +31,25 @@ def lambda_handler():
     ### Examples:
     """
     s3 = boto3.client("s3")
+    secretsmanager = boto3.client("secretsmanager")
+    timestamps3.get_object(Bucket = "ingested-bucket-20240213151611822700000004",
+    Key = "Last_Ingested.json")
+    last_ingested_timestamp = json.load(result["Body"])
+    secret=secretsmanager.get_secret_value(SecretId = "database_creds")
+    secret_string=json.loads(secret["SecretString"])
+
+    conn = Connection(
+    host = secret_string["hostname"],
+    port = secret_string["port"],
+    user = secret_string["username"],
+    password = secret_string["password"],
+    database=secret_string["database"],
+    )
+    
+    check_for_changes(conn, last_ingested_timestamp)
+    test_extract = extract_data("staff", conn, "2022-02-14 16:54:36")
+    test_conversion = data_conversion()
+
     date_time = datetime.now().isoformat()
     with open("./src/extract/Last_Ingested.json", "w") as f:
         json.dump({'last_ingested_time': date_time,"new_data_found" : True}, f)
