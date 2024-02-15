@@ -7,7 +7,6 @@ Functions:\n
 '''
 from datetime import datetime
 from connection import conn, identifier, DatabaseError
-
 def check_for_changes(db_conn, last_ingested_time):
     '''
     This functions goes through the tables in the database 
