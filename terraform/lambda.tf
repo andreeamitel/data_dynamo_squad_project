@@ -6,6 +6,7 @@ resource "aws_lambda_function" "ingest_lambda" {
   filename      = aws_s3_object.lambda_code.source
   handler       = "function.lambda_handler"
   runtime       = "python3.11"
+  layers        = [aws_lambda_layer_version.my-lambda-layer.arn]
 }
 
 resource "aws_lambda_permission" "allow_s3" {
@@ -19,7 +20,7 @@ resource "aws_lambda_permission" "allow_s3" {
 
 resource "aws_cloudwatch_event_rule" "scheduler" {
     name_prefix = "ingestion_scheduler"
-    schedule_expression = "rate(1 minute)"
+    schedule_expression = "rate(2 minutes)"
 }
 
 resource "aws_lambda_permission" "allow_scheduler" {
