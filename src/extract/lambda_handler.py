@@ -44,17 +44,18 @@ def lambda_handler():
     try:
         s3 = boto3.client("s3")
         secretsmanager = boto3.client("secretsmanager")
-        obj = s3.list_objects_v2(Bucket = "ingested-bucket-20240213151611822700000004")["Contents"]
+        bucket_name = secretsmanager.get_secret_value(SecretId = "bucket")["SecretString"]
+        obj = s3.list_objects_v2(Bucket = bucket_name)["Contents"]
         test = [object["Key"] for object in obj if object["Key"] == "Last_Ingested.json"]
         if test != []:
-            timestamp = s3.get_object(Bucket = "ingested-bucket-20240213151611822700000004",
+            timestamp = s3.get_object(Bucket = bucket_name,
             Key = "Last_Ingested.json")
             last_ingested_timestamp_obj = json.load(timestamp["Body"])
             last_ingested_timestamp = last_ingested_timestamp_obj["last_ingested_time"]
         else:
             last_ingested_timestamp = "2000-02-14 16:54:36.774180"
 
-        secret=secretsmanager.get_secret_value(SecretId = "database_creds")
+        secret=secretsmanager.get_secret_value(SecretId = "database_creds_test")
         secret_string=json.loads(secret["SecretString"])
 
         conn = Connection(
@@ -72,7 +73,7 @@ def lambda_handler():
         date_time = datetime.now().isoformat()
         with open("./src/extract/Last_Ingested.json", "w") as f:
             json.dump({'last_ingested_time': date_time,"new_data_found" : True}, f)
-        s3.upload_file("./src/extract/Last_Ingested.json", "ingested-bucket-20240213151611822700000004","Last_Ingested.json")
+        s3.upload_file("./src/extract/Last_Ingested.json", bucket_name,"Last_Ingested.json")
     except ClientError as err:
         response_code = err.response["Error"]["Code"]
         response_msg = err.response["Error"]["Message"]
@@ -81,4 +82,5 @@ def lambda_handler():
         logger.error(f"KeyError: {err}")
     except DatabaseError as err:
         logger.error("DatabaseError")
-    
+
+lambda_handler()
