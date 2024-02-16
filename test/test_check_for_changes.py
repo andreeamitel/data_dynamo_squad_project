@@ -4,6 +4,7 @@ from unittest.mock import patch, Mock
 import datetime
 from pg8000.exceptions import DatabaseError
 import pytest
+from src.extract.check_for_changes import check_for_changes, check_table_for_last_updated
 
 
 @pytest.mark.describe("check_for_changes")
