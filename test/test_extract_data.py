@@ -85,7 +85,7 @@ def test_returns_using_timestamp_query():
     db_user = f"{os.environ['PGUSER']}"
     db_database_name = f"{os.environ['PGDATABASE']}"
     db_password = f"{os.environ['PGPASSWORD']}"
-    conn = Connection(db_user, db_password, database = db_database_name)
+    conn = Connection(db_user, password = db_password, database = db_database_name)
     result = extract_data("currency", conn, "2024-02-13 00:00:00")
     # test_database.close()
     assert result == [
