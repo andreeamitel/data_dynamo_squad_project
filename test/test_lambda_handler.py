@@ -1,6 +1,7 @@
 from src.extract.lambda_handler import lambda_handler
 import pytest
 import boto3
+from botocore.exceptions import ClientError
 from datetime import datetime 
 from moto import mock_aws 
 from unittest.mock import patch, Mock
@@ -18,6 +19,12 @@ def aws_secrets():
 @pytest.fixture
 def create_bucket1(aws_s3):
     boto3.client("s3").create_bucket(Bucket = "ingested-bucket-20240213151611822700000004",
+    CreateBucketConfiguration = {
+        'LocationConstraint': 'eu-west-2'
+    })
+@pytest.fixture
+def create__error_bucket(aws_s3):
+    boto3.client("s3").create_bucket(Bucket = "error_bucket",
     CreateBucketConfiguration = {
         'LocationConstraint': 'eu-west-2'
     })
@@ -65,7 +72,7 @@ def test_database_conn(mock_conn, create_bucket1, secretmanager,create_object):
 @pytest.mark.it("Test that all internal functions are called")
 @patch("src.extract.lambda_handler.check_for_changes", return_value = ["currency", "staff"])
 @patch("src.extract.lambda_handler.extract_data")
-@patch("src.extract.lambda_handler.data_conversion")
+@patch("src.extract.lambda_handler.convert_and_write_data")
 def test_functions_are_called(mock_data_conv, mock_extract_data, mock_check_changes, mock_conn, create_bucket1, secretmanager, create_object):
     lambda_handler()
     print(dir(mock_check_changes))
@@ -77,20 +84,37 @@ def test_functions_are_called(mock_data_conv, mock_extract_data, mock_check_chan
 @pytest.mark.it("Test that check_for_changes uses last_ingested_time stored in bucket json")
 @patch("src.extract.lambda_handler.check_for_changes")
 @patch("src.extract.lambda_handler.extract_data")
-@patch("src.extract.lambda_handler.data_conversion")
+@patch("src.extract.lambda_handler.convert_and_write_data")
 @mock_aws
 def test_check_changes_uses_correct_date(mock_data_conv, mock_extract_data, mock_check_changes, mock_conn, create_bucket1, secretmanager, create_object):
     lambda_handler()
     mock_check_changes.assert_called_with(mock_conn(),"2022-02-14 16:54:36.774180")
 
-
-
+# @pytest.mark.describe("lambda_handler")
+# @pytest.mark.it("Integration test - Test that convert_and_write_data gets called with outputs from extract_data and appears in bucket")
+# @patch("src.extract.lambda_handler.check_for_changes")
+# @patch("src.extract.lambda_handler.extract_data")
+# @mock_aws
+# def test_convert_and_write_data(mock_extract_data, mock_check_changes):
+#     pass
 
 @pytest.mark.describe("lambda_handler")
-@pytest.mark.it("Integration test - Test that data_conversion gets called with outputs from extract_data and appears in bucket")
-@patch("src.extract.lambda_handler.check_for_changes")
-@patch("src.extract.lambda_handler.extract_data")
+@pytest.mark.it("Error: ClientError")
 @mock_aws
-def test_data_conversion(mock_extract_data, mock_check_changes):
-    pass
+def test_client_error(create_error_bucket, secretmanager):
 
+    with pytest.raises(ClientError):
+        lambda_handler()
+    
+
+#TODO
+    # Bucket Name works from Event
+    # Last Ingested from Event at least change the bucket
+    # Errors
+        # KeyError
+        # ClientError
+        # TypeError
+        # DatabaseError
+        # Exception
+            #logger.error(e)
+            #raise RuntimeError
