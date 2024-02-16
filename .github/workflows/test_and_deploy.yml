@@ -1,8 +1,9 @@
 name: Test and Deploy
 on:
-  # - push
+   - push
 jobs:
   run-checks:
+    environment: test
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -22,35 +23,39 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.9'
-      - name: Import DB seed data
-        run: psql -d postgresql://postgres@localhost/test_sales_orders -f currency_test.sql
-        working-directory: ./test
-        env:
-          PGPASSWORD: password
       - name: Setup Venv
         run: make requirements
+      - name: Import DB seed data
+        run: psql -d postgresql://postgres@localhost/test_sales_orders -f currency_test.sql
+        working-directory: ./test/
+        env:
+          PGPASSWORD: password
       - name: Ran all checks
         run: make run-checks
-  deploy:
-    runs-on: ubuntu-latest
-    needs: run-checks
-    steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v4
-      - name: Setup AWS CLI
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-region: eu-west-2
-          aws-access-key-id: ${{secrets.AWS_ACCESS_KEY_ID}}
-          aws-secret-access-key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-      - name: Terraform Init
-        working-directory: terraform
-        run: terraform init
-      - name: Terraform Plan
-        working-directory: terraform
-        run: terraform plan -var=database_creds_var="{'database':${{secrets.DATABASE}}, 'hostname':${{secrets.HOSTNAME}}, 'password':${{secrets.PASSWORD}}, 'port':${{secrets.PORT}}, 'username':${{secrets.USERNAME}}}"
-      - name: Terraform apply
-        working-directory: terraform
-        run: terraform apply -var=database_creds_var="{'database':${{secrets.DATABASE}}, 'hostname':${{secrets.HOSTNAME}}, 'password':${{secrets.PASSWORD}}, 'port':${{secrets.PORT}}, 'username':${{secrets.USERNAME}}}" -auto-approve
+        env:
+          PGUSER: postgres
+          PGPASSWORD: password
+          PGDATABASE: test_sales_orders
+  # deploy:
+  #   runs-on: ubuntu-latest
+  #   needs: run-checks
+  #   steps:
+  #     - name: Checkout Repo
+  #       uses: actions/checkout@v4
+  #     - name: Setup AWS CLI
+  #       uses: aws-actions/configure-aws-credentials@v4
+  #       with:
+  #         aws-region: eu-west-2
+  #         aws-access-key-id: ${{secrets.AWS_ACCESS_KEY_ID}}
+  #         aws-secret-access-key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+  #     - name: Setup Terraform
+  #       uses: hashicorp/setup-terraform@v3
+  #     - name: Terraform Init
+  #       working-directory: terraform
+  #       run: terraform init
+  #     - name: Terraform Plan
+  #       working-directory: terraform
+  #       run: terraform plan -var=database_creds_var=“{‘database’:${{secrets.DATABASE}}, ‘hostname’:${{secrets.HOSTNAME}}, ‘password’:${{secrets.PASSWORD}}, ‘port’:${{secrets.PORT}}, ‘username’:${{secrets.USERNAME}}}”
+  #     - name: Terraform apply
+  #       working-directory: terraform
+  #       run: terraform apply -var=database_creds_var=“{‘database’:${{secrets.DATABASE}}, ‘hostname’:${{secrets.HOSTNAME}}, ‘password’:${{secrets.PASSWORD}}, ‘port’:${{secrets.PORT}}, ‘username’:${{secrets.USERNAME}}}” -auto-approve
