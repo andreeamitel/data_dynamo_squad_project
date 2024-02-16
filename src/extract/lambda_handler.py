@@ -7,6 +7,11 @@ from src.extract.check_for_changes import check_for_changes
 from src.extract.extract_data import extract_data
 from pprint import pprint
 from src.extract.conversion_and_write_data import convert_and_write_data
+import logging
+
+logger = logging.getLogger("Logger")
+logger.setLevel(logging.INFO)
+
 def lambda_handler():
     """
     ### Args:
@@ -68,5 +73,12 @@ def lambda_handler():
         with open("./src/extract/Last_Ingested.json", "w") as f:
             json.dump({'last_ingested_time': date_time,"new_data_found" : True}, f)
         s3.upload_file("./src/extract/Last_Ingested.json", "ingested-bucket-20240213151611822700000004","Last_Ingested.json")
-    except Exception as Excep:
-        print(Excep, "gone tits up")
+    except ClientError as err:
+        response_code = err.response["Error"]["Code"]
+        response_msg = err.response["Error"]["Message"]
+        logger.error(f"{response_code}: {response_msg}")
+    except KeyError as err:
+        logger.error(f"KeyError: {err}")
+    except DatabaseError as err:
+        logger.error("DatabaseError")
+    
