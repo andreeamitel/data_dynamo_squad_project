@@ -4,7 +4,7 @@ resource "aws_lambda_function" "ingest_lambda" {
   role          = aws_iam_role.lambda_role.arn
   function_name = var.lambda_name
   filename      = aws_s3_object.lambda_code.source
-  handler       = "function.lambda_handler"
+  handler       = "../src/extract/lambda_handler.lambda_handler"
   runtime       = "python3.11"
   layers        = [aws_lambda_layer_version.my-lambda-layer.arn]
 }
