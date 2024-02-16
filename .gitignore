@@ -5,5 +5,5 @@
 .env
 python
 connection.py
-layer.zip
+/terraform/layer.zip
 
