@@ -6,7 +6,8 @@ from datetime import datetime
 from moto import mock_aws 
 from unittest.mock import patch, Mock
 import json
-
+import logging
+from pg8000.native import Connection, DatabaseError
 @pytest.fixture(scope="function")
 def aws_s3():
     with mock_aws():
@@ -23,7 +24,7 @@ def create_bucket1(aws_s3):
         'LocationConstraint': 'eu-west-2'
     })
 @pytest.fixture
-def create__error_bucket(aws_s3):
+def create_error_bucket(aws_s3):
     boto3.client("s3").create_bucket(Bucket = "error_bucket",
     CreateBucketConfiguration = {
         'LocationConstraint': 'eu-west-2'
@@ -75,7 +76,6 @@ def test_database_conn(mock_conn, create_bucket1, secretmanager,create_object):
 @patch("src.extract.lambda_handler.convert_and_write_data")
 def test_functions_are_called(mock_data_conv, mock_extract_data, mock_check_changes, mock_conn, create_bucket1, secretmanager, create_object):
     lambda_handler()
-    print(dir(mock_check_changes))
     assert mock_data_conv.call_count == 2
     assert mock_extract_data.call_count == 2
     mock_check_changes.assert_called_once()
@@ -99,13 +99,42 @@ def test_check_changes_uses_correct_date(mock_data_conv, mock_extract_data, mock
 #     pass
 
 @pytest.mark.describe("lambda_handler")
-@pytest.mark.it("Error: ClientError")
+@pytest.mark.it("Error: ClientError - for bucket")
 @mock_aws
-def test_client_error(create_error_bucket, secretmanager):
-
-    with pytest.raises(ClientError):
+def test_client_error_bucket(caplog,secretmanager):
+    with caplog.at_level(logging.INFO):
         lambda_handler()
+        assert "The specified bucket does not exist" in caplog.text
+
+@pytest.mark.describe("lambda_handler")
+@pytest.mark.it("Error: ClientError - for secretsmanager")
+@mock_aws
+def test_client_error_secrets(caplog,create_bucket1, create_object):
+    with caplog.at_level(logging.INFO):
+        lambda_handler()
+        assert "Secrets Manager can't find the specified secret." in caplog.text
     
+@pytest.mark.describe("lambda_handler")
+@pytest.mark.it("Error: KeyError - for bucket object")
+@mock_aws
+def test_key_error(caplog,create_bucket1, secretmanager):
+    with caplog.at_level(logging.INFO):
+        lambda_handler()
+        assert "KeyError: 'Contents'" in caplog.text
+
+@pytest.mark.describe("lambda_handler")
+@pytest.mark.it("Error: DatabaseError")
+@patch("src.extract.lambda_handler.check_for_changes", side_effect = DatabaseError())
+@mock_aws
+def test_database_error(mock_check_changes, mock_conn, caplog,create_bucket1,create_object , secretmanager):
+    with caplog.at_level(logging.INFO):
+        lambda_handler()
+        assert "DatabaseError" in caplog.text
+    
+
+
+
+
 
 #TODO
     # Bucket Name works from Event
