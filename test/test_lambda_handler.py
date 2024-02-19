@@ -39,7 +39,7 @@ def create_object(create_bucket1):
 
 @pytest.fixture
 def secretmanager(aws_secrets):
-    boto3.client("secretsmanager").create_secret(Name = "database_creds", 
+    boto3.client("secretsmanager").create_secret(Name = "database_creds_test", 
     SecretString = '{"hostname":"example_host.com","port": "4321", "database" : "example_database", "username": "project_team_0", "password":"EXAMPLE-PASSWORD"}')
     boto3.client("secretsmanager").create_secret(Name = "bucket", SecretString = "ingested-bucket-20240213151611822700000004")
 @pytest.fixture
