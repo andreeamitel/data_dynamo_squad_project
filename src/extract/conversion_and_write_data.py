@@ -9,7 +9,7 @@ from datetime import datetime
 import boto3
 
 
-def convert_and_write_data(list_of_selection, table_name):
+def convert_and_write_data(list_of_selection, table_name, bucket_name):
     """
     This function should convert the data from a list of dictionaries to 
     json, write it in a file and put it in the ingested-bucket.
@@ -27,7 +27,7 @@ def convert_and_write_data(list_of_selection, table_name):
     s3 = boto3.client('s3')
     s3.put_object(
         Body=f'{json.dumps({table_name:list_of_selection})}',
-        Bucket='ingested-bucket-20240213151611822700000004',
+        Bucket=bucket_name,
         Key=f'{file_name}',
         )
    
