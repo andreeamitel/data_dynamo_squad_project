@@ -24,13 +24,11 @@ def lambda_handler(event, context):
     staff_dict = get_latest_data("staff", s3, bucket_name)
     department_dict = get_latest_data("department", s3, bucket_name)
 
-    #call unit functions --------- ALL OF THESE TAKE A DICTIONARIES WITH KEY VALUE PAIR OF TABLE_NAME AND A THE TABLE  - EACH WILL RETURN A DICTIONARY WITH KEY VALUE PAIR OF NEW TABLE NAME AND THE TABLE ITSELF - sorry for shouting :) - this was nathan and ben
+    #call unit functions --------- ALL OF THESE TAKE A DICTIONARIES WITH KEY VALUE PAIR OF TABLE_NAMEAND A THE TABLE  - EACH WILL RETURN A DICTIONARY WITH KEY VALUE PAIR OF NEW TABLE NAME AND THE TABLE ITSELF - sorry for shouting :) - this was nathan and ben
     
     #get bucket name from ingestion bucket
-    # get timestamp from ingestion bucket 
+    #get timestamp from ingestion bucket 
     #for loop through new tables
-        #python_to_parket(table, processed_bucket_name, timestamp)
-    
-    
+        #python_to_parquet(table, processed_bucket_name, timestamp)
     # finished :)
 lambda_handler(1,2)
