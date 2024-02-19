@@ -26,7 +26,7 @@ def convert_and_write_data(list_of_selection, table_name):
     file_name = f'{table_name}-{date_time}.json'
     s3 = boto3.client('s3')
     s3.put_object(
-        Body=f'{json.dumps(list_of_selection)}',
+        Body=f'{json.dumps({table_name:list_of_selection})}',
         Bucket='ingested-bucket-20240213151611822700000004',
         Key=f'{file_name}',
         )
