@@ -1,5 +1,5 @@
-
-
+import boto3
+import re
 def lambda_handler(event, context):
     """
     ### Args:
@@ -15,3 +15,6 @@ def lambda_handler(event, context):
     - calls python_to_parquet function -  which changes python to parquet and stores in processed bucket  
     """
     pass
+    list_of_tables = ["currency, sales"]  
+    
+lambda_handler(1,2)

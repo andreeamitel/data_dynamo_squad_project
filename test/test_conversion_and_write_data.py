@@ -29,7 +29,7 @@ def test_puts_file_in_bucket():
            'LocationConstraint': 'eu-west-2',
         },
         )
-    convert_and_write_data(arg, 'currency')
+    convert_and_write_data(arg, 'currency', "ingested-bucket")
     result = s3.list_objects(
     Bucket='ingested-bucket',
     )
@@ -40,7 +40,7 @@ def test_puts_file_in_bucket():
 @pytest.mark.it("puts a json file inside the bucket")
 @mock_aws
 def test_puts_json_file():
-     arg = [
+     arg =  [
                 {
                     "currency_id": 1,
                     "currency_code": "GBP",
@@ -55,7 +55,7 @@ def test_puts_json_file():
            'LocationConstraint': 'eu-west-2',
         },
         )
-     convert_and_write_data(arg, 'currency')
+     convert_and_write_data(arg, 'currency', "ingested-bucket")
      result = s3.list_objects(
      Bucket='ingested-bucket',
       )
@@ -66,28 +66,27 @@ def test_puts_json_file():
 @pytest.mark.it("writes correct data to the json file")     
 @mock_aws
 def test_writes_data_of_table_to_json_file():
-     arg = [
-                {
-                    "currency_id": 1,
-                    "currency_code": "GBP",
-                    "created_at": "2024-02-13",
-                    "last_updated": "2024-02-13",
-                }
-     ]
-     s3 = boto3.client('s3')
-     s3.create_bucket(
-            Bucket='ingested-bucket',
-            CreateBucketConfiguration={
-           'LocationConstraint': 'eu-west-2',
-        },
-        )
-     date_time = datetime.now().strftime("%Y-%m-%d %H:%M")
-     file_name= f'currency-{date_time}.json'
-     convert_and_write_data(arg, 'currency')
-     result = s3.get_object(
-     Bucket='ingested-bucket',
-     Key=f'{file_name}'
-      )
-     expected = json.dumps(arg)
-     assert result['Body'].read().decode('utf-8') == expected
-       
+    arg = [
+            {
+                "currency_id": 1,
+                "currency_code": "GBP",
+                "created_at": "2024-02-13",
+                "last_updated": "2024-02-13",
+            }
+    ]
+    s3 = boto3.client('s3')
+    s3.create_bucket(
+        Bucket='ingested-bucket',
+        CreateBucketConfiguration={
+        'LocationConstraint': 'eu-west-2',
+    },
+    )
+    date_time = datetime.now().strftime("%Y-%m-%d %H:%M")
+    file_name= f'currency-{date_time}.json'
+    convert_and_write_data(arg, 'currency', "ingested-bucket")
+    result = s3.get_object(
+    Bucket='ingested-bucket',
+    Key=f'{file_name}'
+    )
+    expected = json.dumps({"currency": arg})
+    assert result['Body'].read().decode('utf-8') == expected

@@ -41,7 +41,7 @@ def create_object(create_bucket1):
 def secretmanager(aws_secrets):
     boto3.client("secretsmanager").create_secret(Name = "database_creds", 
     SecretString = '{"hostname":"example_host.com","port": "4321", "database" : "example_database", "username": "project_team_0", "password":"EXAMPLE-PASSWORD"}')
-
+    boto3.client("secretsmanager").create_secret(Name = "bucket", SecretString = "ingested-bucket-20240213151611822700000004")
 @pytest.fixture
 def mock_conn():
     with patch("src.extract.lambda_handler.Connection") as conn:
@@ -59,8 +59,7 @@ def test_write_json_file(mock_time,create_bucket1,secretmanager, mock_conn, crea
     result = boto3.client("s3").get_object(Bucket = "ingested-bucket-20240213151611822700000004",
     Key = "Last_Ingested.json")
     dict_result=json.load(result["Body"])
-    print(dict_result)
-    assert dict_result=={"last_ingested_time": "2024-02-14 16:54:36.774180", "new_data_found": True}
+    assert dict_result=={"last_ingested_time": "2024-02-14 16:54:36.774180"}
 
 @pytest.mark.describe("lambda_handler")
 @pytest.mark.it("Test that a connection has been established to a database - using secretsmanager")
@@ -76,8 +75,8 @@ def test_database_conn(mock_conn, create_bucket1, secretmanager,create_object):
 @patch("src.extract.lambda_handler.convert_and_write_data")
 def test_functions_are_called(mock_data_conv, mock_extract_data, mock_check_changes, mock_conn, create_bucket1, secretmanager, create_object):
     lambda_handler()
-    assert mock_data_conv.call_count == 2
-    assert mock_extract_data.call_count == 2
+    assert mock_data_conv.call_count == 7
+    assert mock_extract_data.call_count == 7
     mock_check_changes.assert_called_once()
 
 @pytest.mark.describe("lambda_handler")

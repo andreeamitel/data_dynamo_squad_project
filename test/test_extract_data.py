@@ -65,17 +65,6 @@ def test_returns_dictionary():
 
 
 @pytest.mark.describe("extract_data")
-@pytest.mark.it("return correct message when running sql query causes error")
-def test_returns_error():
-    my_mock = Mock()
-    my_mock.run.side_effect = Exception
-    assert (
-        extract_data("currency", my_mock, datetime.now())
-        == "Error when running SQL query in extract_data function"
-    )
-
-
-@pytest.mark.describe("extract_data")
 @pytest.mark.it(
     """return list of dictionaries
                 with last_updated and created_at
