@@ -15,3 +15,5 @@ resource "aws_s3_object" "lambda_code" {
   source = "${path.module}/ingest_lambda.zip"
 }
 
+
+

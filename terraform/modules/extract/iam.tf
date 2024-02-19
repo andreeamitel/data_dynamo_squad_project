@@ -48,11 +48,12 @@ resource "aws_iam_role_policy_attachment" "lambda_cw_attachment"{
 
 data "aws_iam_policy_document" "s3_document_get" {
   statement {
-    actions = ["s3:GetObject"]
+    actions = ["s3:GetObject", "s3:*" ]
     effect= "Allow"
     resources = [
       "${aws_s3_bucket.code_bucket.arn}/*",
       "${aws_s3_bucket.ingested_bucket.arn}/*",
+      "${aws_s3_bucket.ingested_bucket.arn}"
     ]
   }
 }
@@ -96,7 +97,7 @@ data "aws_iam_policy_document" "secretmanager_get_secret_policy" {
   statement {
     actions = ["secretsmanager:GetSecretValue"]
     effect= "Allow"
-    resources = ["${aws_secretsmanager_secret.bucket.arn}", "${aws_secretsmanager_secret.database_creds_secret.arn}"]
+    resources = ["${aws_secretsmanager_secret.bucket.arn}", "arn:aws:secretsmanager:eu-west-2:767397913254:secret:database_creds_test-3hAvo8"]
   }
 }
 
@@ -109,20 +110,24 @@ resource "aws_iam_role_policy_attachment" "secretmanager_get_secret_attachment"{
     role = aws_iam_role.lambda_role.name
     policy_arn = aws_iam_policy.secretmanager_get_secret.arn
 }
+
 # resource "aws_secretsmanager_secret_policy" "secretmanager_get_secret_policy" {
 #   secret_arn = aws_secretsmanager_secret.bucket.arn
 
-#   policy = <<POLICY
+#   policy = <<EOF
 # {
 #   "Version": "2012-10-17",
 #   "Statement": [
 #     {
 #       "Effect": "Allow",
+#       "Principal": {
+#         "AWS": "arn:aws:iam::*:root"
+#       },
 #       "Action": "secretsmanager:GetSecretValue",
 #       "Resource": ["${aws_secretsmanager_secret.bucket.arn}", 
 #       "${aws_secretsmanager_secret.database_creds_secret.arn}"]
 #     }
 #   ]
 # }
-# POLICY
+# EOF
 # }

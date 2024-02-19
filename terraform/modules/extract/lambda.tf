@@ -7,6 +7,8 @@ resource "aws_lambda_function" "ingest_lambda" {
   handler       = "extract/lambda_handler.lambda_handler"
   runtime       = "python3.11"
   layers        = [aws_lambda_layer_version.my-lambda-layer.arn]
+  timeout = 30
+  source_code_hash = data.archive_file.ingest_lambda.output_base64sha256
 }
 
 resource "aws_lambda_permission" "allow_s3" {
