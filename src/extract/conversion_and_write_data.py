@@ -23,11 +23,10 @@ def convert_and_write_data(list_of_selection, table_name, bucket_name):
     """
     
     date_time = datetime.now().strftime("%Y-%m-%d %H:%M")
-    file_name = f'{table_name}-{date_time}.json'
+    file_name = f'{date_time}/{table_name}.json'
     s3 = boto3.client('s3')
     s3.put_object(
         Body=f'{json.dumps({table_name:list_of_selection})}',
         Bucket=bucket_name,
         Key=f'{file_name}',
         )
-   
