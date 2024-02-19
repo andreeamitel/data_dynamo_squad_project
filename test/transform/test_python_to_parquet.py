@@ -3,7 +3,10 @@ from moto import mock_aws
 import boto3
 import pytest
 from pprint import pprint
-
+import awswrangler as wr
+import pandas as pd
+import pyarrow.parquet as pq
+import io
 
 @pytest.mark.describe("python_to_parquet")
 @pytest.mark.it("create parquet file in s3")
@@ -56,5 +59,6 @@ def test_check_parquet():
     }
     python_to_parquet(dim_counterparty_data, s3, "processed-test-bucket", "test-folder")
     result = s3.get_object(Bucket = "processed-test-bucket", Key = "test-folder/dim_counterparty.parquet")
-    pprint(result['Body'].readlines())
+    result = wr.s3.read_parquet("s3://processed-test-bucket/test-folder/dim_counterparty.parquet")
     
+    assert result.to_dict("records") == dim_counterparty_data["dim_counterparty"]
