@@ -92,5 +92,37 @@ resource "aws_iam_role_policy_attachment" "lambda_s3_write_attachment"{
     policy_arn = aws_iam_policy.s3_put_policy.arn
 }
 
+data "aws_iam_policy_document" "secretmanager_get_secret_policy" {
+  statement {
+    actions = ["secretsmanager:GetSecretValue"]
+    effect= "Allow"
+    resources = ["${aws_secretsmanager_secret.bucket.arn}", "${aws_secretsmanager_secret.database_creds_secret.arn}"]
+  }
+}
 
+resource "aws_iam_policy" "secretmanager_get_secret" {
+    name_prefix = "secretmanger-get-secret-policy-"
+    policy = data.aws_iam_policy_document.secretmanager_get_secret_policy.json
+}
 
+resource "aws_iam_role_policy_attachment" "secretmanager_get_secret_attachment"{
+    role = aws_iam_role.lambda_role.name
+    policy_arn = aws_iam_policy.secretmanager_get_secret.arn
+}
+# resource "aws_secretsmanager_secret_policy" "secretmanager_get_secret_policy" {
+#   secret_arn = aws_secretsmanager_secret.bucket.arn
+
+#   policy = <<POLICY
+# {
+#   "Version": "2012-10-17",
+#   "Statement": [
+#     {
+#       "Effect": "Allow",
+#       "Action": "secretsmanager:GetSecretValue",
+#       "Resource": ["${aws_secretsmanager_secret.bucket.arn}", 
+#       "${aws_secretsmanager_secret.database_creds_secret.arn}"]
+#     }
+#   ]
+# }
+# POLICY
+# }

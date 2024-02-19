@@ -1,5 +1,5 @@
 resource "aws_secretsmanager_secret" "database_creds_secret" {
-    name= "database_creds"
+    name_prefix= "project_database_creds-"
 }
 
 
@@ -12,7 +12,7 @@ resource "aws_secretsmanager_secret_version" "database_creds_values" {
 }
 
 resource "aws_secretsmanager_secret" "bucket" {
-    name= "bucket"
+    name_prefix= "ingestion_bucket-"
 }
 
 resource "aws_secretsmanager_secret_version" "bucket_values" {
