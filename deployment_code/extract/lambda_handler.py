@@ -42,7 +42,7 @@ def lambda_handler(event, context):
 
     try:
         s3 = boto3.client("s3")
-        secretsmanager = boto3.client("secretsmanager")
+        secretsmanager = boto3.client("secretsmanager", region_name="eu-west-2")
         bucket_name = secretsmanager.get_secret_value(SecretId = "ingestion_bucket_02")["SecretString"]
         obj = s3.list_objects_v2(Bucket = bucket_name)
         if "Contents" in obj:
@@ -81,7 +81,6 @@ def lambda_handler(event, context):
         response_code = err.response["Error"]["Code"]
         response_msg = err.response["Error"]["Message"]
         logger.error(f"ClientError: {response_code}: {response_msg}")
-        logger.error(f"{err}")
     except KeyError as err:
         logger.error(f"KeyError: {err}")
         print(err)
