@@ -15,7 +15,7 @@ def aws_s3():
 @pytest.fixture(scope="function")
 def aws_secrets():
     with mock_aws():
-        yield boto3.client("secretsmanager", region_name="eu-west-2")
+        yield boto3.client("secretsmanager")
 
 @pytest.fixture
 def create_bucket1(aws_s3):
@@ -110,7 +110,6 @@ def test_client_error_bucket(caplog,secretmanager):
 @mock_aws
 def test_client_error_secrets(caplog,create_bucket1, create_object, aws_secrets):
     with caplog.at_level(logging.INFO):
-        boto3.client("secretsmanager")
         lambda_handler("thing1", "thing2")
         assert "Secrets Manager can't find the specified secret." in caplog.text
     
