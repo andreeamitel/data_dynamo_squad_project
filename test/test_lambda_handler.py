@@ -15,7 +15,7 @@ def aws_s3():
 @pytest.fixture(scope="function")
 def aws_secrets():
     with mock_aws():
-        yield boto3.client("secretsmanager")
+        yield boto3.client("secretsmanager", region_name="eu-west-2")
 
 @pytest.fixture
 def create_bucket1(aws_s3):

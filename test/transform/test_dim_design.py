@@ -30,20 +30,20 @@ def s3(aws_credentials):
         yield boto3.client("s3", region_name="eu-west-2")
 
 
-@pytest.fixture
-def bucket(s3):
-    s3.create_bucket(
-        Bucket="test_ingested_bucket",
-        CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
-    )
+# @pytest.fixture
+# def bucket(s3):
+#     s3.create_bucket(
+#         Bucket="test_ingested_bucket",
+#         CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
+#     )
     
-    with open("test/transform/valid_test_data.json") as v_json:
-        design_data = json.load(v_json)
-    s3.put_object(
-            Body=design_data, Bucket="test_ingested_bucket", Key="test/design_data.json"
-        )
-    data = s3.get_object(Bucket="test_ingested_bucket", Key="test/design_data.json")
-    return data
+#     with open("test/transform/valid_test_data.json") as v_json:
+#         design_data = json.load(v_json)
+#     s3.put_object(
+#             Body=design_data, Bucket="test_ingested_bucket", Key="test/design_data.json"
+#         )
+#     data = s3.get_object(Bucket="test_ingested_bucket", Key="test/design_data.json")
+#     return data
 
 
 @pytest.mark.describe("dim_design")
