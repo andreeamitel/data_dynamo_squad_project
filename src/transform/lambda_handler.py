@@ -16,13 +16,13 @@ def lambda_handler(event, context):
     - calls python_to_parquet function -  which changes python to parquet and stores in processed bucket  
     """
     pass
-    sales_dict = get_latest_data("sales_order", s3, bucket_name)
-    currency_dict = get_latest_data("currency", s3, bucket_name)
-    design_dict = get_latest_data("design", s3, bucket_name)
-    address_dict = get_latest_data("address", s3, bucket_name)
-    counterparty_dict = get_latest_data("counterparty", s3, bucket_name)
-    staff_dict = get_latest_data("staff", s3, bucket_name)
-    department_dict = get_latest_data("department", s3, bucket_name)
+    sales_dict = get_latest_data("sales_order", s3, ingestion_bucket_name)
+    currency_dict = get_latest_data("currency", s3, ingestion_bucket_name)
+    design_dict = get_latest_data("design", s3, ingestion_bucket_name)
+    address_dict = get_latest_data("address", s3, ingestion_bucket_name)
+    counterparty_dict = get_latest_data("counterparty", s3, ingestion_bucket_name)
+    staff_dict = get_latest_data("staff", s3, ingestion_bucket_name)
+    department_dict = get_latest_data("department", s3, ingestion_bucket_name)
 
     #call unit functions --------- ALL OF THESE TAKE A DICTIONARIES WITH KEY VALUE PAIR OF TABLE_NAMEAND A THE TABLE  - EACH WILL RETURN A DICTIONARY WITH KEY VALUE PAIR OF NEW TABLE NAME AND THE TABLE ITSELF - sorry for shouting :) - this was nathan and ben
     
