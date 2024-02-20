@@ -66,6 +66,10 @@ security-test:
 	$(call execute_in_env, safety check -r ./requirements.txt)
 	$(call execute_in_env, bandit -lll */*.py *c/*/*.py)
 
+## Run the black code auto formatter
+# run-black:
+# 	$(call execute_in_env, black ./src/*/*.py ./test/*.py)
+
 ## Run the flake8 code check
 run-flake:
 	$(call execute_in_env, flake8 --exit-zero ./src/*/*.py ./test/*.py)

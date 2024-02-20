@@ -2,11 +2,10 @@ from src.transform.python_to_parquet import python_to_parquet
 from moto import mock_aws
 import boto3
 import pytest
-from pprint import pprint
 import awswrangler as wr
-import pandas as pd
-import pyarrow.parquet as pq
-import io
+
+
+
 
 @pytest.mark.describe("python_to_parquet")
 @pytest.mark.it("create parquet file in s3")

@@ -1,5 +1,7 @@
 import pandas as pd
 import awswrangler as wr
+import warnings
+
 
 
 
@@ -14,6 +16,8 @@ def python_to_parquet(table_data, bucket_name, timestamp_key):
     - converts table to parquet format 
     - writes converted table to s3 processed bucket
     """
+    # Suppress specific FutureWarning from awswrangler module
+    warnings.filterwarnings("ignore", message="promote has been superseded by promote_options='default'.", category=FutureWarning, module="awswrangler")
     table_name = list(table_data.keys())[0]
     dataframe = pd.DataFrame(table_data[table_name])
     wr.s3.to_parquet(dataframe, path=f"s3://{bucket_name}/{timestamp_key}/{table_name}.parquet", index=False)
