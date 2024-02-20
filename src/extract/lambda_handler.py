@@ -44,9 +44,7 @@ def lambda_handler(event, context):
         s3 = boto3.client("s3")
         secretsmanager = boto3.client("secretsmanager")
         bucket_name = secretsmanager.get_secret_value(SecretId = "ingestion_bucket_02")["SecretString"]
-        logger.error(bucket_name)
         obj = s3.list_objects_v2(Bucket = bucket_name)
-        print(obj, '<<<<<object')
         if "Contents" in obj:
             test = [object["Key"] for object in obj['Contents'] if object["Key"] == "Last_Ingested.json"]
             if test != []:

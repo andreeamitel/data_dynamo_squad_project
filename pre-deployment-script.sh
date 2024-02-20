@@ -1,2 +1,2 @@
-cp -f -r ./src/extract ./dummy_function
-sed -e s/src.//g -i ./dummy_function/extract/lambda_handler.py
+cp -f -r ./src/extract ./deployment_code
+sed -e s/src.//g -i ./deployment_code/extract/lambda_handler.py
