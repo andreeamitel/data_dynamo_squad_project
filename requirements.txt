@@ -5,6 +5,7 @@ aws-sam-translator==1.85.0
 aws-xray-sdk==2.12.1
 awswrangler==3.6.0
 bandit==1.7.7
+black==24.2.0
 boto3==1.34.40
 botocore==1.34.40
 certifi==2024.2.2
@@ -46,6 +47,7 @@ mdurl==0.1.2
 moto==5.0.1
 mpmath==1.3.0
 multipart==0.2.4
+mypy-extensions==1.0.0
 networkx==3.2.1
 numpy==1.26.4
 openapi-schema-validator==0.6.2
@@ -53,6 +55,7 @@ openapi-spec-validator==0.7.1
 packaging==23.2
 pandas==2.2.0
 pathable==0.4.3
+pathspec==0.12.1
 pbr==6.0.0
 pg8000==1.30.4
 platformdirs==4.2.0
@@ -99,7 +102,7 @@ typer==0.9.0
 types-toml==0.10.8.7
 typing_extensions==4.9.0
 tzdata==2024.1
-urllib3<1.27
+urllib3==1.26.18
 virtualenv==20.25.0
 virtualenv-clone==0.5.7
 virtualenvwrapper==6.1.0
