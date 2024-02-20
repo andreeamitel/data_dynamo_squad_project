@@ -60,4 +60,4 @@ jobs:
         run: terraform plan -var=database_creds_var="{'database':${{secrets.DATABASE}}, 'hostname':${{secrets.HOSTNAME}}, 'password':${{secrets.PASSWORD}}, 'port':${{secrets.PORT}}, 'username':${{secrets.USERNAME}}}"
       - name: Terraform apply
         working-directory: terraform/modules/extract
-        run: terraform apply '-var="database_creds_var="{'database':${{secrets.DATABASE}}, 'hostname':${{secrets.HOSTNAME}}, 'password':${{secrets.PASSWORD}}, 'port':${{secrets.PORT}}, 'username':${{secrets.USERNAME}}}""' -auto-approve
+        run: terraform apply -var=database_creds_var="{'database':${{secrets.DATABASE}}, 'hostname':${{secrets.HOSTNAME}}, 'password':${{secrets.PASSWORD}}, 'port':${{secrets.PORT}}, 'username':${{secrets.USERNAME}}}" -auto-approve
