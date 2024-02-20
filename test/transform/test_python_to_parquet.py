@@ -30,7 +30,7 @@ def test_creates_parquet():
         "counterparty_legal_phone_number": "73837483"
         }]
     }
-    python_to_parquet(dim_counterparty_data, s3, "processed-test-bucket", "test-folder")
+    python_to_parquet(dim_counterparty_data, "processed-test-bucket", "test-folder")
     result = s3.list_objects(Bucket = "processed-test-bucket")
     key = result['Contents'][0]['Key']
     assert key == "test-folder/dim_counterparty.parquet"
@@ -57,7 +57,7 @@ def test_check_parquet():
         "counterparty_legal_phone_number": "73837483"
         }]
     }
-    python_to_parquet(dim_counterparty_data, s3, "processed-test-bucket", "test-folder")
+    python_to_parquet(dim_counterparty_data, "processed-test-bucket", "test-folder")
     result = s3.get_object(Bucket = "processed-test-bucket", Key = "test-folder/dim_counterparty.parquet")
     result = wr.s3.read_parquet("s3://processed-test-bucket/test-folder/dim_counterparty.parquet")
     
