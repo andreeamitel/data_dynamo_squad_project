@@ -108,7 +108,7 @@ def test_client_error_bucket(caplog,secretmanager):
 @pytest.mark.describe("lambda_handler")
 @pytest.mark.it("Error: ClientError - for secretsmanager")
 @mock_aws
-def test_client_error_secrets(caplog,create_bucket1, create_object):
+def test_client_error_secrets(caplog,create_bucket1, create_object, aws_secrets):
     with caplog.at_level(logging.INFO):
         lambda_handler("thing1", "thing2")
         assert "Secrets Manager can't find the specified secret." in caplog.text
