@@ -5,7 +5,7 @@ variable "bucket_name" {
 
 variable "name_lambda_role" {
     type = string
-    default = "lambda-role"
+    default = "lambda-role-tran-"
 }
 
 variable "lambda_name" {
