@@ -93,3 +93,22 @@ resource "aws_iam_role_policy_attachment" "s3_put_attachment" {
   role       = aws_iam_role.lambda_process_role.name
   policy_arn = aws_iam_policy.s3_tran_put_policy.arn
 }
+
+
+data "aws_iam_policy_document" "secretmanager_get_secret_policy" {
+  statement {
+    actions   = ["secretsmanager:GetSecretValue"]
+    effect    = "Allow"
+    resources = ["${aws_secretsmanager_secret.processed_bucket.arn}", "arn:aws:secretsmanager:eu-west-2:767397913254:secret:database_creds_test-3hAvo8"]
+  }
+}
+
+resource "aws_iam_policy" "secretmanager_get_secret" {
+  name_prefix = "secretmanger-get-secret-policy-"
+  policy      = data.aws_iam_policy_document.secretmanager_get_secret_policy.json
+}
+
+resource "aws_iam_role_policy_attachment" "secretmanager_get_secret_attachment" {
+  role       = aws_iam_role.lambda_process_role.name
+  policy_arn = aws_iam_policy.secretmanager_get_secret.arn
+}
