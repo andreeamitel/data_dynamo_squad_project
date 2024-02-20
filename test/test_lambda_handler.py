@@ -41,7 +41,7 @@ def create_object(create_bucket1):
 def secretmanager(aws_secrets):
     boto3.client("secretsmanager").create_secret(Name = "database_creds_test", 
     SecretString = '{"hostname":"example_host.com","port": "4321", "database" : "example_database", "username": "project_team_0", "password":"EXAMPLE-PASSWORD"}')
-    boto3.client("secretsmanager").create_secret(Name = "bucket", SecretString = "ingested-bucket-20240213151611822700000004")
+    boto3.client("secretsmanager").create_secret(Name = "ingestion_bucket_02", SecretString = "ingested-bucket-20240213151611822700000004")
 @pytest.fixture
 def mock_conn():
     with patch("src.extract.lambda_handler.Connection") as conn:
@@ -55,7 +55,7 @@ def mock_conn():
 @mock_aws
 def test_write_json_file(mock_time,create_bucket1,secretmanager, mock_conn, create_object):
     mock_time.now().isoformat.return_value = "2024-02-14 16:54:36.774180"
-    lambda_handler()
+    lambda_handler("thing1", "thing2")
     result = boto3.client("s3").get_object(Bucket = "ingested-bucket-20240213151611822700000004",
     Key = "Last_Ingested.json")
     dict_result=json.load(result["Body"])
@@ -65,7 +65,7 @@ def test_write_json_file(mock_time,create_bucket1,secretmanager, mock_conn, crea
 @pytest.mark.it("Test that a connection has been established to a database - using secretsmanager")
 @mock_aws
 def test_database_conn(mock_conn, create_bucket1, secretmanager,create_object):
-    lambda_handler()
+    lambda_handler("thing1", "thing2")
     mock_conn.assert_called_with(host="example_host.com",port= "4321", database = "example_database", user= "project_team_0", password = "EXAMPLE-PASSWORD")
   
 @pytest.mark.describe("lambda_handler")
@@ -74,7 +74,7 @@ def test_database_conn(mock_conn, create_bucket1, secretmanager,create_object):
 @patch("src.extract.lambda_handler.extract_data")
 @patch("src.extract.lambda_handler.convert_and_write_data")
 def test_functions_are_called(mock_data_conv, mock_extract_data, mock_check_changes, mock_conn, create_bucket1, secretmanager, create_object):
-    lambda_handler()
+    lambda_handler("thing1", "thing2")
     assert mock_data_conv.call_count == 7
     assert mock_extract_data.call_count == 7
     mock_check_changes.assert_called_once()
@@ -86,7 +86,7 @@ def test_functions_are_called(mock_data_conv, mock_extract_data, mock_check_chan
 @patch("src.extract.lambda_handler.convert_and_write_data")
 @mock_aws
 def test_check_changes_uses_correct_date(mock_data_conv, mock_extract_data, mock_check_changes, mock_conn, create_bucket1, secretmanager, create_object):
-    lambda_handler()
+    lambda_handler("thing1", "thing2")
     mock_check_changes.assert_called_with(mock_conn(),"2022-02-14 16:54:36.774180")
 
 # @pytest.mark.describe("lambda_handler")
@@ -102,7 +102,7 @@ def test_check_changes_uses_correct_date(mock_data_conv, mock_extract_data, mock
 @mock_aws
 def test_client_error_bucket(caplog,secretmanager):
     with caplog.at_level(logging.INFO):
-        lambda_handler()
+        lambda_handler("thing1", "thing2")
         assert "The specified bucket does not exist" in caplog.text
 
 @pytest.mark.describe("lambda_handler")
@@ -110,16 +110,18 @@ def test_client_error_bucket(caplog,secretmanager):
 @mock_aws
 def test_client_error_secrets(caplog,create_bucket1, create_object):
     with caplog.at_level(logging.INFO):
-        lambda_handler()
+        lambda_handler("thing1", "thing2")
         assert "Secrets Manager can't find the specified secret." in caplog.text
     
-@pytest.mark.describe("lambda_handler")
-@pytest.mark.it("Error: KeyError - for bucket object")
-@mock_aws
-def test_key_error(caplog,create_bucket1, secretmanager):
-    with caplog.at_level(logging.INFO):
-        lambda_handler()
-        assert "KeyError: 'Contents'" in caplog.text
+
+# may not be needed as no key found handled different way
+# @pytest.mark.describe("lambda_handler")
+# @pytest.mark.it("Error: KeyError - for bucket object")
+# @mock_aws
+# def test_key_error(caplog,create_bucket1, secretmanager):
+#     with caplog.at_level(logging.INFO):
+#         lambda_handler("thing1", "thing2")
+#         assert "KeyError: 'Contents'" in caplog.text
 
 @pytest.mark.describe("lambda_handler")
 @pytest.mark.it("Error: DatabaseError")
@@ -127,7 +129,7 @@ def test_key_error(caplog,create_bucket1, secretmanager):
 @mock_aws
 def test_database_error(mock_check_changes, mock_conn, caplog,create_bucket1,create_object , secretmanager):
     with caplog.at_level(logging.INFO):
-        lambda_handler()
+        lambda_handler("thing1", "thing2")
         assert "DatabaseError" in caplog.text
     
 

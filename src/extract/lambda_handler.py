@@ -54,6 +54,7 @@ def lambda_handler(event, context):
                 Key = "Last_Ingested.json")
                 last_ingested_timestamp_obj = json.load(timestamp["Body"])
                 last_ingested_timestamp = last_ingested_timestamp_obj["last_ingested_time"]
+        
         else:
             last_ingested_timestamp = "2000-02-14 16:54:36.774180"
 
@@ -85,5 +86,6 @@ def lambda_handler(event, context):
         logger.error(f"{err}")
     except KeyError as err:
         logger.error(f"KeyError: {err}")
+        print(err)
     except DatabaseError as err:
         logger.error("DatabaseError")

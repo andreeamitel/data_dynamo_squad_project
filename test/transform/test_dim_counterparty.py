@@ -1,4 +1,4 @@
-from transform.dim_counterparty import dim_counterparty_func
+from src.transform.dim_counterparty import dim_counterparty_func
 from datetime import datetime
 
 def test_dim_counterparty_func():
