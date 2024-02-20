@@ -1,3 +1,2 @@
-def lambda_handler(event, context):
-    print("hi")
-    
+def say_hello():
+    print('hello')
