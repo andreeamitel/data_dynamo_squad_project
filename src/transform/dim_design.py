@@ -1,15 +1,18 @@
-import boto3
+import copy
 
-def dim_design():
+def dim_design(table_list):
     """
-    This function takes data from ingested-bucket and converts it according to star schema
+    This function takes a list of dictionary from the design table and return amended list of dictionaries for the dim_design table.
 
     Args:
-    
+    'design' table_list
 
     Returns:
-    new dim_design table in json format
+    dim_design table list of dict
 
     """
-
-    pass
+    dim_design_table = copy.deepcopy(table_list)
+    for design in dim_design_table:
+        del design["created_at"]
+        del design["last_updated"]
+    return dim_design_table
