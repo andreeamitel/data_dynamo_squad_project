@@ -39,9 +39,9 @@ def create_object(create_bucket1):
 
 @pytest.fixture
 def secretmanager(aws_secrets):
-    boto3.client("secretsmanager").create_secret(Name = "database_creds_test", 
+    aws_secrets.create_secret(Name = "database_creds_test", 
     SecretString = '{"hostname":"example_host.com","port": "4321", "database" : "example_database", "username": "project_team_0", "password":"EXAMPLE-PASSWORD"}')
-    boto3.client("secretsmanager").create_secret(Name = "ingestion_bucket_02", SecretString = "ingested-bucket-20240213151611822700000004")
+    aws_secrets.create_secret(Name = "ingestion_bucket_02", SecretString = "ingested-bucket-20240213151611822700000004")
 @pytest.fixture
 def mock_conn():
     with patch("src.extract.lambda_handler.Connection") as conn:

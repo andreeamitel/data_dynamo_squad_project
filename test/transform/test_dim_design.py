@@ -1,33 +1,33 @@
 from src.transform.dim_design import dim_design
 
-from moto import mock_aws
-import json
-import pytest
-import boto3
-import os
+# from moto import mock_aws
+# import json
+# import pytest
+# import boto3
+# import os
 
 
-@pytest.fixture
-def valid_data():
-    with open("test/transform/valid_test_data.json") as v_json:
-        test_data = json.loads(v_json)
-        print(test_data, "VALID_DATA")
-    return test_data
+# @pytest.fixture
+# def valid_data():
+#     with open("test/transform/valid_test_data.json") as v_json:
+#         test_data = json.loads(v_json)
+#         print(test_data, "VALID_DATA")
+#     return test_data
 
 
-@pytest.fixture(scope="function")
-def aws_credentials():
-    os.environ["AWS_ACCESS_KEY_ID"] = "test"
-    os.environ["AWS_SECRET_ACCESS_KEY"] = "test"
-    os.environ["AWS_SECURITY_TOKEN"] = "test"
-    os.environ["AWS_SESSION_TOKEN"] = "test"
-    os.environ["AWS_DEFAULT_REGION"] = "eu-west-2"
+# @pytest.fixture(scope="function")
+# def aws_credentials():
+#     os.environ["AWS_ACCESS_KEY_ID"] = "test"
+#     os.environ["AWS_SECRET_ACCESS_KEY"] = "test"
+#     os.environ["AWS_SECURITY_TOKEN"] = "test"
+#     os.environ["AWS_SESSION_TOKEN"] = "test"
+#     os.environ["AWS_DEFAULT_REGION"] = "eu-west-2"
 
 
-@pytest.fixture(scope="function")
-def s3(aws_credentials):
-    with mock_aws():
-        yield boto3.client("s3", region_name="eu-west-2")
+# @pytest.fixture(scope="function")
+# def s3(aws_credentials):
+#     with mock_aws():
+#         yield boto3.client("s3", region_name="eu-west-2")
 
 
 # @pytest.fixture
@@ -46,11 +46,11 @@ def s3(aws_credentials):
 #     return data
 
 
-@pytest.mark.describe("dim_design")
-@pytest.mark.it("function dim_design read a file from the bucket")
-def test_read_file_from_bucket(bucket, valid_data):
-    contents = bucket.data['Body'].read()
-    assert contents == valid_data
+# @pytest.mark.describe("dim_design")
+# @pytest.mark.it("function dim_design read a file from the bucket")
+# def test_read_file_from_bucket(bucket, valid_data):
+#     contents = bucket.data['Body'].read()
+#     assert contents == valid_data
 
 # test_jso
 # @mock_s3

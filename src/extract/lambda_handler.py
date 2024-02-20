@@ -81,7 +81,6 @@ def lambda_handler(event, context):
         response_code = err.response["Error"]["Code"]
         response_msg = err.response["Error"]["Message"]
         logger.error(f"ClientError: {response_code}: {response_msg}")
-        logger.error(f"{err}")
     except KeyError as err:
         logger.error(f"KeyError: {err}")
         print(err)
