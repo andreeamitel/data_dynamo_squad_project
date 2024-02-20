@@ -1,4 +1,4 @@
-from src.transform import dim_design
+from src.transform.dim_design import dim_design
 
 from moto import mock_aws
 import json
