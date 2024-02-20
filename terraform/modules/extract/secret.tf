@@ -1,5 +1,6 @@
 resource "aws_secretsmanager_secret" "database_creds_secret" {
-    name = "database_creds"
+    name = "database_creds_01"
+    recovery_window_in_days = 0
 }
 
 
