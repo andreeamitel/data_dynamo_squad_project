@@ -1,8 +1,90 @@
 from src.transform.dim_currency import dim_currency
+import pytest
 
 
 @pytest.mark.describe("dim_currency")
 @pytest.mark.it("function returns an empty list if given empty table lists")
 def test_returns_empty_list_when_given_empty_dict():
-    result = dim_currency({}) 
-    assert result == []
+    result = dim_currency({})
+    assert result == {}
+
+
+@pytest.mark.describe("dim_currency")
+@pytest.mark.it("function returns a dictionary which has corrrect key")
+def test_returns_dict_with_correct_key():
+    result = dim_currency(
+        {
+            "currency": [
+                {
+                    "currency_id": 1,
+                    "currency_code": "GBP",
+                    "created_at": "2022-11-03T14:20:49.962",
+                    "last_updated": "2022-11-03T14:20:49.962",
+                },
+                {
+                    "currency_id": 2,
+                    "currency_code": "USD",
+                    "created_at": "2022-11-03T14:20:49.962",
+                    "last_updated": "2022-11-03T14:20:49.962",
+                },
+                {
+                    "currency_id": 3,
+                    "currency_code": "EUR",
+                    "created_at": "2022-11-03T14:20:49.962",
+                    "last_updated": "2022-11-03T14:20:49.962",
+                },
+            ]
+        }
+    )
+    expected = list(result.keys())[0]
+    assert expected == "dim_currency"
+
+@pytest.mark.describe("dim_currency")
+@pytest.mark.it("function returns a dictionary which has corrrect values")
+def test_returns_dict_with_correct_values():
+    result = dim_currency(
+        {
+            "currency": [
+                {
+                    "currency_id": 1,
+                    "currency_code": "GBP",
+                    "created_at": "2022-11-03T14:20:49.962",
+                    "last_updated": "2022-11-03T14:20:49.962",
+                },
+                {
+                    "currency_id": 2,
+                    "currency_code": "USD",
+                    "created_at": "2022-11-03T14:20:49.962",
+                    "last_updated": "2022-11-03T14:20:49.962",
+                },
+                {
+                    "currency_id": 3,
+                    "currency_code": "EUR",
+                    "created_at": "2022-11-03T14:20:49.962",
+                    "last_updated": "2022-11-03T14:20:49.962",
+                },
+            ]
+        }
+    )
+    expected =  {
+            "dim_currency": [
+                {
+                    "currency_id": 1,
+                    "currency_code": "GBP",
+                    "currency_name": "Great British Pound"
+                },
+                {
+                    "currency_id": 2,
+                    "currency_code": "USD",
+                    "currency_name": "United States Dollar",
+                },
+                {
+                    "currency_id": 3,
+                    "currency_code": "EUR",
+                    "currency_name": "Euro",
+                },
+            ]
+        }
+    assert result == expected
+
+
