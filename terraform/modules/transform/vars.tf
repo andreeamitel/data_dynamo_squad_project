@@ -12,3 +12,7 @@ variable "lambda_name" {
     type = string
     default = "process_lambda"
 }
+variable "ingestion_bucket_name" {
+    type = string
+    default = "ingested-bucket-20240220192448927000000006"
+}
