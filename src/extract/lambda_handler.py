@@ -71,7 +71,6 @@ def lambda_handler(event, context):
 
         new_ingested_time = datetime.now().isoformat()
         if len(needs_fetching_tables) > 0:
-            needs_fetching_tables = ["sales_order", "design", "address", "counterparty", "staff", "department", "currency"]
             s3.put_object(Body = f"{json.dumps({'last_ingested_time': new_ingested_time})}", Bucket = bucket_name,Key = "Last_Ingested.json")
 
         for table in needs_fetching_tables:
