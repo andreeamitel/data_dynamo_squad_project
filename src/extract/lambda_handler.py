@@ -66,16 +66,18 @@ def lambda_handler(event, context):
             password = secret_string["password"],
             database=secret_string["database"],
         )
+        
         needs_fetching_tables = check_for_changes(conn, last_ingested_timestamp)
+
+        new_ingested_time = datetime.now().isoformat()
         if len(needs_fetching_tables) > 0:
             needs_fetching_tables = ["sales_order", "design", "address", "counterparty", "staff", "department", "currency"] 
         for table in needs_fetching_tables:
             table_data = extract_data(table, conn, last_ingested_timestamp)
-            convert_and_write_data(table_data, table, bucket_name)
+            convert_and_write_data(table_data, table, bucket_name, new_ingested_time)
 
-        date_time = datetime.now().isoformat()
 
-        s3.put_object(Body = f"{json.dumps({'last_ingested_time': date_time})}", Bucket = bucket_name,Key = "Last_Ingested.json")
+        s3.put_object(Body = f"{json.dumps({'last_ingested_time': new_ingested_time})}", Bucket = bucket_name,Key = "Last_Ingested.json")
 
     except ClientError as err:
         response_code = err.response["Error"]["Code"]
