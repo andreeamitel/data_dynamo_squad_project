@@ -20,7 +20,7 @@ def test_puts_file_in_bucket():
                     "last_updated": "2024-02-13",
                 }
             ]
-    date_time = datetime.now().strftime("%Y-%m-%d %H:%M")
+    date_time = datetime.now().isoformat()
     file_name = f'{date_time}/currency.json'
     s3 = boto3.client('s3')
     s3.create_bucket(
@@ -29,7 +29,7 @@ def test_puts_file_in_bucket():
            'LocationConstraint': 'eu-west-2',
         },
         )
-    convert_and_write_data(arg, 'currency', "ingested-bucket")
+    convert_and_write_data(arg, 'currency', "ingested-bucket", date_time)
     result = s3.list_objects(
     Bucket='ingested-bucket',
     )
@@ -40,27 +40,28 @@ def test_puts_file_in_bucket():
 @pytest.mark.it("puts a json file inside the bucket")
 @mock_aws
 def test_puts_json_file():
-     arg =  [
-                {
-                    "currency_id": 1,
-                    "currency_code": "GBP",
-                    "created_at": "2024-02-13",
-                    "last_updated": "2024-02-13",
-                }
-     ]
-     s3 = boto3.client('s3')
-     s3.create_bucket(
-            Bucket='ingested-bucket',
-            CreateBucketConfiguration={
-           'LocationConstraint': 'eu-west-2',
-        },
-        )
-     convert_and_write_data(arg, 'currency', "ingested-bucket")
-     result = s3.list_objects(
-     Bucket='ingested-bucket',
-      )
-     expected = 'json'
-     assert result['Contents'][0]['Key'][-4:] == expected
+    arg =  [
+            {
+                "currency_id": 1,
+                "currency_code": "GBP",
+                "created_at": "2024-02-13",
+                "last_updated": "2024-02-13",
+            }
+    ]
+    s3 = boto3.client('s3')
+    s3.create_bucket(
+        Bucket='ingested-bucket',
+        CreateBucketConfiguration={
+        'LocationConstraint': 'eu-west-2',
+    },
+    )
+    date_time = datetime.now().isoformat()
+    convert_and_write_data(arg, 'currency', "ingested-bucket", date_time)
+    result = s3.list_objects(
+    Bucket='ingested-bucket',
+    )
+    expected = 'json'
+    assert result['Contents'][0]['Key'][-4:] == expected
 
 @pytest.mark.describe("conversion_and_write_data")
 @pytest.mark.it("writes correct data to the json file")     
@@ -81,9 +82,9 @@ def test_writes_data_of_table_to_json_file():
         'LocationConstraint': 'eu-west-2',
     },
     )
-    date_time = datetime.now().strftime("%Y-%m-%d %H:%M")
+    date_time = datetime.now().isoformat()
     file_name= f'{date_time}/currency.json'
-    convert_and_write_data(arg, 'currency', "ingested-bucket")
+    convert_and_write_data(arg, 'currency', "ingested-bucket", date_time)
     result = s3.get_object(
     Bucket='ingested-bucket',
     Key=f'{file_name}'
