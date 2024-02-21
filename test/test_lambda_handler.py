@@ -52,8 +52,11 @@ def mock_conn():
 @pytest.mark.describe("lambda_handler")
 @pytest.mark.it("Test that a json file gets written to the ingestion bucket in aws")
 @patch("src.extract.lambda_handler.datetime")
+@patch("src.extract.lambda_handler.check_for_changes", return_value = ["currency", "staff"])
+@patch("src.extract.lambda_handler.extract_data")
+@patch("src.extract.lambda_handler.convert_and_write_data")
 @mock_aws
-def test_write_json_file(mock_time,create_bucket1,secretmanager, mock_conn, create_object):
+def test_write_json_file(convert_mock, extract_mock, check_mock, mock_time,create_bucket1,secretmanager, mock_conn, create_object):
     mock_time.now().isoformat.return_value = "2024-02-14 16:54:36.774180"
     lambda_handler("thing1", "thing2")
     result = boto3.client("s3").get_object(Bucket = "ingested-bucket-20240213151611822700000004",
