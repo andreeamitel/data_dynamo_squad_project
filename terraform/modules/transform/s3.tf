@@ -10,6 +10,6 @@ resource "aws_s3_object" "process_lambda_code" {
   key    = "lambda_code/process_lambda.zip"
   # source = "${path.module}/process_lambda.zip"
   # source = "${path.module}./../../dummy_function/function.zip"
-  source = "../dummy_function/function.zip"
+  source = "../dummy_function/event.zip"
 
 }
