@@ -39,6 +39,7 @@ def test_returns_dict_with_correct_key():
     expected = list(result.keys())[0]
     assert expected == "dim_currency"
 
+
 @pytest.mark.describe("dim_currency")
 @pytest.mark.it("function returns a dictionary which has corrrect values")
 def test_returns_dict_with_correct_values():
@@ -66,25 +67,103 @@ def test_returns_dict_with_correct_values():
             ]
         }
     )
-    expected =  {
-            "dim_currency": [
-                {
-                    "currency_id": 1,
-                    "currency_code": "GBP",
-                    "currency_name": "Great British Pound"
-                },
-                {
-                    "currency_id": 2,
-                    "currency_code": "USD",
-                    "currency_name": "United States Dollar",
-                },
-                {
-                    "currency_id": 3,
-                    "currency_code": "EUR",
-                    "currency_name": "Euro",
-                },
-            ]
-        }
+    expected = {
+        "dim_currency": [
+            {
+                "currency_id": 1,
+                "currency_code": "GBP",
+                "currency_name": "Great British Pound",
+            },
+            {
+                "currency_id": 2,
+                "currency_code": "USD",
+                "currency_name": "United States Dollar",
+            },
+            {
+                "currency_id": 3,
+                "currency_code": "EUR",
+                "currency_name": "Euro",
+            },
+        ]
+    }
     assert result == expected
 
 
+@pytest.mark.describe("dim_currency")
+@pytest.mark.it("check result is different reference than input")
+def test_check_result_has_diff_ref():
+    test_input = {
+        "currency": [
+            {
+                "currency_id": 1,
+                "currency_code": "GBP",
+                "created_at": "2022-11-03T14:20:49.962",
+                "last_updated": "2022-11-03T14:20:49.962",
+            },
+            {
+                "currency_id": 2,
+                "currency_code": "USD",
+                "created_at": "2022-11-03T14:20:49.962",
+                "last_updated": "2022-11-03T14:20:49.962",
+            },
+            {
+                "currency_id": 3,
+                "currency_code": "EUR",
+                "created_at": "2022-11-03T14:20:49.962",
+                "last_updated": "2022-11-03T14:20:49.962",
+            },
+        ]
+    }
+    result = dim_currency(test_input)
+    assert result is not test_input
+
+
+@pytest.mark.describe("dim_currency")
+@pytest.mark.it("check input has not been changed")
+def test_check_input_not_changed():
+    test_input = {
+        "currency": [
+            {
+                "currency_id": 1,
+                "currency_code": "GBP",
+                "created_at": "2022-11-03T14:20:49.962",
+                "last_updated": "2022-11-03T14:20:49.962",
+            },
+            {
+                "currency_id": 2,
+                "currency_code": "USD",
+                "created_at": "2022-11-03T14:20:49.962",
+                "last_updated": "2022-11-03T14:20:49.962",
+            },
+            {
+                "currency_id": 3,
+                "currency_code": "EUR",
+                "created_at": "2022-11-03T14:20:49.962",
+                "last_updated": "2022-11-03T14:20:49.962",
+            },
+        ]
+    }
+    dim_currency(test_input)
+
+    assert test_input == {
+        "currency": [
+            {
+                "currency_id": 1,
+                "currency_code": "GBP",
+                "created_at": "2022-11-03T14:20:49.962",
+                "last_updated": "2022-11-03T14:20:49.962",
+            },
+            {
+                "currency_id": 2,
+                "currency_code": "USD",
+                "created_at": "2022-11-03T14:20:49.962",
+                "last_updated": "2022-11-03T14:20:49.962",
+            },
+            {
+                "currency_id": 3,
+                "currency_code": "EUR",
+                "created_at": "2022-11-03T14:20:49.962",
+                "last_updated": "2022-11-03T14:20:49.962",
+            },
+        ]
+    }
