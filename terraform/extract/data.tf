@@ -4,7 +4,7 @@ data "aws_region" "current" {}
 
 data "archive_file" "ingest_lambda" {
   type        = "zip"
-  source_dir = "../../../deployment_code"
+  source_dir = "../deployment_code"
   output_path = "./ingest_lambda.zip"
   excludes = ["transform", "load"]
 }

@@ -1,7 +1,3 @@
-from pg8000.native import Connection as conn, identifier, DatabaseError
-from datetime import datetime
-
-
 '''
 Contains functions that check for updated or new data in the database.
 Functions:\n
@@ -9,6 +5,10 @@ Functions:\n
     check_table_for_last_updated
 
 '''
+from pg8000.native import Connection as conn, identifier, DatabaseError
+from datetime import datetime
+
+
 
 def check_for_changes(db_conn, last_ingested_time):
     '''

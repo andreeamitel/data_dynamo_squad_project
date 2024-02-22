@@ -1,6 +1,4 @@
-# module "extract" {
-#     source = "./modules/extract"
-# }
+
 
 # provider "aws" {
 #     region= "eu-west-2"
@@ -8,12 +6,21 @@
 
 terraform {
    backend "s3" {
-    bucket = "backend-project-transform-bucket"
+    bucket = "backend-project-bucket"
     key = "data/tfstate"
     region = "eu-west-2"
    }
 }
 
+# module "modules" {
+#     source = "./modules"
+# }
+module "extract" {
+    source = "./extract" 
+}
 module "transform" {
-    source = "./modules/transform"
+    source = "./transform" 
+}
+variable "database_creds_var" {
+    type = string
 }

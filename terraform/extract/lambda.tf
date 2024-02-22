@@ -37,4 +37,6 @@ resource "aws_cloudwatch_event_target" "lambda_target" {
   rule      = aws_cloudwatch_event_rule.scheduler.name
   arn       = aws_lambda_function.ingest_lambda.arn
 }
-
+output "ingest_lambda_arn" {
+  value = aws_lambda_function.ingest_lambda.arn
+}
