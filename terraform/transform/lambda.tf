@@ -3,7 +3,7 @@ resource "aws_lambda_function" "process_lambda" {
   role          = aws_iam_role.lambda_process_role.arn
   function_name = var.lambda_name
   filename      = aws_s3_object.process_lambda_code.source
-  handler       = "event.lambda_handler"
+  handler       = "transform/lambda_handler.lambda_handler"
   runtime       = "python3.11"
   layers        = [aws_lambda_layer_version.my-lambda-layer.arn]
   timeout          = 30
