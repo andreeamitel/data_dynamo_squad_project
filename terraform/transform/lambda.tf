@@ -7,7 +7,7 @@ resource "aws_lambda_function" "process_lambda" {
   runtime       = "python3.11"
   # layers        = [aws_lambda_layer_version.my-lambda-layer.arn]
   timeout          = 30
-  # source_code_hash = data.archive_file.process_lambda.output_base64sha256
+  source_code_hash = data.archive_file.process_lambda.output_base64sha256
 }
 
 

@@ -10,7 +10,7 @@ variable "name_lambda_role" {
 
 variable "lambda_name" {
     type = string
-    default = "process_lambda"
+    default = "process_lambda2"
 }
 variable "ingestion_bucket_name" {
     type = string

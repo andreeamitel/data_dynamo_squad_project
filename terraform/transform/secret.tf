@@ -1,6 +1,6 @@
 
 resource "aws_secretsmanager_secret" "processed_bucket2" {
-    name = "processed_bucket2"
+    name = "processed_bucket3"
     recovery_window_in_days = 0
 }
 
