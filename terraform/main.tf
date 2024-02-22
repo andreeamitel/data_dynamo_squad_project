@@ -29,4 +29,5 @@ module "extract" {
 module "transform" {
     source = "./transform" 
     ingested_bucket_id = module.extract.ingest_bucket_id
+    ingested_bucket_arn = module.extract.ingest_bucket_arn
 }
