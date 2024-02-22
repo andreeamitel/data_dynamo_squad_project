@@ -1,4 +1,3 @@
-from pprint import pprint
 import json
 
 def get_latest_data(last_updated, s3, ingested_bucket_name):
