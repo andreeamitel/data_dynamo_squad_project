@@ -12,12 +12,12 @@ resource "aws_s3_object" "process_lambda_code" {
   source = "./function.zip"
 
 }
-# variable "ingest_bucket" {
-#   type = string
-# }
+variable "ingested_bucket_id" {
+  type = string
+}
 
 resource "aws_s3_bucket_notification" "bucket_notification" {
-  bucket = "ingested-bucket-20240222143123927600000005"
+  bucket = var.ingested_bucket_id
 
   lambda_function {
     lambda_function_arn = aws_lambda_function.process_lambda.arn
