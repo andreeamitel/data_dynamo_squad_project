@@ -36,7 +36,7 @@ def lambda_handler(event, context):
 
         s3 = boto3.client("s3")
         timestamp = s3.get_object(Bucket=ingestion_bucket_name, Key=timestamp_key)
-
+        
         updated_data = get_latest_data(ingestion_bucket_name, timestamp)
 
         processed_timestamp = datetime.now().isoformat()
@@ -66,7 +66,8 @@ def lambda_handler(event, context):
                 fact_sales, dim_dates = fact_sales_order(updated_data[key])
                 python_to_parquet(fact_sales, processed_bucket_name, processed_timestamp)
                 python_to_parquet(dim_dates, processed_bucket_name, processed_timestamp)
-                
+        
+        s3.put_object(Body = f"{processed_timestamp}", Bucket = processed_bucket_name, Key = "Last_Processed.txt")
     except ClientError as err:
         response_code = err.response["Error"]["Code"]
         response_msg = err.response["Error"]["Message"]
