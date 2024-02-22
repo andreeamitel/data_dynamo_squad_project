@@ -34,10 +34,11 @@ def dim_date(sales_order):
         ))
         dim_date_set.update(sale_date_set)
     
+    dim_date_table = {"dim_date":[]}
     for date in dim_date_set:
         split_date = date.split('-')
         dt = datetime(int(split_date[0]), int(split_date[1]), int(split_date[2]))
-        dim_date["dim_date"].append({
+        dim_date_table["dim_date"].append({
             'date_id': date,
             'year': int(split_date[0]),
             'month': int(split_date[1]),
@@ -48,4 +49,4 @@ def dim_date(sales_order):
             'quarter': int(f'{(int(split_date[1])-1)//3+1}')
         })
 
-    return sales_order, dim_date
+    return sales_order, dim_date_table
