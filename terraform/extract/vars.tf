@@ -4,6 +4,6 @@ variable "lambda_name" {
 }
 #secret for database creds
 
-# variable "database_creds_var" {
-#     type = string
-# }
+variable "database_creds_var" {
+    type = string
+}

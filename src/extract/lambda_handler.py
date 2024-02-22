@@ -3,9 +3,9 @@ from botocore.exceptions import ClientError
 import json
 from datetime import datetime 
 from pg8000.native import Connection, DatabaseError
-from src.extract.check_for_changes import check_for_changes
-from src.extract.extract_data import extract_data
-from src.extract.conversion_and_write_data import convert_and_write_data
+from extract.check_for_changes import check_for_changes
+from extract.extract_data import extract_data
+from extract.conversion_and_write_data import convert_and_write_data
 import logging
 
 logger = logging.getLogger("Logger")
@@ -50,8 +50,9 @@ def lambda_handler(event, context):
             if test != []:
                 timestamp = s3.get_object(Bucket = bucket_name,
                 Key = "Last_Ingested.txt")
-                last_ingested_timestamp_obj = json.load(timestamp["Body"])
-                last_ingested_timestamp = last_ingested_timestamp_obj["last_ingested_time"]
+                last_ingested_timestamp_str = timestamp["Body"].read().decode('utf-8')
+                last_ingested_timestamp = last_ingested_timestamp_str
+                print(last_ingested_timestamp_str)
         
         else:
             last_ingested_timestamp = "2000-02-14 16:54:36.774180"
@@ -66,6 +67,7 @@ def lambda_handler(event, context):
             password = secret_string["password"],
             database=secret_string["database"],
         )
+
         
         needs_fetching_tables = check_for_changes(conn, last_ingested_timestamp)
 
@@ -76,7 +78,9 @@ def lambda_handler(event, context):
             convert_and_write_data(table_data, table, bucket_name, new_ingested_time)
 
         if len(needs_fetching_tables) > 0:
-            s3.put_object(Body = f"{json.dumps({'last_ingested_time': new_ingested_time})}", Bucket = bucket_name,Key = "Last_Ingested.txt")
+            s3.put_object(Body = f"{new_ingested_time}", Bucket = bucket_name,Key = "Last_Ingested.txt")
+        
+        s3.put_object(Body ="hello", Bucket = bucket_name,Key = "hello.txt")
 
 
     except ClientError as err:
