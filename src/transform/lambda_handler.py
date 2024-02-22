@@ -1,13 +1,14 @@
 import boto3
 from src.transform.get_latest_data import get_latest_data
-from dim_counterparty import dim_counterparty
-from dim_currency import dim_currency
-from dim_design import dim_design
-from dim_location import dim_location
-from dim_staff import dim_staff
-from python_to_parquet import python_to_parquet
+from src.transform.dim_counterparty import dim_counterparty
+from src.transform.dim_currency import dim_currency
+from src.transform.dim_design import dim_design
+from src.transform.dim_location import dim_location
+from src.transform.dim_staff import dim_staff
+# from src.transform.dim_date import  
+from src.transform.python_to_parquet import python_to_parquet
 from datetime import datetime
-
+from pprint import pprint
 def lambda_handler(event, context):
     """
     ### Args:
@@ -22,15 +23,14 @@ def lambda_handler(event, context):
     - passed into unit functions to change from OLTP to OLAP
     - calls python_to_parquet function -  which changes python to parquet and stores in processed bucket
     """
-
-    ingestion_bucket_name = event["Records"]["s3"]["bucket"]["name"]
-    timestamp_key = event["Records"]["s3"]["object"]["key"]
+    ingestion_bucket_name = event["Records"][0]["s3"]["bucket"]["name"]
+    timestamp_key = event["Records"][0]["s3"]["object"]["key"]
+    pprint(timestamp_key)
     s3 = boto3.client("s3")
-    timestamp = s3.get_object(Bucket=ingestion_bucket_name, key=timestamp_key)
+    timestamp = s3.get_object(Bucket=ingestion_bucket_name, Key=timestamp_key)
 
     updated_data = get_latest_data(ingestion_bucket_name, timestamp)
     file_function_dict = {
-        "date": dim_date,
         "currency": dim_currency,
         "counterparty": dim_counterparty,
         "design": dim_design,
@@ -56,5 +56,3 @@ def lambda_handler(event, context):
     # python_to_parquet(table, processed_bucket_name, timestamp)
     # finished :)
 
-
-lambda_handler(1, 2)
