@@ -19,3 +19,7 @@ variable "ingested_bucket_arn" {
 variable "ingested_bucket_id" {
   type = string
 }
+
+variable "code_buck_id" {
+    type = string
+}
