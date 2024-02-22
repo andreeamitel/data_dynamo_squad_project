@@ -5,7 +5,7 @@ resource "aws_lambda_function" "process_lambda" {
   filename      = aws_s3_object.process_lambda_code.source
   handler       = "event.lambda_handler"
   runtime       = "python3.11"
-  # layers        = [aws_lambda_layer_version.my-lambda-layer.arn]
+  layers        = [aws_lambda_layer_version.my-lambda-layer.arn]
   timeout          = 30
   source_code_hash = data.archive_file.process_lambda.output_base64sha256
 }
