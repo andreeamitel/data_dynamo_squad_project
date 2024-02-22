@@ -12,9 +12,7 @@ resource "aws_s3_object" "process_lambda_code" {
   source = "./function.zip"
 
 }
-variable "ingested_bucket_id" {
-  type = string
-}
+
 
 resource "aws_s3_bucket_notification" "bucket_notification" {
   bucket = var.ingested_bucket_id

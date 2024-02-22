@@ -79,7 +79,6 @@ def lambda_handler(event, context):
 
         if len(needs_fetching_tables) > 0:
             s3.put_object(Body = f"{new_ingested_time}", Bucket = bucket_name,Key = "Last_Ingested.txt")
-        
 
 
     except ClientError as err:
