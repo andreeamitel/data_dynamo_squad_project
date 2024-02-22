@@ -17,8 +17,6 @@ def dim_date(sales_order):
     """
     sales_order = copy.deepcopy(sales_order)
     dim_date_set = set()
-    dim_date = {"dim_date": []}
-    # format_date = "%Y-%m-%d"
     for sale in sales_order["sales_order"]:
         created_date_time = sale["created_at"].split("T")
         sale["created_date"] = created_date_time[0]
@@ -37,21 +35,17 @@ def dim_date(sales_order):
         dim_date_set.update(sale_date_set)
     
     for date in dim_date_set:
-        foo = date.split('-')
-        dt = datetime(int(foo[0]), int(foo[1]), int(foo[2]))
+        split_date = date.split('-')
+        dt = datetime(int(split_date[0]), int(split_date[1]), int(split_date[2]))
         dim_date["dim_date"].append({
             'date_id': date,
-            'year': int(foo[0]),
-            'month': int(foo[1]),
-            'day': int(foo[2]),
+            'year': int(split_date[0]),
+            'month': int(split_date[1]),
+            'day': int(split_date[2]),
             'day_of_week': dt.isoweekday(),
             'day_name': calendar.day_name[dt.weekday()],
-            'month_name': calendar.month_name[int(foo[1])],
-            'quarter': int(f'{(int(foo[1])-1)//3+1}')
+            'month_name': calendar.month_name[int(split_date[1])],
+            'quarter': int(f'{(int(split_date[1])-1)//3+1}')
         })
-        
-        
-
-        
 
     return sales_order, dim_date
