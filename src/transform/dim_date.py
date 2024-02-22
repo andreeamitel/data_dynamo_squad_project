@@ -17,7 +17,6 @@ def dim_date(sales_order):
     """
     sales_order = copy.deepcopy(sales_order)
     dim_date_set = set()
-    dim_date = {"dim_date": []}
     for sale in sales_order["sales_order"]:
         created_date_time = sale["created_at"].split("T")
         sale["created_date"] = created_date_time[0]
@@ -48,9 +47,5 @@ def dim_date(sales_order):
             'month_name': calendar.month_name[int(split_date[1])],
             'quarter': int(f'{(int(split_date[1])-1)//3+1}')
         })
-        
-        
-
-        
 
     return sales_order, dim_date

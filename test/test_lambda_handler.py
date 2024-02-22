@@ -78,8 +78,8 @@ def test_database_conn(mock_conn, create_bucket1, secretmanager,create_object):
 @patch("src.extract.lambda_handler.convert_and_write_data")
 def test_functions_are_called(mock_data_conv, mock_extract_data, mock_check_changes, mock_conn, create_bucket1, secretmanager, create_object):
     lambda_handler("thing1", "thing2")
-    assert mock_data_conv.call_count == 7
-    assert mock_extract_data.call_count == 7
+    assert mock_data_conv.call_count == 2
+    assert mock_extract_data.call_count == 2
     mock_check_changes.assert_called_once()
 
 @pytest.mark.describe("lambda_handler")

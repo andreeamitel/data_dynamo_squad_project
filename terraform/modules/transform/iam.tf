@@ -99,7 +99,7 @@ data "aws_iam_policy_document" "secretmanager_get_secret_policy" {
   statement {
     actions   = ["secretsmanager:GetSecretValue"]
     effect    = "Allow"
-    resources = ["${aws_secretsmanager_secret.processed_bucket.arn}", "arn:aws:secretsmanager:eu-west-2:767397913254:secret:database_creds_test-3hAvo8"]
+    resources = ["${aws_secretsmanager_secret.processed_bucket2.arn}", "arn:aws:secretsmanager:eu-west-2:767397913254:secret:database_creds_test-3hAvo8"]
   }
 }
 

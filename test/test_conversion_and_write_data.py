@@ -21,7 +21,7 @@ def test_puts_file_in_bucket():
                 }
             ]
     date_time = datetime.now().isoformat()
-    file_name = f'{date_time}/currency.json'
+    file_name = f'currency/{date_time}.json'
     s3 = boto3.client('s3')
     s3.create_bucket(
             Bucket='ingested-bucket',
@@ -83,7 +83,7 @@ def test_writes_data_of_table_to_json_file():
     },
     )
     date_time = datetime.now().isoformat()
-    file_name= f'{date_time}/currency.json'
+    file_name= f'currency/{date_time}.json'
     convert_and_write_data(arg, 'currency', "ingested-bucket", date_time)
     result = s3.get_object(
     Bucket='ingested-bucket',

@@ -179,7 +179,6 @@ def test_returns_dim_date_schema_single_item():
             },
         ]
     }
-
     result_all = [dict_result in excepted["dim_date"] for dict_result in result["dim_date"]]
     assert all(result_all)
 

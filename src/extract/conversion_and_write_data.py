@@ -1,9 +1,3 @@
-'''
-Conatains a function that converts data to json.
-Functions:\n
-    conversion_and_write_data
-'''
-
 import json
 from datetime import datetime
 import boto3
@@ -22,8 +16,7 @@ def convert_and_write_data(list_of_selection, table_name, bucket_name, new_inges
         None
     """
     
-    # date_time = datetime.now().strftime("%Y-%m-%d %H:%M")
-    file_name = f'{new_ingesting_time}/{table_name}.json'
+    file_name = f'{table_name}/{new_ingesting_time}.json'
     s3 = boto3.client('s3')
     table_dict = {table_name:list_of_selection}
     if list_of_selection == None:
