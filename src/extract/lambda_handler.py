@@ -46,10 +46,10 @@ def lambda_handler(event, context):
         bucket_name = secretsmanager.get_secret_value(SecretId = "ingestion_bucket_02")["SecretString"]
         obj = s3.list_objects_v2(Bucket = bucket_name)
         if "Contents" in obj:
-            test = [object["Key"] for object in obj['Contents'] if object["Key"] == "Last_Ingested.json"]
+            test = [object["Key"] for object in obj['Contents'] if object["Key"] == "Last_Ingested.txt"]
             if test != []:
                 timestamp = s3.get_object(Bucket = bucket_name,
-                Key = "Last_Ingested.json")
+                Key = "Last_Ingested.txt")
                 last_ingested_timestamp_obj = json.load(timestamp["Body"])
                 last_ingested_timestamp = last_ingested_timestamp_obj["last_ingested_time"]
         
@@ -70,13 +70,13 @@ def lambda_handler(event, context):
         needs_fetching_tables = check_for_changes(conn, last_ingested_timestamp)
 
         new_ingested_time = datetime.now().isoformat()
-        if len(needs_fetching_tables) > 0:
-            s3.put_object(Body = f"{json.dumps({'last_ingested_time': new_ingested_time})}", Bucket = bucket_name,Key = "Last_Ingested.json")
 
         for table in needs_fetching_tables:
             table_data = extract_data(table, conn, last_ingested_timestamp)
             convert_and_write_data(table_data, table, bucket_name, new_ingested_time)
 
+        if len(needs_fetching_tables) > 0:
+            s3.put_object(Body = f"{json.dumps({'last_ingested_time': new_ingested_time})}", Bucket = bucket_name,Key = "Last_Ingested.txt")
 
 
     except ClientError as err:

@@ -17,10 +17,10 @@ terraform {
 # }
 module "extract" {
     source = "./extract" 
-    database_creds_var = "fake data"
 }
 module "transform" {
     source = "./transform" 
-    ingest_lambda = module.extract.ingest_lambda_arn
 }
-
+variable "database_creds_var" {
+    type = string
+}
