@@ -1,9 +1,3 @@
-
-
-# provider "aws" {
-#     region= "eu-west-2"
-# }
-
 terraform {
    backend "s3" {
     bucket = "backend-project-bucket"
@@ -12,16 +6,10 @@ terraform {
    }
 }
 
-# module "modules" {
-#     source = "./modules"
-# }
 variable "secret_var" {
   type = string
 }
-# variable "in_bucket_id" {
-#   type = string
-#   default = module.extract.ingest_bucket_id
-# }
+
 module "extract" {
     source = "./extract" 
     database_creds_var = var.secret_var
@@ -31,4 +19,12 @@ module "transform" {
     ingested_bucket_id = module.extract.ingest_bucket_id
     ingested_bucket_arn = module.extract.ingest_bucket_arn
     code_buck_id = module.extract.code_bucket_id
+}
+
+module "load" {
+    source = "./load"
+    processed_bucket_id = module.transform.processed_bucket_id
+    processed_bucket_arn = module.transform.processed_bucket_arn
+    code_buck_id = module.extract.code_bucket_id
+    load_database_creds = var.secret_var #not sure what this is, may need changing
 }

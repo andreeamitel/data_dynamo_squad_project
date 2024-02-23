@@ -1,13 +1,13 @@
 #define variables
 locals {
-  layer_zip_path    = "./layer2.zip"
-  layer_name        = "my_lambda2_requirements_layer"
+  layer_zip_path = "./layer2.zip"
+  layer_name     = "my_lambda2_requirements_layer"
 }
 
 # create zip file from requirements.txt. Triggers only when the file is updated
 resource "null_resource" "lambda_layer" {
   # the command to install python and dependencies to the machine and zips
- provisioner "local-exec" {
+  provisioner "local-exec" {
     command = <<EOT
       rm -rf python/lib/python3.10/site-packages
       mkdir python/lib/python3.10/site-packages

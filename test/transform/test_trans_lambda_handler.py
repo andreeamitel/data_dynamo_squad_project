@@ -1,6 +1,6 @@
 from src.transform.lambda_handler import lambda_handler
 import pytest
-from unittest.mock import patch, call
+from unittest.mock import patch, call, ANY
 import boto3
 from moto import mock_aws
 from datetime import datetime
@@ -100,17 +100,19 @@ test_event = {
     ]
 }
 
-test_context = 2
+test_context = "this is cool context"
 
 
 @pytest.mark.describe("lambda_handler")
-@pytest.mark.it("should test that the get_latest_data is called")
+@pytest.mark.it("should test that the get_latest_data is called with correct values")
 @patch("src.transform.lambda_handler.get_latest_data", return_value={})
+@mock_aws
 def test_get_latest_data(
     mock_get_latest_data, create_bucket1, create_bucket2, create_object, secretmanager
 ):
     lambda_handler(test_event, test_context)
-    mock_get_latest_data.assert_called_once()
+    mock_get_latest_data.assert_called_once_with("ingested-bucket-20240222080432331400000006", ANY, "2024-02-22T15:41:59.776283")
+
 
 
 @pytest.mark.describe("lambda_handler")
@@ -305,13 +307,21 @@ def test_fact_sales_parquet(
 @mock_aws
 @patch("src.transform.lambda_handler.datetime")
 @patch("src.transform.lambda_handler.get_latest_data", return_value={})
-def test_last_processed_timestamp(get_latest_data, mock_date, create_bucket1, create_bucket2, secretmanager, create_object):
+def test_last_processed_timestamp(
+    get_latest_data,
+    mock_date,
+    create_bucket1,
+    create_bucket2,
+    secretmanager,
+    create_object,
+):
     mock_date.now().isoformat.return_value = "2024-02-22T16:41:59.776283"
     s3 = boto3.client("s3")
     lambda_handler(test_event, test_context)
     response = s3.get_object(Bucket="processed_bucket123", Key="Last_Processed.txt")
     time = response["Body"].read().decode("utf8")
-    assert time == '2024-02-22T16:41:59.776283'
+    assert time == "2024-02-22T16:41:59.776283"
+
 
 @pytest.mark.describe("lambda_handler")
 @pytest.mark.it("Error: ClientError - for bucket")
