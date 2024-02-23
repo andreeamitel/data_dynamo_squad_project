@@ -26,27 +26,31 @@ def dim_date(sales_order):
         sale["last_updated_date"] = last_updated_date_time[0]
         sale["last_updated_time"] = last_updated_date_time[1]
         del sale["last_updated"]
-        sale_date_set = set((
-            sale["created_date"],
-            sale["last_updated_date"],
-            sale["agreed_delivery_date"],
-            sale["agreed_payment_date"],
-        ))
+        sale_date_set = set(
+            (
+                sale["created_date"],
+                sale["last_updated_date"],
+                sale["agreed_delivery_date"],
+                sale["agreed_payment_date"],
+            )
+        )
         dim_date_set.update(sale_date_set)
-    
-    dim_date_table = {"dim_date":[]}
+
+    dim_date_table = {"dim_date": []}
     for date in dim_date_set:
-        split_date = date.split('-')
+        split_date = date.split("-")
         dt = datetime(int(split_date[0]), int(split_date[1]), int(split_date[2]))
-        dim_date_table["dim_date"].append({
-            'date_id': date,
-            'year': int(split_date[0]),
-            'month': int(split_date[1]),
-            'day': int(split_date[2]),
-            'day_of_week': dt.isoweekday(),
-            'day_name': calendar.day_name[dt.weekday()],
-            'month_name': calendar.month_name[int(split_date[1])],
-            'quarter': int(f'{(int(split_date[1])-1)//3+1}')
-        })
+        dim_date_table["dim_date"].append(
+            {
+                "date_id": date,
+                "year": int(split_date[0]),
+                "month": int(split_date[1]),
+                "day": int(split_date[2]),
+                "day_of_week": dt.isoweekday(),
+                "day_name": calendar.day_name[dt.weekday()],
+                "month_name": calendar.month_name[int(split_date[1])],
+                "quarter": int(f"{(int(split_date[1])-1)//3+1}"),
+            }
+        )
 
     return sales_order, dim_date_table

@@ -1,30 +1,20 @@
-'''
-Contains functions that check for updated or new data in the database.
-Functions:\n
-    check_for_changes
-    check_table_for_last_updated
-
-'''
 from pg8000.native import Connection as conn, identifier, DatabaseError
 from datetime import datetime
 
 
-
 def check_for_changes(db_conn, last_ingested_time):
-    '''
-    This functions goes through the tables in the database 
-    and returns the ones that have been changed which is 
+    """
+    This functions goes through the tables in the database
+    and returns the ones that have been changed which is
     determined by the util function check_table_for_last_updated.
     Args:\n
         A connection to the database
         Last_ingested_time: A date of str type
-    
+
     Returns:\n
         A list of table names
-    '''
-    
-    format_to_use = "%Y-%m-%d %H:%M:%S.%f"
-    #date_time = datetime.strptime(last_ingested_time, format_to_use)
+    """
+
     table_names = [
         "address",
         "staff",
@@ -41,11 +31,11 @@ def check_for_changes(db_conn, last_ingested_time):
     ]
 
     return result
-   
+
 
 def check_table_for_last_updated(table_name, last_ingested_time, conn):
-    '''
-    This function goes through the last_updated column of one table and checks if 
+    """
+    This function goes through the last_updated column of one table and checks if
     the last updated time is different to the last ingested time.
     Args:\n
         A table name
@@ -55,15 +45,13 @@ def check_table_for_last_updated(table_name, last_ingested_time, conn):
     Returns:\n
         True: If last ingested time is not equal to last updated time
         False: If both times are equal
-    '''
-   
+    """
+
     times_for_tables = conn.run(
         f"""SELECT last_updated FROM {identifier(table_name)}
         WHERE created_at > '{last_ingested_time}'
         OR last_updated > '{last_ingested_time}';;"""
-        )
-    if len(times_for_tables) > 0 :
+    )
+    if len(times_for_tables) > 0:
         return True
     return False
-    
-   
