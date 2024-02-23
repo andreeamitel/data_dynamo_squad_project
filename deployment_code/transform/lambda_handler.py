@@ -38,19 +38,19 @@ def lambda_handler(event, context):
 
         ingestion_bucket_name = event["Records"][0]["s3"]["bucket"]["name"]
         ingestion_timestamp_key = event["Records"][0]["s3"]["object"]["key"]
-
+        print("LH - ingested key")
         ingestion_timestamp_dict = s3.get_object(
             Bucket=ingestion_bucket_name, Key=ingestion_timestamp_key
         )
         ingestion_timestamp = ingestion_timestamp_dict["Body"].read().decode("utf-8")
-
+        print("LH - ingested timestamp")
         updated_data = get_latest_data(ingestion_bucket_name, s3, ingestion_timestamp)
+        print(updated_data)
 
         processed_timestamp = datetime.now().isoformat()
         processed_bucket_name = secrets_manager.get_secret_value(
-            SecretId="processed_bucket"
+            SecretId="processed_bucket3"
         )["SecretString"]
-
         for table_name in updated_data:
             if table_name == "counterparty":
                 dim_counterparty_table = dim_counterparty(
@@ -101,3 +101,4 @@ def lambda_handler(event, context):
         logger.error(f"ClientError: {response_code}: {response_msg}")
     except Exception as err:
         print(err)
+        print("ERROR FFS")
