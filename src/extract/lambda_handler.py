@@ -55,6 +55,8 @@ def lambda_handler(event, context):
         
             else:
                 last_ingested_timestamp = "2022-02-14 16:54:36.774180"
+        else:
+            last_ingested_timestamp = "2022-02-14 16:54:36.774180"
 
         secret = secretsmanager.get_secret_value(SecretId = "database_creds_test")
         secret_string = json.loads(secret["SecretString"])
