@@ -32,52 +32,58 @@ def lambda_handler(event, context):
     - calls python_to_parquet function -  which changes python to parquet and stores in processed bucket
     """
     try:
-        ingestion_bucket_name = event["Records"][0]["s3"]["bucket"]["name"]    
-        timestamp_key = event["Records"][0]["s3"]["object"]["key"]
         s3 = boto3.client("s3")
-        timestamp_obj = s3.get_object(Bucket=ingestion_bucket_name, Key=timestamp_key)
-        timestamp = timestamp_obj["Body"].read().decode('utf-8')
-        updated_data = get_latest_data(ingestion_bucket_name, s3, timestamp)
-        processed_timestamp = datetime.now().isoformat()
         secrets_manager = boto3.client("secretsmanager")
+
+        ingestion_bucket_name = event["Records"][0]["s3"]["bucket"]["name"]
+        ingestion_timestamp_key = event["Records"][0]["s3"]["object"]["key"]
+
+        ingestion_timestamp_dict = s3.get_object(
+            Bucket=ingestion_bucket_name, Key=ingestion_timestamp_key
+        )
+        ingestion_timestamp = ingestion_timestamp_dict["Body"].read().decode("utf-8")
+
+        updated_data = get_latest_data(ingestion_bucket_name, s3, ingestion_timestamp)
+
+        processed_timestamp = datetime.now().isoformat()
         processed_bucket_name = secrets_manager.get_secret_value(
             SecretId="processed_bucket"
         )["SecretString"]
 
-        for key in updated_data:
-            if key == "counterparty":
+        for table_name in updated_data:
+            if table_name == "counterparty":
                 dim_counterparty_table = dim_counterparty(
-                    updated_data[key], updated_data["address"]
+                    updated_data[table_name], updated_data["address"]
                 )
                 python_to_parquet(
                     dim_counterparty_table, processed_bucket_name, processed_timestamp
                 )
-            elif key == "staff":
+            elif table_name == "staff":
                 dim_staff_table = dim_staff(
-                    updated_data[key], updated_data["department"]
+                    updated_data[table_name], updated_data["department"]
                 )
                 python_to_parquet(
                     dim_staff_table, processed_bucket_name, processed_timestamp
                 )
-            elif key == "currency":
-                dim_currency_table = dim_currency(updated_data[key])
+            elif table_name == "currency":
+                dim_currency_table = dim_currency(updated_data[table_name])
                 python_to_parquet(
                     dim_currency_table, processed_bucket_name, processed_timestamp
                 )
-            elif key == "design":
-                dim_desgin_table = dim_design(updated_data[key])
+            elif table_name == "design":
+                dim_desgin_table = dim_design(updated_data[table_name])
                 python_to_parquet(
                     dim_desgin_table, processed_bucket_name, processed_timestamp
                 )
-            elif key == "address":
-                dim_location_table = dim_location(updated_data[key])
+            elif table_name == "address":
+                dim_location_table = dim_location(updated_data[table_name])
                 python_to_parquet(
                     dim_location_table, processed_bucket_name, processed_timestamp
                 )
-            elif key == "department":
+            elif table_name == "department":
                 pass
             else:
-                fact_sales, dim_dates = fact_sales_order(updated_data[key])
+                fact_sales, dim_dates = fact_sales_order(updated_data[table_name])
                 python_to_parquet(
                     fact_sales, processed_bucket_name, processed_timestamp
                 )
