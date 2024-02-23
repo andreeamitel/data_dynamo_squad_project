@@ -1,7 +1,11 @@
 from pg8000.native import Connection
+import pg8000
 import pandas as pd
 import awswrangler as wr
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, inspect, Numeric
+import pyarrow as py
+import numpy as np 
+from decimal import Decimal,getcontext
 
 def lambda_handler(event, context):
     """
@@ -20,29 +24,40 @@ def lambda_handler(event, context):
     get parquet data from processed bucket
     load data to RDS
     """
-    conn = Connection(
-            host = "testdb.eu-west-1.rds.amazonaws.com",
-            port = "1234",
-            user = "project_team_0",
-            password = "Z4s1r0ZGJjJUGC",
-            database="postgres",
-        )
+    # column_data_types = {
+    #         "sales_record_id": "int32",
+    #         "sales_order_id": "int64",
+    #         "created_date": pd.to_datetime(arg="Series"),
+    #         "created_time":  pd.to_datetime(format="%H:%M:%S.%f"),
+    #         "last_updated_date": pd.to_datetime(format="%Y-%m-%d"),
+    #         "last_updated_time": pd.to_datetime(format="%Y-%m-%d"),
+    #         "design_id": "int64",
+    #         "sales_staff_id": "int64",
+    #         "counterparty_id": "int64",
+    #         "units_sold": "int64",
+    #         "unit_price": "float",
+    #         "currency_id": "int64",
+    #         "agreed_delivery_date": pd.to_datetime(format="%Y-%m-%d"),
+    #         "agreed_payment_date": pd.to_datetime(format="%Y-%m-%d"),
+    #         "agreed_delivery_location_id": "int64",
+    # }
     test_parquet_read = wr.s3.read_parquet(
         "s3://processed-bucket-20240222143124212400000004/2022-02-14 16:54:36.774180/fact_sales_order.parquet"
     )
-    # foo = test_parquet_read.to_sql('fact_sales_order', "testdb.eu-west-1.rds.amazonaws.com", if_exists="append", index=False)
 
-    # conn = Connection(
-    #         host = "nc-data-eng-project-dw-prod.chpsczt8h1nu.eu-west-2.rds.amazonaws.com",
-    #         port = "5432",
-    #         user = "project_team_0",
-    #         password = "Z4s1r0ZGJjJUGC",
-    #         database="postgres",
-    #     )
-    # response = conn.run("SELECT * FROM project_team_0;")
-    # return response
-    # eng_postgresql = wr.postgresql.connect(db_type="postgresql", host="nc-data-eng-project-dw-prod.chpsczt8h1nu.eu-west-2.rds.amazonaws.com", port=5432, database="postgres", user="project_team_0", password="Z4s1r0ZGJjJUGC")
-    # # print(dir(wr.sqlserver))
-
+    test_parquet_read[['created_date', 'created_time']] = test_parquet_read[['created_date', 'created_time']].astype(str)
+    print(test_parquet_read[['unit_price']])
+    test_parquet_read[['unit_price']] = test_parquet_read[['unit_price']].astype("object")
+    print(test_parquet_read.dtypes)
+    print(test_parquet_read[['unit_price']])
     
-# print(lambda_handler())
+    dbapi_con = pg8000.connect(      
+        host= "nc-data-eng-project-dw-prod.chpsczt8h1nu.eu-west-2.rds.amazonaws.com",
+        port= "5432",
+        user= "project_team_0",
+        password= "Z4s1r0ZGJjJUGC",
+        database= "postgres",)
+   
+    wr.postgresql.to_sql(df=test_parquet_read, con=dbapi_con, table="fact_sales_order", schema="project_team_0", mode="append",index=True)
+
+ 
