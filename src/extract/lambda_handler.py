@@ -3,9 +3,9 @@ from botocore.exceptions import ClientError
 import json
 from datetime import datetime 
 from pg8000.native import Connection, DatabaseError
-from extract.check_for_changes import check_for_changes
-from extract.extract_data import extract_data
-from extract.conversion_and_write_data import convert_and_write_data
+from src.extract.check_for_changes import check_for_changes
+from src.extract.extract_data import extract_data
+from src.extract.conversion_and_write_data import convert_and_write_data
 import logging
 
 logger = logging.getLogger("Logger")
@@ -52,10 +52,9 @@ def lambda_handler(event, context):
                 Key = "Last_Ingested.txt")
                 last_ingested_timestamp_str = timestamp["Body"].read().decode('utf-8')
                 last_ingested_timestamp = last_ingested_timestamp_str
-                print(last_ingested_timestamp_str)
         
-        else:
-            last_ingested_timestamp = "2000-02-14 16:54:36.774180"
+            else:
+                last_ingested_timestamp = "2022-02-14 16:54:36.774180"
 
         secret = secretsmanager.get_secret_value(SecretId = "database_creds_test")
         secret_string = json.loads(secret["SecretString"])

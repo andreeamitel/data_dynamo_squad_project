@@ -32,7 +32,7 @@ def test_creates_parquet():
     python_to_parquet(dim_counterparty_data, "processed-test-bucket", "test-folder")
     result = s3.list_objects(Bucket = "processed-test-bucket")
     key = result['Contents'][0]['Key']
-    assert key == "test-folder/dim_counterparty.parquet"
+    assert key == "dim_counterparty/test-folder.parquet"
 
 @pytest.mark.describe("python_to_parquet")
 @pytest.mark.it("check new parquet file in s3")
@@ -57,7 +57,7 @@ def test_check_parquet():
         }]
     }
     python_to_parquet(dim_counterparty_data, "processed-test-bucket", "test-folder")
-    result = s3.get_object(Bucket = "processed-test-bucket", Key = "test-folder/dim_counterparty.parquet")
-    result = wr.s3.read_parquet("s3://processed-test-bucket/test-folder/dim_counterparty.parquet")
+    result = s3.get_object(Bucket = "processed-test-bucket", Key = "dim_counterparty/test-folder.parquet")
+    result = wr.s3.read_parquet("s3://processed-test-bucket/dim_counterparty/test-folder.parquet")
     
     assert result.to_dict("records") == dim_counterparty_data["dim_counterparty"]
