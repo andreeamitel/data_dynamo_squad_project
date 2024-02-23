@@ -32,17 +32,14 @@ def lambda_handler(event, context):
     - calls python_to_parquet function -  which changes python to parquet and stores in processed bucket
     """
     try:
-        ingestion_bucket_name = event["Records"][0]["s3"]["bucket"]["name"]
+        ingestion_bucket_name = event["Records"][0]["s3"]["bucket"]["name"]    
         timestamp_key = event["Records"][0]["s3"]["object"]["key"]
-
         s3 = boto3.client("s3")
-        timestamp = s3.get_object(Bucket=ingestion_bucket_name, Key=timestamp_key)
-
-        updated_data = get_latest_data(ingestion_bucket_name, timestamp)
-
+        timestamp_obj = s3.get_object(Bucket=ingestion_bucket_name, Key=timestamp_key)
+        timestamp = timestamp_obj["Body"].read().decode('utf-8')
+        updated_data = get_latest_data(ingestion_bucket_name, s3, timestamp)
         processed_timestamp = datetime.now().isoformat()
         secrets_manager = boto3.client("secretsmanager")
-
         processed_bucket_name = secrets_manager.get_secret_value(
             SecretId="processed_bucket"
         )["SecretString"]

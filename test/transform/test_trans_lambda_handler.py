@@ -1,6 +1,6 @@
 from src.transform.lambda_handler import lambda_handler
 import pytest
-from unittest.mock import patch, call
+from unittest.mock import patch, call, ANY
 import boto3
 from moto import mock_aws
 from datetime import datetime
@@ -100,17 +100,19 @@ test_event = {
     ]
 }
 
-test_context = 2
+test_context = "this is cool context"
 
 
 @pytest.mark.describe("lambda_handler")
-@pytest.mark.it("should test that the get_latest_data is called")
+@pytest.mark.it("should test that the get_latest_data is called with correct values")
 @patch("src.transform.lambda_handler.get_latest_data", return_value={})
+@mock_aws
 def test_get_latest_data(
     mock_get_latest_data, create_bucket1, create_bucket2, create_object, secretmanager
 ):
     lambda_handler(test_event, test_context)
-    mock_get_latest_data.assert_called_once()
+    mock_get_latest_data.assert_called_once_with("ingested-bucket-20240222080432331400000006", ANY, "2024-02-22T15:41:59.776283")
+
 
 
 @pytest.mark.describe("lambda_handler")
