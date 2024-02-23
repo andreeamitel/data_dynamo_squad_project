@@ -114,6 +114,7 @@ def test_returns_updated_data_for_one_table():
         }
     }
 
+
 @pytest.mark.describe("get latest data")
 @pytest.mark.it("function returns list with updated data for more than one table")
 @mock_aws
@@ -164,8 +165,76 @@ def test_returns_updated_data_for_more_than_one_table():
                 }
             ]
         },
-        "department": {"department": [{"department_id": 1, "department_name": "Sales", "location": "Manchester", "manager": "Richard Roma", "created_at": "2022-11-03T14:20:49.962", "last_updated": "2022-11-03T14:20:49.962"}, {"department_id": 2, "department_name": "Purchasing", "location": "Manchester", "manager": "Naomi Lapaglia", "created_at": "2022-11-03T14:20:49.962", "last_updated": "2022-11-03T14:20:49.962"}, {"department_id": 3, "department_name": "Production", "location": "Leeds", "manager": "Chester Ming", "created_at": "2022-11-03T14:20:49.962", "last_updated": "2022-11-03T14:20:49.962"}, {"department_id": 4, "department_name": "Dispatch", "location": "Leds", "manager": "Mark Hanna", "created_at": "2022-11-03T14:20:49.962", "last_updated": "2022-11-03T14:20:49.962"}, {"department_id": 5, "department_name": "Finance", "location": "Manchester", "manager": "Jordan Belfort", "created_at": "2022-11-03T14:20:49.962", "last_updated": "2022-11-03T14:20:49.962"}, {"department_id": 6, "department_name": "Facilities", "location": "Manchester", "manager": "Shelley Levene", "created_at": "2022-11-03T14:20:49.962", "last_updated": "2022-11-03T14:20:49.962"}, {"department_id": 7, "department_name": "Communications", "location": "Leeds", "manager": "Ann Blake", "created_at": "2022-11-03T14:20:49.962", "last_updated": "2022-11-03T14:20:49.962"}, {"department_id": 8, "department_name": "HR", "location": "Leeds", "manager": "James Link", "created_at": "2022-11-03T14:20:49.962", "last_updated": "2022-11-03T14:20:49.962"}]}
+        "department": {
+            "department": [
+                {
+                    "department_id": 1,
+                    "department_name": "Sales",
+                    "location": "Manchester",
+                    "manager": "Richard Roma",
+                    "created_at": "2022-11-03T14:20:49.962",
+                    "last_updated": "2022-11-03T14:20:49.962",
+                },
+                {
+                    "department_id": 2,
+                    "department_name": "Purchasing",
+                    "location": "Manchester",
+                    "manager": "Naomi Lapaglia",
+                    "created_at": "2022-11-03T14:20:49.962",
+                    "last_updated": "2022-11-03T14:20:49.962",
+                },
+                {
+                    "department_id": 3,
+                    "department_name": "Production",
+                    "location": "Leeds",
+                    "manager": "Chester Ming",
+                    "created_at": "2022-11-03T14:20:49.962",
+                    "last_updated": "2022-11-03T14:20:49.962",
+                },
+                {
+                    "department_id": 4,
+                    "department_name": "Dispatch",
+                    "location": "Leds",
+                    "manager": "Mark Hanna",
+                    "created_at": "2022-11-03T14:20:49.962",
+                    "last_updated": "2022-11-03T14:20:49.962",
+                },
+                {
+                    "department_id": 5,
+                    "department_name": "Finance",
+                    "location": "Manchester",
+                    "manager": "Jordan Belfort",
+                    "created_at": "2022-11-03T14:20:49.962",
+                    "last_updated": "2022-11-03T14:20:49.962",
+                },
+                {
+                    "department_id": 6,
+                    "department_name": "Facilities",
+                    "location": "Manchester",
+                    "manager": "Shelley Levene",
+                    "created_at": "2022-11-03T14:20:49.962",
+                    "last_updated": "2022-11-03T14:20:49.962",
+                },
+                {
+                    "department_id": 7,
+                    "department_name": "Communications",
+                    "location": "Leeds",
+                    "manager": "Ann Blake",
+                    "created_at": "2022-11-03T14:20:49.962",
+                    "last_updated": "2022-11-03T14:20:49.962",
+                },
+                {
+                    "department_id": 8,
+                    "department_name": "HR",
+                    "location": "Leeds",
+                    "manager": "James Link",
+                    "created_at": "2022-11-03T14:20:49.962",
+                    "last_updated": "2022-11-03T14:20:49.962",
+                },
+            ]
+        },
     }
+
 
 @pytest.mark.describe("get latest data")
 @pytest.mark.it("function returns a dictionary with correct keys")

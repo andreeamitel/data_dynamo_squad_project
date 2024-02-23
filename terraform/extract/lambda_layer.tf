@@ -8,7 +8,7 @@ locals {
 # create zip file from requirements.txt. Triggers only when the file is updated
 resource "null_resource" "lambda_layer" {
   # the command to install python and dependencies to the machine and zips
- provisioner "local-exec" {
+  provisioner "local-exec" {
     command = <<EOT
       rm -rf python
       mkdir python

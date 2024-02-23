@@ -1,11 +1,11 @@
 resource "aws_lambda_function" "load_lambda" {
 
-  role          = aws_iam_role.lambda_load_role.arn
-  function_name = var.lambda_name
-  filename      = aws_s3_object.load_lambda_code.source
-  handler       = "event.lambda_handler" #needs changing
-  runtime       = "python3.11"
-  layers        = [aws_lambda_layer_version.my-lambda-layer.arn]
+  role             = aws_iam_role.lambda_load_role.arn
+  function_name    = var.lambda_name
+  filename         = aws_s3_object.load_lambda_code.source
+  handler          = "event.lambda_handler" #needs changing
+  runtime          = "python3.11"
+  layers           = [aws_lambda_layer_version.my-lambda-layer.arn]
   timeout          = 30
   source_code_hash = data.archive_file.load_lambda.output_base64sha256
 }
