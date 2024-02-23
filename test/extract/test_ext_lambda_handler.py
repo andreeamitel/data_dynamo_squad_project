@@ -50,19 +50,22 @@ def mock_conn():
 
 
 @pytest.mark.describe("lambda_handler")
-@pytest.mark.it("Test that a json file gets written to the ingestion bucket in aws")
+@pytest.mark.it("Test that a txt file gets written to the ingestion bucket in aws")
 @patch("src.extract.lambda_handler.datetime")
 @patch("src.extract.lambda_handler.check_for_changes", return_value = ["currency", "staff"])
 @patch("src.extract.lambda_handler.extract_data")
 @patch("src.extract.lambda_handler.convert_and_write_data")
 @mock_aws
-def test_write_json_file(convert_mock, extract_mock, check_mock, mock_time,create_bucket1,secretmanager, mock_conn, create_object):
+def test_write_txt_file(convert_mock, extract_mock, check_mock, mock_time,create_bucket1,secretmanager, mock_conn, create_object):
     mock_time.now().isoformat.return_value = "2024-02-14 16:54:36.774180"
     lambda_handler("thing1", "thing2")
     result = boto3.client("s3").get_object(Bucket = "ingested-bucket-20240213151611822700000004",
-    Key = "Last_Ingested.json")
-    dict_result=json.load(result["Body"])
-    assert dict_result=={"last_ingested_time": "2024-02-14 16:54:36.774180"}
+    Key = "Last_Ingested.txt")
+    txt_result=result["Body"].read().decode("utf-8")
+    print(txt_result)
+    assert txt_result=="2024-02-14 16:54:36.774180"
+        
+
 
 @pytest.mark.describe("lambda_handler")
 @pytest.mark.it("Test that a connection has been established to a database - using secretsmanager")
@@ -92,14 +95,6 @@ def test_check_changes_uses_correct_date(mock_data_conv, mock_extract_data, mock
     lambda_handler("thing1", "thing2")
     mock_check_changes.assert_called_with(mock_conn(),"2022-02-14 16:54:36.774180")
 
-# @pytest.mark.describe("lambda_handler")
-# @pytest.mark.it("Integration test - Test that convert_and_write_data gets called with outputs from extract_data and appears in bucket")
-# @patch("src.extract.lambda_handler.check_for_changes")
-# @patch("src.extract.lambda_handler.extract_data")
-# @mock_aws
-# def test_convert_and_write_data(mock_extract_data, mock_check_changes):
-#     pass
-
 @pytest.mark.describe("lambda_handler")
 @pytest.mark.it("Error: ClientError - for bucket")
 @mock_aws
@@ -114,8 +109,7 @@ def test_client_error_bucket(caplog,secretmanager):
 def test_client_error_secrets(caplog,create_bucket1, create_object, aws_secrets):
     with caplog.at_level(logging.INFO):
         lambda_handler("thing1", "thing2")
-        assert "Secrets Manager can't find the specified secret." in caplog.text
-    
+        assert "Secrets Manager can't find the specified secret." in caplog.text 
 
 # may not be needed as no key found handled different way
 # @pytest.mark.describe("lambda_handler")
@@ -134,20 +128,3 @@ def test_database_error(mock_check_changes, mock_conn, caplog,create_bucket1,cre
     with caplog.at_level(logging.INFO):
         lambda_handler("thing1", "thing2")
         assert "DatabaseError" in caplog.text
-    
-
-
-
-
-
-#TODO
-    # Bucket Name works from Event
-    # Last Ingested from Event at least change the bucket
-    # Errors
-        # KeyError
-        # ClientError
-        # TypeError
-        # DatabaseError
-        # Exception
-            #logger.error(e)
-            #raise RuntimeError

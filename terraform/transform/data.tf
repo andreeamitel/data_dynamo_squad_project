@@ -11,7 +11,7 @@ data "archive_file" "process_layer_zip" {
 
 data "archive_file" "process_lambda" {
   type        = "zip"
-  source_dir = "../deployment_code"
+  source_dir  = "../deployment_code"
   output_path = "./transform_lambda.zip"
   excludes = ["extract", "load"]
 }

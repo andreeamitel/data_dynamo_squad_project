@@ -18,22 +18,3 @@ resource "aws_lambda_permission" "allow_s3" {
   source_arn     = var.ingested_bucket_arn
   source_account = data.aws_caller_identity.current.account_id
 }
-
-# resource "aws_cloudwatch_event_rule" "tran_scheduler" {
-#   name_prefix         = "processing_scheduler-"
-#   schedule_expression = "rate(2 minutes)"
-# }
-
-# resource "aws_lambda_permission" "allow_tran_scheduler" {
-#   action         = "lambda:InvokeFunction"
-#   function_name  = aws_lambda_function.process_lambda.function_name
-#   principal      = "events.amazonaws.com"
-#   source_arn     = aws_cloudwatch_event_rule.tran_scheduler.arn
-#   source_account = data.aws_caller_identity.current.account_id
-
-# }
-
-# resource "aws_cloudwatch_event_target" "tran_lambda_target" {
-#   rule = aws_cloudwatch_event_rule.tran_scheduler.name
-#   arn = aws_lambda_function.process_lambda.arn
-# }

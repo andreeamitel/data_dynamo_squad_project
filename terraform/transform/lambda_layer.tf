@@ -1,7 +1,7 @@
 #define variables
 locals {
-  layer_zip_path    = "./layer2.zip"
-  layer_name        = "my_lambda2_requirements_layer"
+  layer_zip_path = "./layer2.zip"
+  layer_name     = "my_lambda2_requirements_layer"
 }
 
 # # create zip file from requirements.txt. Triggers only when the file is updated

@@ -2,6 +2,7 @@ from src.transform.dim_staff import dim_staff
 import pytest
 from pprint import pprint
 
+
 @pytest.mark.describe("dim_staff")
 @pytest.mark.it("function returns dictionary with correct key")
 def test_returns_dict_with_correct_key():
@@ -78,8 +79,11 @@ def test_returns_dict_with_correct_values():
     }
     assert result == expected
 
+
 @pytest.mark.describe("dim_staff")
-@pytest.mark.it("function returns dictionary with correct values when passed in with many staff and department data")
+@pytest.mark.it(
+    "function returns dictionary with correct values when passed in with many staff and department data"
+)
 def test_returns_dict_with_correct_values_when_passed_in_many_staff_and_dep_data():
     test_staff_data = {
         "staff": [
@@ -92,7 +96,7 @@ def test_returns_dict_with_correct_values_when_passed_in_many_staff_and_dep_data
                 "created_at": "2022-11-03T14:20:51.563",
                 "last_updated": "2022-11-03T14:20:51.563",
             },
-              {
+            {
                 "staff_id": 2,
                 "first_name": "Jeremie",
                 "last_name": "Franey",
@@ -100,7 +104,7 @@ def test_returns_dict_with_correct_values_when_passed_in_many_staff_and_dep_data
                 "email_address": "jeremie.franey@terrifictotes.com",
                 "created_at": "2022-11-03T14:20:51.563",
                 "last_updated": "2022-11-03T14:20:51.563",
-            }
+            },
         ]
     }
     test_department_data = {
@@ -146,6 +150,7 @@ def test_returns_dict_with_correct_values_when_passed_in_many_staff_and_dep_data
     }
     assert result == expected
 
+
 @pytest.mark.describe("dim_staff")
 @pytest.mark.it("check result is different reference than input")
 def test_check_result_has_diff_ref():
@@ -160,7 +165,7 @@ def test_check_result_has_diff_ref():
                 "created_at": "2022-11-03T14:20:51.563",
                 "last_updated": "2022-11-03T14:20:51.563",
             },
-              {
+            {
                 "staff_id": 2,
                 "first_name": "Jeremie",
                 "last_name": "Franey",
@@ -168,7 +173,7 @@ def test_check_result_has_diff_ref():
                 "email_address": "jeremie.franey@terrifictotes.com",
                 "created_at": "2022-11-03T14:20:51.563",
                 "last_updated": "2022-11-03T14:20:51.563",
-            }
+            },
         ]
     }
     test_department_data = {
@@ -195,6 +200,7 @@ def test_check_result_has_diff_ref():
     assert result is not test_staff_data
     assert result is not test_department_data
 
+
 @pytest.mark.describe("dim_staff")
 @pytest.mark.it("check input hasnt not changed")
 def test_check_input_hasnt_changed():
@@ -209,7 +215,7 @@ def test_check_input_hasnt_changed():
                 "created_at": "2022-11-03T14:20:51.563",
                 "last_updated": "2022-11-03T14:20:51.563",
             },
-              {
+            {
                 "staff_id": 2,
                 "first_name": "Jeremie",
                 "last_name": "Franey",
@@ -217,7 +223,7 @@ def test_check_input_hasnt_changed():
                 "email_address": "jeremie.franey@terrifictotes.com",
                 "created_at": "2022-11-03T14:20:51.563",
                 "last_updated": "2022-11-03T14:20:51.563",
-            }
+            },
         ]
     }
     test_department_data = {
@@ -252,7 +258,7 @@ def test_check_input_hasnt_changed():
                 "created_at": "2022-11-03T14:20:51.563",
                 "last_updated": "2022-11-03T14:20:51.563",
             },
-              {
+            {
                 "staff_id": 2,
                 "first_name": "Jeremie",
                 "last_name": "Franey",
@@ -260,7 +266,7 @@ def test_check_input_hasnt_changed():
                 "email_address": "jeremie.franey@terrifictotes.com",
                 "created_at": "2022-11-03T14:20:51.563",
                 "last_updated": "2022-11-03T14:20:51.563",
-            }
+            },
         ]
     }
     assert test_department_data == {
@@ -283,4 +289,3 @@ def test_check_input_hasnt_changed():
             },
         ]
     }
-

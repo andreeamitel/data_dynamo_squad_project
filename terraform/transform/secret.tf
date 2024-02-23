@@ -1,7 +1,6 @@
-
 resource "aws_secretsmanager_secret" "processed_bucket2" {
-    name = "processed_bucket3"
-    recovery_window_in_days = 0
+  name                    = "processed_bucket3"
+  recovery_window_in_days = 0
 }
 
 resource "aws_secretsmanager_secret_version" "processed_bucket_values" {
