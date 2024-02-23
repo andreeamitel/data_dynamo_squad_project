@@ -1,4 +1,4 @@
-resource "aws_iam_role" "lambda_process_role" {
+resource "aws_iam_role" "lambda_load_role" {
   name_prefix        = var.name_lambda_role
   assume_role_policy = <<EOF
 {
@@ -54,7 +54,7 @@ data "aws_iam_policy_document" "s3_get_document" {
     ]
     effect = "Allow"
     resources = [
-      "${var.ingested_bucket_arn}/*",
+      "${aws_s3_bucket.processed_bucket.arn}/*",
     ]
   }
 }
@@ -70,36 +70,13 @@ resource "aws_iam_role_policy_attachment" "s3_get_attachment" {
   policy_arn = aws_iam_policy.s3_tran_get_policy.arn
 }
 
-data "aws_iam_policy_document" "s3_document_put" {
-  statement {
-    actions = [
-      "s3:PutObject",
-      "s3:PutObjectAcl",
-    ]
-    effect = "Allow"
-    resources = [
-      "${aws_s3_bucket.processed_bucket.arn}/*",
-    ]
-  }
-}
-
-resource "aws_iam_policy" "s3_tran_put_policy" {
-  name_prefix = "s3-tran_put_policy-${var.lambda_name}"
-  policy      = data.aws_iam_policy_document.s3_document_put.json
-
-}
-
-resource "aws_iam_role_policy_attachment" "s3_put_attachment" {
-  role       = aws_iam_role.lambda_process_role.name
-  policy_arn = aws_iam_policy.s3_tran_put_policy.arn
-}
-
 
 data "aws_iam_policy_document" "secretmanager_get_secret_policy" {
   statement {
     actions   = ["secretsmanager:GetSecretValue"]
     effect    = "Allow"
-    resources = ["${aws_secretsmanager_secret.processed_bucket2.arn}"]
+    #need arn of new database credentials
+    resources = ["${aws_secretsmanager_secret.processed_bucket2.arn}", "arn:aws:secretsmanager:eu-west-2:767397913254:secret:database_creds_test-3hAvo8"]
   }
 }
 
