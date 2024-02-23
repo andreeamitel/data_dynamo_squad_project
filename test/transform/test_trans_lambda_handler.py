@@ -307,13 +307,21 @@ def test_fact_sales_parquet(
 @mock_aws
 @patch("src.transform.lambda_handler.datetime")
 @patch("src.transform.lambda_handler.get_latest_data", return_value={})
-def test_last_processed_timestamp(get_latest_data, mock_date, create_bucket1, create_bucket2, secretmanager, create_object):
+def test_last_processed_timestamp(
+    get_latest_data,
+    mock_date,
+    create_bucket1,
+    create_bucket2,
+    secretmanager,
+    create_object,
+):
     mock_date.now().isoformat.return_value = "2024-02-22T16:41:59.776283"
     s3 = boto3.client("s3")
     lambda_handler(test_event, test_context)
     response = s3.get_object(Bucket="processed_bucket123", Key="Last_Processed.txt")
     time = response["Body"].read().decode("utf8")
-    assert time == '2024-02-22T16:41:59.776283'
+    assert time == "2024-02-22T16:41:59.776283"
+
 
 @pytest.mark.describe("lambda_handler")
 @pytest.mark.it("Error: ClientError - for bucket")

@@ -1,5 +1,5 @@
 variable "processed_bucket_arn" {
-    type = string
+  type = string
 }
 
 variable "processed_bucket_id" {
@@ -7,20 +7,20 @@ variable "processed_bucket_id" {
 }
 
 variable "name_lambda_role" {
-    type = string
-    default = "lambda-role-load-"
+  type    = string
+  default = "lambda-role-load-"
 }
 
 variable "code_buck_id" {
-    type = string
+  type = string
 }
 
 variable "lambda_name" {
-    type = string
-    default = "lambda-load-"
+  type    = string
+  default = "lambda-load-"
 }
 
 variable "load_database_creds" {
-    type = string
-    
+  type = string
+
 }

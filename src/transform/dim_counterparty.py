@@ -6,8 +6,8 @@ def dim_counterparty(address_table_data, counterparty_table_data):
     Args: 'counterparty' and 'address' dictionaries
     Returns: dim_counterparty dictionary
     """
-    address_table = copy.deepcopy(address_table_data['address'])
-    counterparty_table = copy.deepcopy(counterparty_table_data['counterparty'])
+    address_table = copy.deepcopy(address_table_data["address"])
+    counterparty_table = copy.deepcopy(counterparty_table_data["counterparty"])
     dim_counterparty_list = []
 
     for counterparty in counterparty_table:

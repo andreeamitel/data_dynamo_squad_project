@@ -73,8 +73,8 @@ resource "aws_iam_role_policy_attachment" "s3_get_attachment" {
 
 data "aws_iam_policy_document" "secretmanager_get_secret_policy" {
   statement {
-    actions   = ["secretsmanager:GetSecretValue"]
-    effect    = "Allow"
+    actions = ["secretsmanager:GetSecretValue"]
+    effect  = "Allow"
     #need arn of new database credentials
     resources = ["${aws_secretsmanager_secret.processed_bucket2.arn}", "arn:aws:secretsmanager:eu-west-2:767397913254:secret:database_creds_test-3hAvo8"]
   }

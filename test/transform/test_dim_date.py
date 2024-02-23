@@ -179,8 +179,11 @@ def test_returns_dim_date_schema_single_item():
             },
         ]
     }
-    result_all = [dict_result in excepted["dim_date"] for dict_result in result["dim_date"]]
+    result_all = [
+        dict_result in excepted["dim_date"] for dict_result in result["dim_date"]
+    ]
     assert all(result_all)
+
 
 @pytest.mark.describe("dim_date")
 @pytest.mark.it("function returns items of dim_date table")
@@ -238,17 +241,22 @@ def test_returns_dim_date_schema_multiple_items():
                 "day_name": "Thursday",
                 "month_name": "November",
                 "quarter": 4,
-            }
+            },
         ]
     }
 
-    result_all = [dict_result in excepted["dim_date"] for dict_result in result["dim_date"]]
+    result_all = [
+        dict_result in excepted["dim_date"] for dict_result in result["dim_date"]
+    ]
     assert all(result_all)
+
 
 @pytest.mark.describe("dim_date")
 @pytest.mark.it("function returns both sales_order and dim_date tables")
 def test_returns_both_tables():
-    input = {"sales_order": [{
+    input = {
+        "sales_order": [
+            {
                 "sales_order_id": 3,
                 "created_at": "2020-01-03T14:20:52.188",
                 "last_updated": "2022-04-03T14:20:52.188",
@@ -261,7 +269,9 @@ def test_returns_both_tables():
                 "agreed_delivery_date": "2022-09-06",
                 "agreed_payment_date": "2022-11-07",
                 "agreed_delivery_location_id": 19,
-        }]}
+            }
+        ]
+    }
     sales_order_result, dim_date_result = dim_date(input)
     dim_date_expected = {
         "dim_date": [
@@ -307,7 +317,9 @@ def test_returns_both_tables():
             },
         ]
     }
-    sales_order_expected = {"sales_order": [{
+    sales_order_expected = {
+        "sales_order": [
+            {
                 "sales_order_id": 3,
                 "created_date": "2020-01-03",
                 "created_time": "14:20:52.188",
@@ -322,15 +334,23 @@ def test_returns_both_tables():
                 "agreed_delivery_date": "2022-09-06",
                 "agreed_payment_date": "2022-11-07",
                 "agreed_delivery_location_id": 19,
-        }]}
-    dim_date_result_all = [dict_result in dim_date_expected["dim_date"] for dict_result in dim_date_result["dim_date"]]
+            }
+        ]
+    }
+    dim_date_result_all = [
+        dict_result in dim_date_expected["dim_date"]
+        for dict_result in dim_date_result["dim_date"]
+    ]
     assert all(dim_date_result_all)
     assert sales_order_result["sales_order"] == sales_order_expected["sales_order"]
+
 
 @pytest.mark.describe("dim_date")
 @pytest.mark.it("function does not mutate original data")
 def test_mutation_test():
-    input = {"sales_order": [{
+    input = {
+        "sales_order": [
+            {
                 "sales_order_id": 3,
                 "created_at": "2020-01-03T14:20:52.188",
                 "last_updated": "2022-04-03T14:20:52.188",
@@ -343,9 +363,13 @@ def test_mutation_test():
                 "agreed_delivery_date": "2022-09-06",
                 "agreed_payment_date": "2022-11-07",
                 "agreed_delivery_location_id": 19,
-        }]}
+            }
+        ]
+    }
     dim_date(input)
-    assert input == {"sales_order": [{
+    assert input == {
+        "sales_order": [
+            {
                 "sales_order_id": 3,
                 "created_at": "2020-01-03T14:20:52.188",
                 "last_updated": "2022-04-03T14:20:52.188",
@@ -358,4 +382,6 @@ def test_mutation_test():
                 "agreed_delivery_date": "2022-09-06",
                 "agreed_payment_date": "2022-11-07",
                 "agreed_delivery_location_id": 19,
-        }]}
+            }
+        ]
+    }
