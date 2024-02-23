@@ -47,21 +47,23 @@ resource "aws_iam_role_policy_attachment" "lambda_tran_cw_attachment" {
 }
 
 
-data "aws_iam_policy_document" "s3_get_document" {
+data "aws_iam_policy_document" "s3_document_get" {
   statement {
-    actions = [
-      "s3:GetObject"
-    ]
-    effect = "Allow"
+    actions = ["s3:GetObject", "s3:*" ]
+    effect= "Allow"
     resources = [
+      "${var.code_buck_arn}/*",
       "${var.ingested_bucket_arn}/*",
+      "${var.ingested_bucket_arn}",
+      "${aws_s3_bucket.processed_bucket.arn}/*",
+      "${aws_s3_bucket.processed_bucket.arn}"
     ]
   }
 }
 
 resource "aws_iam_policy" "s3_tran_get_policy" {
   name_prefix = "s3-tran_get_policy-${var.lambda_name}"
-  policy      = data.aws_iam_policy_document.s3_get_document.json
+  policy      = data.aws_iam_policy_document.s3_document_get.json
 
 }
 

@@ -19,6 +19,7 @@ module "transform" {
     ingested_bucket_id = module.extract.ingest_bucket_id
     ingested_bucket_arn = module.extract.ingest_bucket_arn
     code_buck_id = module.extract.code_bucket_id
+    code_buck_arn = module.extract.code_bucket_arn
 }
 
 module "load" {
