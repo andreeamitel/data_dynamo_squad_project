@@ -1,4 +1,4 @@
-from src.transform.dim_date import dim_date
+from transform.dim_date import dim_date
 import copy
 
 def fact_sales_order(sales_order):

@@ -1,9 +1,9 @@
 import json
 import urllib.parse
 import boto3
-from src.transform.dim_currency import dim_currency
-from src.transform.dim_counterparty import dim_counterparty
-from src.transform.dim_staff import dim_staff
+from transform.dim_currency import dim_currency
+from transform.dim_counterparty import dim_counterparty
+from transform.dim_staff import dim_staff
 from pprint import pprint
 
 test_event = {  
