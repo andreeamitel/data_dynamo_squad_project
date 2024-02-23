@@ -1,7 +1,7 @@
 import json
 
 
-def get_latest_data(last_updated, s3, ingested_bucket_name):
+def get_latest_data(ingested_bucket_name, s3, last_updated):
     updated_data_dict = {}
     objs = s3.list_objects(Bucket=ingested_bucket_name)
     for obj in objs["Contents"]:
