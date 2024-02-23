@@ -34,6 +34,7 @@ def lambda_handler(event, context):
     try:
         s3 = boto3.client("s3")
         secrets_manager = boto3.client("secretsmanager")
+        print(event)
 
         ingestion_bucket_name = event["Records"][0]["s3"]["bucket"]["name"]
         ingestion_timestamp_key = event["Records"][0]["s3"]["object"]["key"]
