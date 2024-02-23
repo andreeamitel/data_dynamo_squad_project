@@ -1,5 +1,4 @@
 
-
 # provider "aws" {
 #     region= "eu-west-2"
 # }
@@ -31,4 +30,12 @@ module "transform" {
     ingested_bucket_id = module.extract.ingest_bucket_id
     ingested_bucket_arn = module.extract.ingest_bucket_arn
     code_buck_id = module.extract.code_bucket_id
+}
+
+module "load" {
+    source = "./load"
+    processed_bucket_id = module.transform.processed_bucket_id
+    processed_bucket_arn = module.transform.processed_bucket_arn
+    code_buck_id = module.extract.code_bucket_id
+    load_database_creds = var.secret_var #not sure what this is, may need changing
 }
