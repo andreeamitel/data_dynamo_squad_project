@@ -34,6 +34,7 @@ def lambda_handler(event, context):
     try:
         s3 = boto3.client("s3")
         secrets_manager = boto3.client("secretsmanager")
+        print(event)
 
         ingestion_bucket_name = event["Records"][0]["s3"]["bucket"]["name"]
         ingestion_timestamp_key = event["Records"][0]["s3"]["object"]["key"]
@@ -44,12 +45,12 @@ def lambda_handler(event, context):
         ingestion_timestamp = ingestion_timestamp_dict["Body"].read().decode("utf-8")
 
         updated_data = get_latest_data(ingestion_bucket_name, s3, ingestion_timestamp)
+        print(updated_data)
 
         processed_timestamp = datetime.now().isoformat()
         processed_bucket_name = secrets_manager.get_secret_value(
             SecretId="processed_bucket"
         )["SecretString"]
-
         for table_name in updated_data:
             if table_name == "counterparty":
                 dim_counterparty_table = dim_counterparty(
