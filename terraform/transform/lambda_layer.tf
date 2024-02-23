@@ -9,10 +9,10 @@ resource "null_resource" "lambda_layer" {
   # the command to install python and dependencies to the machine and zips
   provisioner "local-exec" {
     command = <<EOT
-      rm -rf python2/python2
-      mkdir python/python2
-      pip3 install pandas -t python/python2
-      zip -r layer2.zip python/python2
+      rm -rf python/lib/python3.10/site-packages
+      mkdir python/lib/python3.10/site-packages
+      pip3 install pandas -t python/lib/python3.10/site-packages
+      zip -r layer2.zip python/lib/python3.10/site-packages
     EOT
   }
 }
