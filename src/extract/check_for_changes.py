@@ -29,7 +29,7 @@ def check_for_changes(db_conn, last_ingested_time):
         if check_table_for_last_updated(table, last_ingested_time, db_conn)
     ]
 
-    return result
+    return  result
 
 
 def check_table_for_last_updated(table_name, last_ingested_time, conn):
