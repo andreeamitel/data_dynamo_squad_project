@@ -1,5 +1,4 @@
-from pg8000.native import Connection as conn, identifier, DatabaseError
-from datetime import datetime
+from pg8000.native import identifier, literal
 
 
 def check_for_changes(db_conn, last_ingested_time):
@@ -30,12 +29,13 @@ def check_for_changes(db_conn, last_ingested_time):
         if check_table_for_last_updated(table, last_ingested_time, db_conn)
     ]
 
-    return result
+    return  result
 
 
 def check_table_for_last_updated(table_name, last_ingested_time, conn):
     """
-    This function goes through the last_updated column of one table and checks if
+    This function goes through the last_updated column of 
+    one table and checks if
     the last updated time is different to the last ingested time.
     Args:\n
         A table name
@@ -49,8 +49,8 @@ def check_table_for_last_updated(table_name, last_ingested_time, conn):
 
     times_for_tables = conn.run(
         f"""SELECT last_updated FROM {identifier(table_name)}
-        WHERE created_at > '{last_ingested_time}'
-        OR last_updated > '{last_ingested_time}';;"""
+        WHERE created_at > '{literal(last_ingested_time)}'
+        OR last_updated > '{literal(last_ingested_time)}';;"""
     )
     if len(times_for_tables) > 0:
         return True

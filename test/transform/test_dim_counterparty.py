@@ -1,4 +1,4 @@
-from src.transform.dim_counterparty import dim_counterparty, dim_counterparty_to_dataframe
+from src.transform.dim_counterparty import dim_counterparty
 import datetime
 import pytest
 from pprint import pprint
@@ -484,10 +484,3 @@ def test_always_returns_the_same_value():
             },
         ]
     }
-    # result = dim_counterparty(address_data, counterparty_data)
-    # dim_counterparty_to_dataframe(result)
-    
-    # assert result == expected
-
-
-
