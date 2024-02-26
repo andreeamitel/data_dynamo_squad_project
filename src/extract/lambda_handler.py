@@ -16,17 +16,18 @@ def lambda_handler(event, context):
     """
     ### Args:
         event:
-            a valid S3 PutObject event -
-            see https://docs.aws.amazon.com/AmazonS3/latest/userguide/notification-content-structure.html
+            a valid S3 PutObject event
         context:
             a valid AWS lambda Python context object - see
             https://docs.aws.amazon.com/lambda/latest/dg/python-context.html
 
     ### Functionality:
     - Establishes connection to totesys database.
-    - Uses `check_for_updates()` to see if totesys database has any new or updated data.
-    - Loop of `check_for_updates()` return list of `table_names` IF empty kill process:
-        - Runs `extract_data()` with `table_name` as argument returning `list` of `dicts` (`table_dict`)
+    - Uses `check_for_updates()` to see
+    if totesys database has any new or updated data.
+    - Loop of `check_for_updates()` return list of `table_names`:
+        - Runs `extract_data()` with `table_name` as argument returning
+        `list` of `dicts` (`table_dict`)
         - Runs `write_table_dict_to_JSON()` printing to bucket
 
     ### Returns a JSON file:
@@ -43,7 +44,9 @@ def lambda_handler(event, context):
 
     try:
         s3 = boto3.client("s3")
-        secretsmanager = boto3.client("secretsmanager", region_name="eu-west-2")
+        secretsmanager = boto3.client(
+            "secretsmanager", region_name="eu-west-2"
+            )
         bucket_name = secretsmanager.get_secret_value(SecretId="ingestion_bucket_02")[
             "SecretString"
         ]
@@ -78,7 +81,6 @@ def lambda_handler(event, context):
         needs_fetching_tables = check_for_changes(conn, last_ingested_timestamp)
 
         new_ingested_time = datetime.now().isoformat()
-
         for table in needs_fetching_tables:
             table_data = extract_data(table, conn, last_ingested_timestamp)
             convert_and_write_data(table_data, table, bucket_name, new_ingested_time)

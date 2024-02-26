@@ -9,7 +9,7 @@ def get_latest_data(ingested_bucket_name, s3, last_updated):
     for obj in objs["Contents"]:
         print("GLD - for loop")
         print(obj)
-        if obj['Key'] != 'Last_Ingested.txt':
+        if obj["Key"] != "Last_Ingested.txt":
             if obj["Key"].split("/")[1][:-5] == last_updated:
                 print("get_latest_data - in if")
                 up_data = s3.get_object(Bucket=ingested_bucket_name, Key=obj["Key"])

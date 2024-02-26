@@ -40,18 +40,15 @@ def create_parquet_file(create_bucket1):
             "2022-02-14 16:54:36.774180",
         )
 
+
 @pytest.fixture
 def mock_conn():
     with patch("src.load.lambda_handler.Connection") as conn:
         yield conn
 
+
 @pytest.mark.describe("lambda_handler")
 @pytest.mark.it("should read one file")
 def test_read_one_file(create_parquet_file):
-    lambda_handler('event', 'context')
+    lambda_handler("event", "context")
     # print(isinstance(create_parquet_file, pd.DataFrame))
-    
-    
-
-
-
