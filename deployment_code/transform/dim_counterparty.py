@@ -2,6 +2,7 @@ import copy
 import pandas as pd
 import numpy as np
 
+
 def dim_counterparty(address_table_data, counterparty_table_data):
     """This function takes a two dictionaries from the counterparty and address tables and returns amended dictionary with key = table name and value list for the dim_counterparty table.
     Args: 'counterparty' and 'address' dictionaries
@@ -28,3 +29,11 @@ def dim_counterparty(address_table_data, counterparty_table_data):
         dim_counterparty_list.append(dim_counterparty)
     return {"dim_counterparty": dim_counterparty_list}
 
+
+# def dim_counterparty_to_dataframe(dim_counterparty):
+#     dataframe = pd.DataFrame(dim_counterparty["dim_counterparty"])
+#     print(dataframe.to_csv())
+#     dataframe[["address_id"]] = dataframe[["address_id"]].astype(np.int4)
+#     print(dataframe[["address_id"]])
+
+# pass
