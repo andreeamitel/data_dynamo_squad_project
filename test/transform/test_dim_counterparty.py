@@ -182,7 +182,6 @@ def test_return_a_list_of_dictionaries():
         ]
     }
     result = dim_counterparty(address_data, counterparty_data)
-    pprint(result)
     expected = {
         "dim_counterparty": [
             {
