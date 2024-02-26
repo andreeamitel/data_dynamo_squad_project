@@ -57,7 +57,7 @@ jobs:
         run: terraform init
       - name: Terraform Plan
         working-directory: terraform
-        run: terraform plan -var=secret_var="{\"database\":${{secrets.DATABASE}}, "hostname":${{secrets.HOSTNAME}}, "password":${{secrets.PASSWORD}}, "port":${{secrets.PORT}}, "username":${{secrets.USERNAME}}}"
+        run: terraform plan -var=secret_var="{\"database\":\"${{secrets.DATABASE}}\", \"hostname\":\"${{secrets.HOSTNAME}}\", \"password\":\"${{secrets.PASSWORD}}\", \"port\":\"${{secrets.PORT}}\", \"username\":\"${{secrets.USERNAME}}\"}"
       - name: Terraform apply
         working-directory: terraform
-        run: terraform apply -var=secret_var="{"database":${{secrets.DATABASE}}, "hostname":${{secrets.HOSTNAME}}, "password":${{secrets.PASSWORD}}, "port":${{secrets.PORT}}, "username":${{secrets.USERNAME}}}" -auto-approve
+        run: terraform apply -var=secret_var="{\"database\":\"${{secrets.DATABASE}}\", \"hostname\":\"${{secrets.HOSTNAME}}\", \"password\":\"${{secrets.PASSWORD}}\", \"port\":\"${{secrets.PORT}}\", \"username\":\"${{secrets.USERNAME}}\"}" -auto-approve
