@@ -29,12 +29,12 @@ def check_for_changes(db_conn, last_ingested_time):
         if check_table_for_last_updated(table, last_ingested_time, db_conn)
     ]
 
-    return  result
+    return result
 
 
 def check_table_for_last_updated(table_name, last_ingested_time, conn):
     """
-    This function goes through the last_updated column of 
+    This function goes through the last_updated column of
     one table and checks if
     the last updated time is different to the last ingested time.
     Args:\n

@@ -47,9 +47,8 @@ def lambda_handler(event, context):
         secretsmanager = boto3.client(
             "secretsmanager", region_name="eu-west-2"
             )
-        bucket_name = secretsmanager.get_secret_value(SecretId="ingestion_bucket_02")[
-            "SecretString"
-        ]
+        bucket_name = secretsmanager.get_secret_value(
+            SecretId="ingestion_bucket_02")["SecretString"]
         obj = s3.list_objects_v2(Bucket=bucket_name)
         if "Contents" in obj:
             test = [
@@ -58,7 +57,8 @@ def lambda_handler(event, context):
                 if object["Key"] == "Last_Ingested.txt"
             ]
             if test != []:
-                timestamp = s3.get_object(Bucket=bucket_name, Key="Last_Ingested.txt")
+                timestamp = s3.get_object(
+                    Bucket=bucket_name, Key="Last_Ingested.txt")
                 last_ingested_timestamp_str = timestamp["Body"].read().decode("utf-8")
                 last_ingested_timestamp = last_ingested_timestamp_str
 
@@ -83,7 +83,8 @@ def lambda_handler(event, context):
         new_ingested_time = datetime.now().isoformat()
         for table in needs_fetching_tables:
             table_data = extract_data(table, conn, last_ingested_timestamp)
-            convert_and_write_data(table_data, table, bucket_name, new_ingested_time)
+            convert_and_write_data(
+                table_data, table, bucket_name, new_ingested_time)
 
         if len(needs_fetching_tables) > 0:
             s3.put_object(
@@ -99,3 +100,4 @@ def lambda_handler(event, context):
         print(err)
     except DatabaseError as err:
         logger.error("DatabaseError")
+        print(err)
