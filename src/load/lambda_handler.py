@@ -44,7 +44,15 @@ def lambda_handler(event, context):
     test_parquet_read = wr.s3.read_parquet(
         "s3://processed-bucket-20240222143124212400000004/fact_sales_order/2022-02-14 16:54:36.774180.parquet"
     )
-
+    # pd.options.display.float_format = None
+    # test_parquet_read["unit_price"] = pd.to_numeric(test_parquet_read["unit_price"], downcast="float").round(2)
+    # test_parquet_read["unit_price"] = test_parquet_read["unit_price"].convert_dtypes(convert_floating=True)
+    # print(test_parquet_read["unit_price"])
+    
+    test_parquet_read["unit_price"] = test_parquet_read["unit_price"].astype("float32").round(2)
+    test_parquet_read["unit_price"] = test_parquet_read["unit_price"].astype("string").transform()
+    print(test_parquet_read["unit_price"])
+    
     # test_parquet_read[['created_date', 'created_time']] = test_parquet_read[['created_date', 'created_time']].astype(str)
     # print(test_parquet_read[['unit_price']])
 
@@ -59,22 +67,22 @@ def lambda_handler(event, context):
         password= "Z4s1r0ZGJjJUGC",
         database= "postgres",)
    
-    t = wr.postgresql.to_sql(df=test_parquet_read, con=dbapi_con, table="fact_sales_order", dtype= {
-        "sales_order_id": types.INTEGER,
-        "created_date": types.String,
-        "created_time": types.String,
-        "last_updated_date": types.String,
-        "last_updated_time": types.String,
-        "design_id": types.INTEGER,
-        "sales_staff_id": types.INTEGER,
-        "counterparty_id": types.INTEGER,
-        "units_sold": types.INTEGER,
-        "unit_price": types.Float,
-        "currency_id": types.INTEGER,
-        "agreed_delivery_date": types.String,
-        "agreed_payment_date": types.String,
-        "agreed_delivery_location_id": types.INTEGER
-    }, mode="append",index=True, schema="project_team_0")
-    print(t)
+    wr.postgresql.to_sql(df=test_parquet_read, con=dbapi_con, table="fact_sales_order", mode="append",index=True, schema="project_team_0", dtype={"unit_price": pd.Float32Dtype})
+    print(test_parquet_read["sales_order_id"])
 
- 
+#  dtype= {
+#         "sales_order_id": types.INTEGER,
+#         "created_date": types.String,
+#         "created_time": types.String,
+#         "last_updated_date": types.String,
+#         "last_updated_time": types.String,
+#         "design_id": types.INTEGER,
+#         "sales_staff_id": types.INTEGER,
+#         "counterparty_id": types.INTEGER,
+#         "units_sold": types.INTEGER,
+#         "unit_price": types.Float,
+#         "currency_id": types.INTEGER,
+#         "agreed_delivery_date": types.String,
+#         "agreed_payment_date": types.String,
+#         "agreed_delivery_location_id": types.INTEGER
+#     }, 
