@@ -7,7 +7,7 @@ terraform {
 }
 
 variable "secret_var" {
-  type = string
+  type = map
 }
 
 module "extract" {
