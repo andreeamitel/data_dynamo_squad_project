@@ -7,8 +7,8 @@ terraform {
 }
 
 variable "secret_var" {
-  type = map
-  default = { database = "", port = "", hostname = "", password = "", username = ""}
+  type = map(string)
+  default = { "database" = "", "port" = "", "hostname" = "", "password" = "", "username" = ""}
 }
 
 module "extract" {
