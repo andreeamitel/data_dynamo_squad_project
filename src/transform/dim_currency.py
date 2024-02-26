@@ -1,4 +1,5 @@
 import copy
+import pandas as pd
 
 
 def dim_currency(currency_table_data):
@@ -23,3 +24,12 @@ def dim_currency(currency_table_data):
         )
 
     return dim_curr
+
+
+def dim_currency_to_dataframe(dim_curr_data):
+    dataframe = pd.DataFrame(dim_curr_data["dim_currency"])
+    dataframe["currency_id"] = dataframe["currency_id"].astype(int)
+    dataframe["currency_code"] = dataframe["currency_code"].astype(str)
+    dataframe["currency_name"] = dataframe["currency_name"].astype(str)
+
+    return dataframe
