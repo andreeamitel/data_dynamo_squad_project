@@ -6,9 +6,9 @@ from pprint import pprint
 
 
 @pytest.mark.describe("get latest data")
-@pytest.mark.it("function returns dictionary")
+@pytest.mark.it("function returns list")
 @mock_aws
-def test_returns_dict():
+def test_returns_list():
     s3 = boto3.client("s3", region_name="eu-west-2")
     s3.create_bucket(
         Bucket="ingested-bucket",
@@ -26,7 +26,7 @@ def test_returns_dict():
     )
     last_updated_time = "2024-02-14 16:55:36.774180"
     result = get_latest_data("ingested-bucket", s3, last_updated_time)
-    assert type(result) == dict
+    assert type(result) == list
 
 
 @pytest.mark.describe("get latest data")
@@ -50,8 +50,8 @@ def test_returns_updated_data_for_one_table():
     )
     last_updated_time = "2024-02-14 16:55:36.774180"
     result = get_latest_data("ingested-bucket", s3, last_updated_time)
-    assert result == {
-        "sales_order": {
+    assert result == [
+        {
             "sales_order": [
                 {
                     "sales_order_id": 6922,
@@ -69,7 +69,7 @@ def test_returns_updated_data_for_one_table():
                 }
             ]
         }
-    }
+    ]
 
 
 @pytest.mark.describe("get latest data")
@@ -93,8 +93,8 @@ def test_returns_updated_data_for_one_table():
     )
     last_updated_time = "2024-02-14 16:55:36.774180"
     result = get_latest_data("ingested-bucket", s3, last_updated_time)
-    assert result == {
-        "sales_order": {
+    assert result == [
+        {
             "sales_order": [
                 {
                     "sales_order_id": 6922,
@@ -112,7 +112,7 @@ def test_returns_updated_data_for_one_table():
                 }
             ]
         }
-    }
+    ]
 
 
 @pytest.mark.describe("get latest data")
@@ -146,26 +146,8 @@ def test_returns_updated_data_for_more_than_one_table():
     )
     last_updated_time = "2024-02-14 16:55:36.774180"
     result = get_latest_data("ingested-bucket", s3, last_updated_time)
-    assert result == {
-        "sales_order": {
-            "sales_order": [
-                {
-                    "sales_order_id": 6922,
-                    "created_at": "2024-02-22T10:12:10.155",
-                    "last_updated": "2024-02-14T16:55:36.774180",
-                    "design_id": 316,
-                    "staff_id": 13,
-                    "counterparty_id": 11,
-                    "units_sold": 70190,
-                    "unit_price": 3.32,
-                    "currency_id": 1,
-                    "agreed_delivery_date": "2024-02-26",
-                    "agreed_payment_date": "2024-02-23",
-                    "agreed_delivery_location_id": 22,
-                }
-            ]
-        },
-        "department": {
+    assert result == [
+        {
             "department": [
                 {
                     "department_id": 1,
@@ -233,7 +215,25 @@ def test_returns_updated_data_for_more_than_one_table():
                 },
             ]
         },
-    }
+        {
+            "sales_order": [
+                {
+                    "sales_order_id": 6922,
+                    "created_at": "2024-02-22T10:12:10.155",
+                    "last_updated": "2024-02-14T16:55:36.774180",
+                    "design_id": 316,
+                    "staff_id": 13,
+                    "counterparty_id": 11,
+                    "units_sold": 70190,
+                    "unit_price": 3.32,
+                    "currency_id": 1,
+                    "agreed_delivery_date": "2024-02-26",
+                    "agreed_payment_date": "2024-02-23",
+                    "agreed_delivery_location_id": 22,
+                }
+            ]
+        },
+    ]
 
 
 @pytest.mark.describe("get latest data")
@@ -267,6 +267,5 @@ def test_returns_dict_with_correct_keys():
     )
     last_updated_time = "2024-02-14 16:55:36.774180"
     result = get_latest_data("ingested-bucket", s3, last_updated_time)
-    expected = list(result.keys())
-    assert "sales_order" in expected
-    assert "department" in expected
+    assert list(result[1].keys())[0] == "sales_order"
+    assert list(result[0].keys())[0] == "department"
