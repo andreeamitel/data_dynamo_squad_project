@@ -93,7 +93,7 @@ def test_functions_are_called(mock_data_conv, mock_extract_data, mock_check_chan
 @mock_aws
 def test_check_changes_uses_correct_date(mock_data_conv, mock_extract_data, mock_check_changes, mock_conn, create_bucket1, secretmanager, create_object):
     lambda_handler("thing1", "thing2")
-    mock_check_changes.assert_called_with(mock_conn(),"2022-02-14 16:54:36.774180")
+    mock_check_changes.assert_called_with(mock_conn(),"2000-02-14 16:54:36.774180")
 
 @pytest.mark.describe("lambda_handler")
 @pytest.mark.it("Error: ClientError - for bucket")
