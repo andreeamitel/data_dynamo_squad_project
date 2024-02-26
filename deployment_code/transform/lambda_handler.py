@@ -101,7 +101,7 @@ def lambda_handler(event, context):
                 print("sales loop")
                 sales_order, dim_date_table = dim_date(updated_data_dict[table_name])
                 print("unpacked sales and dates")
-                python_to_parquet(dim_dates_table, processed_bucket_name, processed_timestamp)
+                python_to_parquet(dim_date_table, processed_bucket_name, processed_timestamp)
                 print("wrote dim dates to parquet")
 
                 fact_sales= fact_sales_order(sales_order)
