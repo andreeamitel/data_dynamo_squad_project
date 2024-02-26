@@ -1,4 +1,5 @@
 import boto3
+
 from transform.get_latest_data import get_latest_data
 from transform.dim_counterparty import dim_counterparty
 from transform.dim_currency import dim_currency
@@ -8,6 +9,7 @@ from transform.dim_staff import dim_staff
 from transform.fact_sales_order import fact_sales_order
 from transform.python_to_parquet import python_to_parquet
 from transform.dim_date import dim_date
+
 from datetime import datetime
 from pprint import pprint
 from botocore.exceptions import ClientError

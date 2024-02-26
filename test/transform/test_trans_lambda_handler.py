@@ -111,8 +111,9 @@ def test_get_latest_data(
     mock_get_latest_data, create_bucket1, create_bucket2, create_object, secretmanager
 ):
     lambda_handler(test_event, test_context)
-    mock_get_latest_data.assert_called_once_with("ingested-bucket-20240222080432331400000006", ANY, "2024-02-22T15:41:59.776283")
-
+    mock_get_latest_data.assert_called_once_with(
+        "ingested-bucket-20240222080432331400000006", ANY, "2024-02-22T15:41:59.776283"
+    )
 
 
 @pytest.mark.describe("lambda_handler")

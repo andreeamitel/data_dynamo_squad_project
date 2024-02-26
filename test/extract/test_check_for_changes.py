@@ -71,6 +71,7 @@ def test_returns_empty_list_when_there_is_no_changes(mock_conn):
 #             mock_conn, [datetime.datetime(2022, 11, 3, 14, 20, 49, 962000)]
 #         )
 
+
 @pytest.mark.describe("check_tables_for_last_updated")
 @pytest.mark.it("returns true when table is updated")
 @patch("src.extract.check_for_changes.conn")

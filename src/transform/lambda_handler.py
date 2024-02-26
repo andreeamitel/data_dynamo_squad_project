@@ -9,7 +9,6 @@ from src.transform.fact_sales_order import fact_sales_order
 from src.transform.python_to_parquet import python_to_parquet
 from src.transform.dim_date import dim_date
 from datetime import datetime
-from pprint import pprint
 from botocore.exceptions import ClientError
 import logging
 import time
@@ -35,17 +34,18 @@ def lambda_handler(event, context):
     try:
         s3 = boto3.client("s3")
         secrets_manager = boto3.client("secretsmanager")
-        
 
         ingestion_bucket_name = event["Records"][0]["s3"]["bucket"]["name"]
         ingestion_timestamp_key = event["Records"][0]["s3"]["object"]["key"]
-        
+
         ingestion_timestamp_dict = s3.get_object(
             Bucket=ingestion_bucket_name, Key=ingestion_timestamp_key
         )
-        ingestion_timestamp = ingestion_timestamp_dict["Body"].read().decode("utf-8")
-        
-        updated_data = get_latest_data(ingestion_bucket_name, s3, ingestion_timestamp)
+        ingestion_timestamp = ingestion_timestamp_dict["Body"].read().decode(
+            "utf-8")
+
+        updated_data = get_latest_data(
+            ingestion_bucket_name, s3, ingestion_timestamp)
         print("updated_data >>>>>", updated_data)
 
         processed_timestamp = datetime.now().isoformat()
@@ -55,11 +55,12 @@ def lambda_handler(event, context):
 
         table_names = [list(table.keys())[0] for table in updated_data]
         print("table_names >>>>>", table_names)
-        updated_data_dict = {list(table.keys())[0]: table for table in updated_data}
+        updated_data_dict = {
+            list(table.keys())[0]: table for table in updated_data}
         print("updated_data_dict >>>>>", updated_data_dict)
         counter = 0
         for table_name in table_names:
-            counter+=1
+            counter += 1
             if table_name == "counterparty":
                 print("counterparty loop")
                 dim_counterparty_table = dim_counterparty(
@@ -78,7 +79,8 @@ def lambda_handler(event, context):
                 )
             elif table_name == "currency":
                 print("currency loop")
-                dim_currency_table = dim_currency(updated_data_dict[table_name])
+                dim_currency_table = dim_currency(
+                    updated_data_dict[table_name])
                 python_to_parquet(
                     dim_currency_table, processed_bucket_name, processed_timestamp
                 )
@@ -90,7 +92,8 @@ def lambda_handler(event, context):
                 )
             elif table_name == "address":
                 print("address loop")
-                dim_location_table = dim_location(updated_data_dict[table_name])
+                dim_location_table = dim_location(
+                    updated_data_dict[table_name])
                 python_to_parquet(
                     dim_location_table, processed_bucket_name, processed_timestamp
                 )
@@ -99,6 +102,7 @@ def lambda_handler(event, context):
                 pass
             else:
                 print("sales loop")
+
                 sales_order, dim_date_table = dim_date(updated_data_dict[table_name])
                 print("unpacked sales and dates")
                 python_to_parquet(dim_date_table, processed_bucket_name, processed_timestamp)
@@ -110,6 +114,7 @@ def lambda_handler(event, context):
                     fact_sales, processed_bucket_name, processed_timestamp
                 )
                 print("wrote to parquet")
+
             print(counter, "<<< counter")
         s3.put_object(
             Body=f"{processed_timestamp}",

@@ -483,10 +483,3 @@ def test_always_returns_the_same_value():
             },
         ]
     }
-    # result = dim_counterparty(address_data, counterparty_data)
-    # dim_counterparty_to_dataframe(result)
-    
-    # assert result == expected
-
-
-
