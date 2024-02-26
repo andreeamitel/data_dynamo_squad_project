@@ -1,6 +1,6 @@
 resource "aws_iam_role" "lambda_load_role" {
   name_prefix        = var.name_lambda_role
-  assume_role_policy = <<EOF 
+  assume_role_policy = <<EOF
 {
     "Version": "2012-10-17",
     "Statement": [
@@ -42,7 +42,7 @@ resource "aws_iam_policy" "cloudwatch_policy" {
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_tran_cw_attachment" {
-  role       = aws_iam_role.lambda_process_role.name
+  role       = aws_iam_role.lambda_load_role.name
   policy_arn = aws_iam_policy.cloudwatch_policy.arn
 }
 
@@ -54,7 +54,7 @@ data "aws_iam_policy_document" "s3_get_document" {
     ]
     effect = "Allow"
     resources = [
-      "${aws_s3_bucket.processed_bucket.arn}/*",
+      "${var.processed_bucket_arn}/*",
     ]
   }
 }
@@ -66,7 +66,7 @@ resource "aws_iam_policy" "s3_tran_get_policy" {
 }
 
 resource "aws_iam_role_policy_attachment" "s3_get_attachment" {
-  role       = aws_iam_role.lambda_process_role.name
+  role       = aws_iam_role.lambda_load_role.name
   policy_arn = aws_iam_policy.s3_tran_get_policy.arn
 }
 
@@ -76,7 +76,7 @@ data "aws_iam_policy_document" "secretmanager_get_secret_policy" {
     actions   = ["secretsmanager:GetSecretValue"]
     effect    = "Allow"
     #need arn of new database credentials
-    resources = ["${aws_secretsmanager_secret.processed_bucket2.arn}", "arn:aws:secretsmanager:eu-west-2:767397913254:secret:database_creds_test-3hAvo8"]
+    resources = ["${var.processed_bucket_arn}", "arn:aws:secretsmanager:eu-west-2:767397913254:secret:database_creds_test-3hAvo8"]
   }
 }
 
@@ -86,6 +86,6 @@ resource "aws_iam_policy" "secretmanager_get_secret" {
 }
 
 resource "aws_iam_role_policy_attachment" "secretmanager_get_secret_attachment" {
-  role       = aws_iam_role.lambda_process_role.name
+  role       = aws_iam_role.lambda_load_role.name
   policy_arn = aws_iam_policy.secretmanager_get_secret.arn
 }
