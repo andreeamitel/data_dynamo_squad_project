@@ -1,13 +1,14 @@
 import copy
-
+import pandas as pd
+import numpy as np
 
 def dim_counterparty(address_table_data, counterparty_table_data):
     """This function takes a two dictionaries from the counterparty and address tables and returns amended dictionary with key = table name and value list for the dim_counterparty table.
     Args: 'counterparty' and 'address' dictionaries
     Returns: dim_counterparty dictionary
     """
-    address_table = copy.deepcopy(address_table_data['address'])
-    counterparty_table = copy.deepcopy(counterparty_table_data['counterparty'])
+    address_table = copy.deepcopy(address_table_data["address"])
+    counterparty_table = copy.deepcopy(counterparty_table_data["counterparty"])
     dim_counterparty_list = []
 
     for counterparty in counterparty_table:
@@ -26,3 +27,4 @@ def dim_counterparty(address_table_data, counterparty_table_data):
                 }
         dim_counterparty_list.append(dim_counterparty)
     return {"dim_counterparty": dim_counterparty_list}
+

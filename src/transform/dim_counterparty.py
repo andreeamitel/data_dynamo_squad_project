@@ -1,4 +1,6 @@
 import copy
+import pandas as pd
+import numpy as np
 
 
 def dim_counterparty(address_table_data, counterparty_table_data):
@@ -6,8 +8,8 @@ def dim_counterparty(address_table_data, counterparty_table_data):
     Args: 'counterparty' and 'address' dictionaries
     Returns: dim_counterparty dictionary
     """
-    address_table = copy.deepcopy(address_table_data['address'])
-    counterparty_table = copy.deepcopy(counterparty_table_data['counterparty'])
+    address_table = copy.deepcopy(address_table_data["address"])
+    counterparty_table = copy.deepcopy(counterparty_table_data["counterparty"])
     dim_counterparty_list = []
 
     for counterparty in counterparty_table:
@@ -26,3 +28,12 @@ def dim_counterparty(address_table_data, counterparty_table_data):
                 }
         dim_counterparty_list.append(dim_counterparty)
     return {"dim_counterparty": dim_counterparty_list}
+
+
+# def dim_counterparty_to_dataframe(dim_counterparty):
+#     dataframe = pd.DataFrame(dim_counterparty["dim_counterparty"])
+#     print(dataframe.to_csv())
+#     dataframe[["address_id"]] = dataframe[["address_id"]].astype(np.int4)
+#     print(dataframe[["address_id"]])
+
+# pass

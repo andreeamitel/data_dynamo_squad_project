@@ -95,14 +95,6 @@ def test_check_changes_uses_correct_date(mock_data_conv, mock_extract_data, mock
     lambda_handler("thing1", "thing2")
     mock_check_changes.assert_called_with(mock_conn(),"2022-02-14 16:54:36.774180")
 
-# @pytest.mark.describe("lambda_handler")
-# @pytest.mark.it("Integration test - Test that convert_and_write_data gets called with outputs from extract_data and appears in bucket")
-# @patch("src.extract.lambda_handler.check_for_changes")
-# @patch("src.extract.lambda_handler.extract_data")
-# @mock_aws
-# def test_convert_and_write_data(mock_extract_data, mock_check_changes):
-#     pass
-
 @pytest.mark.describe("lambda_handler")
 @pytest.mark.it("Error: ClientError - for bucket")
 @mock_aws
@@ -117,8 +109,7 @@ def test_client_error_bucket(caplog,secretmanager):
 def test_client_error_secrets(caplog,create_bucket1, create_object, aws_secrets):
     with caplog.at_level(logging.INFO):
         lambda_handler("thing1", "thing2")
-        assert "Secrets Manager can't find the specified secret." in caplog.text
-    
+        assert "Secrets Manager can't find the specified secret." in caplog.text 
 
 # may not be needed as no key found handled different way
 # @pytest.mark.describe("lambda_handler")
@@ -137,20 +128,3 @@ def test_database_error(mock_check_changes, mock_conn, caplog,create_bucket1,cre
     with caplog.at_level(logging.INFO):
         lambda_handler("thing1", "thing2")
         assert "DatabaseError" in caplog.text
-    
-
-
-
-
-
-#TODO
-    # Bucket Name works from Event
-    # Last Ingested from Event at least change the bucket
-    # Errors
-        # KeyError
-        # ClientError
-        # TypeError
-        # DatabaseError
-        # Exception
-            #logger.error(e)
-            #raise RuntimeError

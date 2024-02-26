@@ -8,4 +8,7 @@ output "ingest_bucket_arn" {
 
 output "code_bucket_id" {
   value = aws_s3_bucket.code_bucket.id
-}
+  }
+output "code_bucket_arn" {
+  value = aws_s3_bucket.code_bucket.arn
+  }
