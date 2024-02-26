@@ -63,9 +63,9 @@ def lambda_handler(event, context):
                 last_ingested_timestamp = last_ingested_timestamp_str
 
             else:
-                last_ingested_timestamp = "2022-02-14 16:54:36.774180"
+                last_ingested_timestamp = "2000-02-14 16:54:36.774180"
         else:
-            last_ingested_timestamp = "2022-02-14 16:54:36.774180"
+            last_ingested_timestamp = "2000-02-14 16:54:36.774180"
 
         secret = secretsmanager.get_secret_value(SecretId="database_creds_01")
         secret_string = json.loads(secret["SecretString"])

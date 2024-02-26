@@ -8,7 +8,53 @@ import json
 import pandas as pd
 import pprint
 import awswrangler as wr
-
+from sqlalchemy import Numeric
+from decimal import Decimal,getcontext
+json_with_datatypes =  {"sales_order": [
+        {
+            "sales_order_id": 1,
+            "created_at": "2022-11-03T14:20:52.186",
+            "last_updated": "2022-11-03T14:20:52.186",
+            "design_id": 9,
+            "staff_id": 16,
+            "counterparty_id": 18,
+            "units_sold": 84754,
+            "unit_price":  Decimal(2.43),
+            "currency_id": 3,
+            "agreed_delivery_date": "2022-11-10",
+            "agreed_payment_date": "2022-11-03",
+            "agreed_delivery_location_id": 4,
+        },
+        {
+            "sales_order_id": 2,
+            "created_at": "2022-11-03T14:20:52.186",
+            "last_updated": "2022-11-03T14:20:52.186",
+            "design_id": 3,
+            "staff_id": 19,
+            "counterparty_id": 8,
+            "units_sold": 42972,
+            "unit_price": Decimal(2.43),
+            "currency_id": 2,
+            "agreed_delivery_date": "2022-11-07",
+            "agreed_payment_date": "2022-11-08",
+            "agreed_delivery_location_id": 8,
+        },
+        {
+            "sales_order_id": 3,
+            "created_at": "2022-11-03T14:20:52.188",
+            "last_updated": "2022-11-03T14:20:52.188",
+            "design_id": 4,
+            "staff_id": 10,
+            "counterparty_id": 4,
+            "units_sold": 65839,
+            "unit_price": Decimal(2.43),
+            "currency_id": 3,
+            "agreed_delivery_date": "2022-11-06",
+            "agreed_payment_date": "2022-11-07",
+            "agreed_delivery_location_id": 19,
+        },
+    ]
+}
 
 @pytest.fixture(scope="function")
 def aws_s3():
@@ -50,5 +96,15 @@ def mock_conn():
 @pytest.mark.describe("lambda_handler")
 @pytest.mark.it("should read one file")
 def test_read_one_file(create_parquet_file):
+<<<<<<< HEAD
     lambda_handler("event", "context")
     # print(isinstance(create_parquet_file, pd.DataFrame))
+=======
+    lambda_handler('event', 'context')
+   
+    
+    
+
+
+
+>>>>>>> main
