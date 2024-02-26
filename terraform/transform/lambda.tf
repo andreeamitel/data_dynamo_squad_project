@@ -6,7 +6,7 @@ resource "aws_lambda_function" "process_lambda" {
   handler       = "transform/lambda_handler.lambda_handler"
   runtime       = "python3.11"
   layers        = ["arn:aws:lambda:eu-west-2:336392948345:layer:AWSSDKPandas-Python311:7"]
-  timeout          = 120
+  timeout          = 900
   source_code_hash = data.archive_file.process_lambda.output_base64sha256
 }
 

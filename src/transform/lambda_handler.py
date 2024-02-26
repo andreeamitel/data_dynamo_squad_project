@@ -45,7 +45,7 @@ def lambda_handler(event, context):
         ingestion_timestamp = ingestion_timestamp_dict["Body"].read().decode("utf-8")
         
         updated_data = get_latest_data(ingestion_bucket_name, s3, ingestion_timestamp)
-        print(updated_data, "<<<< data first collected")
+        print("updated_data >>>>>", updated_data)
 
         processed_timestamp = datetime.now().isoformat()
         processed_bucket_name = secrets_manager.get_secret_value(
@@ -53,15 +53,16 @@ def lambda_handler(event, context):
         )["SecretString"]
 
         table_names = [list(table.keys())[0] for table in updated_data]
-
+        print("table_names >>>>>", table_names)
         updated_data_dict = {list(table.keys())[0]: table for table in updated_data}
+        print("updated_data_dict >>>>>", updated_data_dict)
         counter = 0
         for table_name in table_names:
             counter+=1
             if table_name == "counterparty":
                 print("counterparty loop")
                 dim_counterparty_table = dim_counterparty(
-                    updated_data_dict[table_name], updated_data_dict["address"]
+                    updated_data_dict["address"], updated_data_dict[table_name]
                 )
                 python_to_parquet(
                     dim_counterparty_table, processed_bucket_name, processed_timestamp
