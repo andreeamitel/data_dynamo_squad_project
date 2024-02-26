@@ -95,7 +95,7 @@ def mock_conn():
 @pytest.mark.it("should read one file")
 def test_read_one_file(create_parquet_file):
     lambda_handler('event', 'context')
-    # print(isinstance(create_parquet_file, pd.DataFrame))
+   
     
     
 
