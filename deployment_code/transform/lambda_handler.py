@@ -7,11 +7,12 @@ from transform.dim_location import dim_location
 from transform.dim_staff import dim_staff
 from transform.fact_sales_order import fact_sales_order
 from transform.python_to_parquet import python_to_parquet
+from transform.dim_date import dim_date
 from datetime import datetime
 from pprint import pprint
 from botocore.exceptions import ClientError
 import logging
-
+import time
 
 logger = logging.getLogger("Logger")
 logger.setLevel(logging.INFO)
@@ -98,11 +99,17 @@ def lambda_handler(event, context):
                 pass
             else:
                 print("sales loop")
-                fact_sales, dim_dates = fact_sales_order(updated_data_dict[table_name])
+                sales_order, dim_date_table = dim_date(updated_data_dict[table_name])
+                print("unpacked sales and dates")
+                python_to_parquet(dim_dates_table, processed_bucket_name, processed_timestamp)
+                print("wrote dim dates to parquet")
+
+                fact_sales= fact_sales_order(sales_order)
+                print("did fact sales order")
                 python_to_parquet(
                     fact_sales, processed_bucket_name, processed_timestamp
                 )
-                python_to_parquet(dim_dates, processed_bucket_name, processed_timestamp)
+                print("wrote to parquet")
             print(counter, "<<< counter")
         s3.put_object(
             Body=f"{processed_timestamp}",
