@@ -6,7 +6,7 @@ resource "aws_cloudwatch_log_metric_filter" "load_error_alarm" {
   metric_transformation {
     name      = "ClientErrorCount"
     namespace = "errors"
-    value     = "1"
+    value     = "1" 
   }
 }
 

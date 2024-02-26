@@ -2,7 +2,7 @@ resource "aws_s3_object" "load_lambda_code" {
   bucket = var.code_buck_id
   key    = "lambda_code/load_lambda.zip"
   source = "./load_lambda.zip"
-}
+} 
 
 resource "aws_s3_bucket_notification" "bucket_notification" {
   bucket = var.processed_bucket_id 

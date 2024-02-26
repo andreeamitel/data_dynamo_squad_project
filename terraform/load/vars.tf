@@ -9,7 +9,7 @@ variable "processed_bucket_id" {
 variable "name_lambda_role" {
     type = string
     default = "lambda-role-load-"
-}
+} 
 
 variable "code_buck_id" {
     type = string

@@ -6,5 +6,5 @@ data "archive_file" "load_lambda" {
   type        = "zip"
   source_dir = "../deployment_code"
   output_path = "./load_lambda.zip"
-  excludes = ["transform", "extract"]
+  excludes = ["transform", "extract"] 
 }
