@@ -1,10 +1,13 @@
-from pg8000.native import Connection
+import boto3
 import pg8000
 import awswrangler as wr
-from sqlalchemy import create_engine, inspect, Numeric, types
-import pyarrow as py
-import numpy as np
-from decimal import Decimal, getcontext
+import json
+import logging
+from botocore.exceptions import ClientError
+from pg8000.native import DatabaseError
+
+logger = logging.getLogger("Logger")
+logger.setLevel(logging.INFO)
 
 
 def lambda_handler(event, context):
@@ -24,24 +27,60 @@ def lambda_handler(event, context):
     get parquet data from processed bucket
     load data to RDS
     """
-    test_parquet_read = wr.s3.read_parquet(
-        "s3://processed-bucket-20240222143124212400000004/fact_sales_order/2022-02-14 16:54:36.774180.parquet"
-    )
-    print(test_parquet_read.dtypes)
 
-    dbapi_con = pg8000.Connection(
-        host="nc-data-eng-project-dw-prod.chpsczt8h1nu.eu-west-2.rds.amazonaws.com",
-        port="5432",
-        user="project_team_0",
-        password="Z4s1r0ZGJjJUGC",
-        database="postgres",
-    )
+    try:
+        s3 = boto3.client("s3")
+        secretsmanager = boto3.client("secretsmanager", region_name="eu-west-2")
+        secret = secretsmanager.get_secret_value(SecretId="database_creds_test")
+        secret_string = json.loads(secret["SecretString"])
 
-    wr.postgresql.to_sql(
-        df=test_parquet_read,
-        con=dbapi_con,
-        table="fact_sales_order",
-        mode="overwrite",
-        schema="project_team_0",
-        use_column_names=True,
-    )
+        bucket_name = secretsmanager.get_secret_value(SecretId="processed_bucket3")[
+            "SecretString"
+        ]
+
+        last_processed = (
+            s3.get_object(
+                Bucket=bucket_name,
+                Key="Last_Processed.txt",
+            )["Body"]
+            .read()
+            .decode("UTF-8")
+        )
+
+        bucket_contents = s3.list_objects_v2(Bucket=bucket_name)["Contents"]
+
+        files = []
+        for obj in bucket_contents:
+            if last_processed in obj["Key"]:
+                files.append(obj["Key"])
+
+        dbapi_con = pg8000.connect(
+            host=secret_string["hostname"],
+            port=secret_string["port"],
+            user=secret_string["username"],
+            password=secret_string["password"],
+            database=secret_string["database"],
+        )
+
+        for file in files:
+            table_name = file.split("/")[0]
+            test_parquet_read = wr.s3.read_parquet(f"s3://{bucket_name}/{file}")
+            insert_rows = wr.postgresql.to_sql(
+                df=test_parquet_read,
+                con=dbapi_con,
+                table=table_name,
+                mode="append",
+                schema=secret_string["database"],
+                use_column_names=True,
+            )
+            logger.info(
+                f"Successfully inserted {insert_rows} rows into {table_name} table "
+            )
+    except ClientError as err:
+        response_code = err.response["Error"]["Code"]
+        response_msg = err.response["Error"]["Message"]
+        logger.error(f"ClientError: {response_code}: {response_msg}")
+    except DatabaseError as err:
+        logger.error("DatabaseError")
+    except Exception as err:
+        logger.error(err)
