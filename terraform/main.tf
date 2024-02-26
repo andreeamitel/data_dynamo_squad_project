@@ -7,7 +7,6 @@ terraform {
 }
 
 variable "secret_var" {
-  type = string
 }
 
 module "extract" {
@@ -22,10 +21,10 @@ module "transform" {
     code_buck_arn = module.extract.code_bucket_arn
 }
 
-# module "load" {
-#     source = "./load"
-#     processed_bucket_id = module.transform.processed_bucket_id
-#     processed_bucket_arn = module.transform.processed_bucket_arn
-#     code_buck_id = module.extract.code_bucket_id
-#     load_database_creds = var.secret_var #not sure what this is, may need changing
-# }
+module "load" {
+  source = "./load" 
+  processed_bucket_arn = module.transform.processed_bucket_arn
+  processed_bucket_id = module.transform.processed_bucket_id
+  code_buck_id = module.extract.code_bucket_id
+  code_buck_arn = module.extract.code_bucket_arn
+}

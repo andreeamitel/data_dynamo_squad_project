@@ -21,7 +21,7 @@ resource "aws_lambda_permission" "allow_s3" {
 
 resource "aws_cloudwatch_event_rule" "scheduler" {
   name_prefix         = "ingestion_scheduler"
-  schedule_expression = "rate(2 minutes)"
+  schedule_expression = "rate(15 minutes)"
 }
 
 resource "aws_lambda_permission" "allow_scheduler" {

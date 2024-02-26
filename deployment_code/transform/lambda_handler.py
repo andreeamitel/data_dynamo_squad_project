@@ -1,4 +1,5 @@
 import boto3
+
 from transform.get_latest_data import get_latest_data
 from transform.dim_counterparty import dim_counterparty
 from transform.dim_currency import dim_currency
@@ -7,11 +8,13 @@ from transform.dim_location import dim_location
 from transform.dim_staff import dim_staff
 from transform.fact_sales_order import fact_sales_order
 from transform.python_to_parquet import python_to_parquet
+from transform.dim_date import dim_date
+
 from datetime import datetime
 from pprint import pprint
 from botocore.exceptions import ClientError
 import logging
-
+import time
 
 logger = logging.getLogger("Logger")
 logger.setLevel(logging.INFO)
@@ -34,71 +37,93 @@ def lambda_handler(event, context):
     try:
         s3 = boto3.client("s3")
         secrets_manager = boto3.client("secretsmanager")
-        print(event)
+        
 
         ingestion_bucket_name = event["Records"][0]["s3"]["bucket"]["name"]
         ingestion_timestamp_key = event["Records"][0]["s3"]["object"]["key"]
-        print("LH - ingested key")
+        
         ingestion_timestamp_dict = s3.get_object(
             Bucket=ingestion_bucket_name, Key=ingestion_timestamp_key
         )
         ingestion_timestamp = ingestion_timestamp_dict["Body"].read().decode("utf-8")
-        print("LH - ingested timestamp")
+        
         updated_data = get_latest_data(ingestion_bucket_name, s3, ingestion_timestamp)
-        print(updated_data)
+        print("updated_data >>>>>", updated_data)
 
         processed_timestamp = datetime.now().isoformat()
         processed_bucket_name = secrets_manager.get_secret_value(
             SecretId="processed_bucket3"
         )["SecretString"]
-        for table_name in updated_data:
+
+        table_names = [list(table.keys())[0] for table in updated_data]
+        print("table_names >>>>>", table_names)
+        updated_data_dict = {list(table.keys())[0]: table for table in updated_data}
+        print("updated_data_dict >>>>>", updated_data_dict)
+        counter = 0
+        for table_name in table_names:
+            counter+=1
             if table_name == "counterparty":
+                print("counterparty loop")
                 dim_counterparty_table = dim_counterparty(
-                    updated_data[table_name], updated_data["address"]
+                    updated_data_dict["address"], updated_data_dict[table_name]
                 )
                 python_to_parquet(
                     dim_counterparty_table, processed_bucket_name, processed_timestamp
                 )
             elif table_name == "staff":
+                print("staff loop")
                 dim_staff_table = dim_staff(
-                    updated_data[table_name], updated_data["department"]
+                    updated_data_dict[table_name], updated_data_dict["department"]
                 )
                 python_to_parquet(
                     dim_staff_table, processed_bucket_name, processed_timestamp
                 )
             elif table_name == "currency":
-                dim_currency_table = dim_currency(updated_data[table_name])
+                print("currency loop")
+                dim_currency_table = dim_currency(updated_data_dict[table_name])
                 python_to_parquet(
                     dim_currency_table, processed_bucket_name, processed_timestamp
                 )
             elif table_name == "design":
-                dim_desgin_table = dim_design(updated_data[table_name])
+                print("design loop")
+                dim_design_table = dim_design(updated_data_dict[table_name])
                 python_to_parquet(
-                    dim_desgin_table, processed_bucket_name, processed_timestamp
+                    dim_design_table, processed_bucket_name, processed_timestamp
                 )
             elif table_name == "address":
-                dim_location_table = dim_location(updated_data[table_name])
+                print("address loop")
+                dim_location_table = dim_location(updated_data_dict[table_name])
                 python_to_parquet(
                     dim_location_table, processed_bucket_name, processed_timestamp
                 )
             elif table_name == "department":
+                print("department loop")
                 pass
             else:
-                fact_sales, dim_dates = fact_sales_order(updated_data[table_name])
+                print("sales loop")
+                sales_order, dim_date_table = dim_date(updated_data_dict[table_name])
+                print("unpacked sales and dates")
+                python_to_parquet(dim_date_table, processed_bucket_name, processed_timestamp)
+                print("wrote dim dates to parquet")
+
+                fact_sales= fact_sales_order(sales_order)
+                print("did fact sales order")
                 python_to_parquet(
                     fact_sales, processed_bucket_name, processed_timestamp
                 )
-                python_to_parquet(dim_dates, processed_bucket_name, processed_timestamp)
-
+                print("wrote to parquet")
+            print(counter, "<<< counter")
         s3.put_object(
             Body=f"{processed_timestamp}",
             Bucket=processed_bucket_name,
             Key="Last_Processed.txt",
         )
+        print("end of lambda2")
     except ClientError as err:
         response_code = err.response["Error"]["Code"]
         response_msg = err.response["Error"]["Message"]
         logger.error(f"ClientError: {response_code}: {response_msg}")
     except Exception as err:
+        logger.error(err)
         print(err)
         print("ERROR FFS")

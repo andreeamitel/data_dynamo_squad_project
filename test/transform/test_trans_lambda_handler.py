@@ -111,16 +111,16 @@ def test_get_latest_data(
     mock_get_latest_data, create_bucket1, create_bucket2, create_object, secretmanager
 ):
     lambda_handler(test_event, test_context)
-    mock_get_latest_data.assert_called_once_with("ingested-bucket-20240222080432331400000006", ANY, "2024-02-22T15:41:59.776283")
-
+    mock_get_latest_data.assert_called_once_with(
+        "ingested-bucket-20240222080432331400000006", ANY, "2024-02-22T15:41:59.776283"
+    )
 
 
 @pytest.mark.describe("lambda_handler")
 @pytest.mark.it("test that dim_currency gets called with correct values")
 @patch(
     "src.transform.lambda_handler.get_latest_data",
-    return_value={
-        "currency": {
+    return_value=[{
             "currency": [
                 {
                     "currency_id": 1,
@@ -136,7 +136,7 @@ def test_get_latest_data(
                 },
             ]
         }
-    },
+    ]
 )
 @patch("src.transform.lambda_handler.dim_currency")
 @patch("src.transform.lambda_handler.python_to_parquet")
@@ -152,7 +152,7 @@ def test_dim_currency(
 ):
     lambda_handler(test_event, test_context)
     mock_dim_currency.assert_called_once_with(
-        mock_get_latest_data.return_value["currency"]
+        mock_get_latest_data.return_value[0]
     )
 
 

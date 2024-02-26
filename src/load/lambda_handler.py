@@ -27,6 +27,7 @@ def lambda_handler(event, context):
     get parquet data from processed bucket
     load data to RDS
     """
+
     try:
         s3 = boto3.client("s3")
         secretsmanager = boto3.client("secretsmanager", region_name="eu-west-2")
@@ -83,4 +84,3 @@ def lambda_handler(event, context):
         logger.error("DatabaseError")
     except Exception as err:
         logger.error(err)
-
