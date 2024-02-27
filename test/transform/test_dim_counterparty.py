@@ -1,7 +1,8 @@
-from src.transform.dim_counterparty import dim_counterparty
+'''Tests the function dim_counterparty.'''
 import datetime
 import pytest
-from pprint import pprint
+from src.transform.dim_counterparty import dim_counterparty
+
 
 
 @pytest.mark.describe("dim_counterparty")

@@ -1,6 +1,6 @@
+'''T'''
 from src.transform.dim_staff import dim_staff
 import pytest
-from pprint import pprint
 
 
 @pytest.mark.describe("dim_staff")
