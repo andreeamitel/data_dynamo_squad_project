@@ -1,12 +1,9 @@
 {
   "fact_sales_order": [
     {
-      "sales_record_id": 1,
       "sales_order_id": 1,
       "created_date": "2022-11-03",
       "created_time": "14:20:52.186",
-      "last_updated_date": "2022-11-03",
-      "last_updated_time": "14:20:52.186",
       "design_record_id": 9,
       "sales_staff_id": 16,
       "counterparty_record_id": 18,
@@ -18,12 +15,9 @@
       "agreed_delivery_location_id": 4
     },
     {
-      "sales_record_id": 2,
       "sales_order_id": 2,
       "created_date": "2022-11-03",
       "created_time": "14:20:52.186",
-      "last_updated_date": "2022-11-03",
-      "last_updated_time": "14:20:52.186",
       "design_record_id": 3,
       "sales_staff_id": 19,
       "counterparty_record_id": 8,
@@ -35,12 +29,9 @@
       "agreed_delivery_location_id": 8
     },
     {
-      "sales_record_id": 3,
       "sales_order_id": 3,
       "created_date": "2022-11-03",
       "created_time": "14:20:52.188",
-      "last_updated_date": "2022-11-03",
-      "last_updated_time": "14:20:52.188",
       "design_record_id": 4,
       "sales_staff_id": 10,
       "counterparty_record_id": 4,
