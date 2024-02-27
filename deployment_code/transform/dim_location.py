@@ -10,7 +10,7 @@ def dim_location(address_table_data):
     for address in location_dict["address"]:
         dim_loca["dim_location"].append(
             {
-                "location_id": address["address_id"],
+                "address_id": address["address_id"],
                 "address_line_1": address["address_line_1"],
                 "address_line_2": address["address_line_2"],
                 "district": address["district"],
