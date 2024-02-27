@@ -1,5 +1,7 @@
-from src.transform.fact_sales_order import fact_sales_order
+'''Tests the function fact_sales_order.'''
+
 import pytest
+from src.transform.fact_sales_order import fact_sales_order
 
 test_sales_order = {
     "sales_order": [
@@ -62,7 +64,7 @@ def test_returns_empty_list():
     "function returns edited staff_id and add sales_record_id - single item"
 )
 def test_returns_edited_properties_single():
-    input = {
+    arg = {
         "sales_order": [
             {
                 "sales_order_id": 1,
@@ -97,7 +99,7 @@ def test_returns_edited_properties_single():
         "agreed_payment_date": "2022-11-03",
         "agreed_delivery_location_id": 4,
     }
-    result_1, result_2 = fact_sales_order(input)
+    result_1, result_2 = fact_sales_order(arg)
     assert result_1["fact_sales_order"][0] == expected
 
 
@@ -166,7 +168,7 @@ def test_returns_edited_properties_multiple():
 @pytest.mark.describe("fact_sales_order")
 @pytest.mark.it("function does not mutate original data")
 def test_mutation_test():
-    input = {
+    arg = {
         "sales_order": [
             {
                 "sales_order_id": 3,
@@ -184,8 +186,8 @@ def test_mutation_test():
             }
         ]
     }
-    fact_sales_order(input)
-    assert input == {
+    fact_sales_order(arg)
+    assert arg == {
         "sales_order": [
             {
                 "sales_order_id": 3,
