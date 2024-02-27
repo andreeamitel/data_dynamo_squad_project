@@ -6,7 +6,7 @@ __Key Features:__
 Two S3 buckets are used: one for ingested data and another for processed data.
 Data is structured and immutable within these buckets.   
 
-__Data Ingestion Application__   return
+__Data Ingestion Application__     
 A Python application continuously ingests tables from the totesys database into the "ingestion" S3 bucket.
 The ingestion process is automatic, follows good security practices, with progress logged to Cloudwatch.
 Email alerts are triggered in case of failures.    
