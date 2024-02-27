@@ -1,6 +1,7 @@
-from src.transform.dim_staff import dim_staff
+'''Tests the function dim_staff.'''
+
 import pytest
-from pprint import pprint
+from src.transform.dim_staff import dim_staff
 
 
 @pytest.mark.describe("dim_staff")

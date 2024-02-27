@@ -6,7 +6,8 @@ import warnings
 def python_to_parquet(table_data, bucket_name, timestamp_key):
     """
     Arg:
-    - table_data - new data created from unit functions in correct schema, form of python list of dictionaries
+    - table_data - new data created from unit functions in correct schema,
+    form of python list of dictionaries
     - s3 - client - connection to s3
     - bucket_name - name of processed bucket
     - file_key - name of key we are writing to

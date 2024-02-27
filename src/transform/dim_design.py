@@ -3,7 +3,8 @@ import copy
 
 def dim_design(table_dict):
     """
-    This function takes a dictionary from the design table and return amended  dictionary for the dim_design table.
+    This function takes a dictionary from the design table
+    and return amended  dictionary for the dim_design table.
 
     Args:
     'design' table_list

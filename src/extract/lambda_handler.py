@@ -45,11 +45,11 @@ def lambda_handler(event, context):
     try:
         s3 = boto3.client("s3")
         secretsmanager = boto3.client(
-            "secretsmanager", region_name="eu-west-2"
-            )
-        bucket_name = secretsmanager.get_secret_value(
-            SecretId="ingestion_bucket_02")["SecretString"]
-        obj = s3.list_objects_v2(Bucket=bucket_name)
+            "secretsmanager", region_name="eu-west-2")
+        bucket = secretsmanager.get_secret_value(SecretId="ingestion_bucket")[
+            "SecretString"
+        ]
+        obj = s3.list_objects_v2(Bucket=bucket)
         if "Contents" in obj:
             test = [
                 object["Key"]
@@ -58,16 +58,16 @@ def lambda_handler(event, context):
             ]
             if test != []:
                 timestamp = s3.get_object(
-                    Bucket=bucket_name, Key="Last_Ingested.txt")
-                last_ingested_timestamp_str = timestamp["Body"].read().decode("utf-8")
-                last_ingested_timestamp = last_ingested_timestamp_str
+                    Bucket=bucket, Key="Last_Ingested.txt"
+                    )
+                last_ingested_time = timestamp["Body"].read().decode("utf-8")
 
             else:
-                last_ingested_timestamp = "2000-02-14 16:54:36.774180"
+                last_ingested_time = "2000-02-14 16:54:36.774180"
         else:
-            last_ingested_timestamp = "2000-02-14 16:54:36.774180"
+            last_ingested_time = "2000-02-14 16:54:36.774180"
 
-        secret = secretsmanager.get_secret_value(SecretId="database_creds_01")
+        secret = secretsmanager.get_secret_value(SecretId="database_creds_test")
         secret_string = json.loads(secret["SecretString"])
 
         conn = Connection(
@@ -78,17 +78,16 @@ def lambda_handler(event, context):
             database=secret_string["database"],
         )
 
-        needs_fetching_tables = check_for_changes(conn, last_ingested_timestamp)
+        needs_fetching_tables = check_for_changes(conn, last_ingested_time)
 
-        new_ingested_time = datetime.now().isoformat()
+        current_time = datetime.now().isoformat()
         for table in needs_fetching_tables:
-            table_data = extract_data(table, conn, last_ingested_timestamp)
-            convert_and_write_data(
-                table_data, table, bucket_name, new_ingested_time)
+            table_data = extract_data(table, conn, last_ingested_time)
+            convert_and_write_data(table_data, table, bucket, current_time)
 
         if len(needs_fetching_tables) > 0:
             s3.put_object(
-                Body=f"{new_ingested_time}", Bucket=bucket_name, Key="Last_Ingested.txt"
+                Body=f"{current_time}", Bucket=bucket, Key="Last_Ingested.txt"
             )
 
     except ClientError as err:

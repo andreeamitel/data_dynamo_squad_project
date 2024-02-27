@@ -1,10 +1,11 @@
-import pytest
+'''Tests the function extract data.'''
 from unittest.mock import Mock
 from datetime import datetime
-from src.extract.extract_data import extract_data
-from pg8000.native import Connection
 import os
+import pytest
+from pg8000.native import Connection
 from dotenv import load_dotenv
+from src.extract.extract_data import extract_data
 
 load_dotenv()
 
@@ -27,7 +28,7 @@ def test_returns_list_of_dictionaries():
     ]
     result1 = type(extract_data("currency", my_mock, datetime.now()))
     result2 = [
-        type(returned_data) is dict
+        isinstance(returned_data, dict)
         for returned_data in extract_data("currency", my_mock, datetime.now())
     ]
     assert result1 is list
