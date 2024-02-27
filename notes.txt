@@ -1,1 +1,0 @@
-  [sales_order, design, address, counterparty, staff, department, currency]
