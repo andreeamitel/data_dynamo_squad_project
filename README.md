@@ -2,7 +2,7 @@
 
 This repository contains the code and configurations for a data engineering project aimed creating a data platform that extracts data from an operational database, archives it in a data lake, and makes it available in a remodelled OLAP data warehouse.
 
-Key Features:
+__Key Features:__
 S3 Buckets
 Two S3 buckets are used: one for ingested data and another for processed data.
 Data is structured and immutable within these buckets.
