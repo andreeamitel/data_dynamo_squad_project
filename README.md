@@ -17,22 +17,22 @@ Remodeled data is stored in Parquet format in the "processed" S3 bucket.
 The application triggers automatically, is logged and monitored.
 Populates dimension and fact tables of a single "star" schema in the warehouse.   
 
-__Data Loading Application__
+__Data Loading Application__    
 A Python application loads data into a prepared data warehouse at defined intervals.
 Adequately logged and monitored.   
 
-__Testing and Compliance__
+__Testing and Compliance__    
 All Python code is thoroughly tested, PEP8 compliant, and checked for security vulnerabilities.
 Test coverage exceeds 90%.   
 
-__Deployment__
+__Deployment__      
 Infrastructure-as-code and CI/CD techniques are used for automatic deployment.
 AWS services like AWS Eventbridge, S3 buckets, AWS Lambda, and Cloudwatch are utilized.    
 
-__Data Sources__
+__Data Sources__      
 Primary data source: totesys database.
 
-__Tables to be ingested from the totesys database:__
+__Tables to be ingested from the totesys database:__       
 counterparty
 currency
 department
@@ -45,7 +45,7 @@ purchase_order
 payment_type
 transaction
 
-__Tables to be populated in the warehouse:__
+__Tables to be populated in the warehouse:__      
 fact_sales_order
 dim_staff
 dim_location
@@ -54,11 +54,11 @@ dim_date
 dim_currency
 dim_counterparty   
 
-__Dashboard__
+__Dashboard__       
 A Quicksight dashboard is used to display warehouse data.
 SQL queries for data retrieval are provided.   
 
-__Technical Details__
+__Technical Details__        
 Hosted on AWS.
 Utilizes AWS services such as AWS Eventbridge, S3 buckets, AWS Lambda, and Cloudwatch.
 Logging and monitoring are managed through Cloudwatch, with email alerts for major errors.
