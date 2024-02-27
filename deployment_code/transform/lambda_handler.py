@@ -1,13 +1,13 @@
 import boto3
-from transform.get_latest_data import get_latest_data
-from transform.dim_counterparty import dim_counterparty
-from transform.dim_currency import dim_currency
-from transform.dim_design import dim_design
-from transform.dim_location import dim_location
-from transform.dim_staff import dim_staff
-from transform.fact_sales_order import fact_sales_order
-from transform.python_to_parquet import python_to_parquet
-from transform.dim_date import dim_date
+from src.transform.get_latest_data import get_latest_data
+from src.transform.dim_counterparty import dim_counterparty
+from src.transform.dim_currency import dim_currency
+from src.transform.dim_design import dim_design
+from src.transform.dim_location import dim_location
+from src.transform.dim_staff import dim_staff
+from src.transform.fact_sales_order import fact_sales_order
+from src.transform.python_to_parquet import python_to_parquet
+from src.transform.dim_date import dim_date
 from datetime import datetime
 from botocore.exceptions import ClientError
 import logging
@@ -95,21 +95,11 @@ def lambda_handler(event, context):
                 )
                 fact_sales_order_df = fact_sales_order(sales_df)
                 wr.s3.to_parquet(
-                dim_date_df,
+                fact_sales_order_df,
                 path=f"s3://{processed_bucket}/fact_sales_order/{current_time}.parquet",
                 index=False,
-                )
-
-                # sales_order, dim_date_table = dim_date(updated_data[table])
-                # print("unpacked sales and dates")
-                # python_to_parquet(dim_date_table, bucket, current_time)
-                # print("wrote dim dates to parquet")
-
-                # fact_sales = fact_sales_order(sales_order)
-                # print("did fact sales order")
-                # python_to_parquet(fact_sales, bucket, current_time)
+                )       
                 print("wrote to parquet")
-
             print(counter, "<<< counter")
         s3.put_object(
             Body=f"{current_time}",
