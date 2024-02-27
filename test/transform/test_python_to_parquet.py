@@ -1,8 +1,10 @@
-from src.transform.python_to_parquet import python_to_parquet
-from moto import mock_aws
-import boto3
+'''Tests the function python_to_parquet.'''
+
 import pytest
+import boto3
 import awswrangler as wr
+from moto import mock_aws
+from src.transform.python_to_parquet import python_to_parquet
 
 
 @pytest.mark.describe("python_to_parquet")

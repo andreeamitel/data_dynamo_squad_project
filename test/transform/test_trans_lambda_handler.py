@@ -1,11 +1,13 @@
-from src.transform.lambda_handler import lambda_handler
-import pytest
-from unittest.mock import patch, call, ANY
-import boto3
-from moto import mock_aws
+'''Tests the function lambda_handler in the transform folder.'''
+
+from unittest.mock import patch, ANY
 from datetime import datetime
 import logging
-from pprint import pprint
+from moto import mock_aws
+import pytest
+import boto3
+from src.transform.lambda_handler import lambda_handler
+
 
 
 @pytest.fixture(scope="function")
@@ -194,7 +196,6 @@ def test_dim_currency(
 )
 @patch("src.transform.lambda_handler.python_to_parquet")
 @patch("src.transform.lambda_handler.dim_counterparty")
-# @patch("src.tranform.lambda_handler.dim_location")
 @mock_aws
 def test_dim_counterparty(
     mock_dim_counterparty,
