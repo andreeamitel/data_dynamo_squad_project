@@ -52,7 +52,8 @@ def lambda_handler(event, context):
         for obj in bucket_contents:
             if last_processed in obj["Key"]:
                 files.append(obj["Key"])
-        
+        files.sort()
+        print(files)
         dbapi_con = pg8000.connect(
             host=secret_string["hostname"],
             port=secret_string["port"],

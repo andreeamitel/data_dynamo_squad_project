@@ -25,7 +25,7 @@ def aws_secrets():
 @pytest.fixture
 def create_bucket1(aws_s3):
     boto3.client("s3").create_bucket(
-        Bucket="processed-bucket-20240222143124212400000004",
+        Bucket="processed-bucket-20240227173729838900000004",
         CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
     )
 
@@ -36,7 +36,7 @@ def create_parquet_file(create_bucket1):
         file = json.load(f)
         python_to_parquet(
             file,
-            "processed-bucket-20240222143124212400000004",
+            "processed-bucket-20240227173729838900000004",
             "2022-02-14 16:54:36.774180",
         )
 
@@ -46,7 +46,7 @@ def create_last_processed_file(create_bucket1):
     s3 = boto3.client("s3")
     s3.upload_file(
         "./test/load/Last_Processed.txt",
-        "processed-bucket-20240222143124212400000004",
+        "processed-bucket-20240227173729838900000004",
         "Last_Processed.txt",
     )
     with open("./test/load/dim_address/2024-02-27T15_35_42.711277.json", "r") as f:
@@ -54,12 +54,12 @@ def create_last_processed_file(create_bucket1):
         dim_address = dim_location(file)
         python_to_parquet(
             dim_address,
-            "processed-bucket-20240222143124212400000004",
+            "processed-bucket-20240227173729838900000004",
             "2022-02-14 16:54:36.774180")
 
     s3.upload_file(
         "test/load/dim_address_copy/2024-02-27T15_35_57.764941.parquet",
-        "processed-bucket-20240222143124212400000004",
+        "processed-bucket-20240227173729838900000004",
         "dim_null/2024-02-25T14_01_42.316404.parquet",
     )
 
@@ -72,7 +72,7 @@ def secretmanager(aws_secrets):
     )
     aws_secrets.create_secret(
         Name="processed_bucket3",
-        SecretString="processed-bucket-20240222143124212400000004",
+        SecretString="processed-bucket-20240227173729838900000004",
     )
 
 
