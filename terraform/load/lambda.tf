@@ -5,7 +5,7 @@ resource "aws_lambda_function" "load_lambda" {
   filename      = aws_s3_object.load_lambda_code.source
   handler       = "load/lambda_handler.lambda_handler"
   runtime       = "python3.11"
-  # layers        = [aws_lambda_layer_version.my-lambda-layer.arn]
+  layers        = ["arn:aws:lambda:eu-west-2:767397913254:layer:my_lambda_requirements_layer:99", "arn:aws:lambda:eu-west-2:336392948345:layer:AWSSDKPandas-Python311:7"]
   timeout          = 30
   source_code_hash = data.archive_file.load_lambda.output_base64sha256
 }

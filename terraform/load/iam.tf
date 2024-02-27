@@ -50,11 +50,13 @@ resource "aws_iam_role_policy_attachment" "lambda_tran_cw_attachment" {
 data "aws_iam_policy_document" "s3_get_document" {
   statement {
     actions = [
-      "s3:GetObject"
-    ]
+      "s3:GetObject", "s3:*" 
+      ]
     effect = "Allow"
     resources = [
       "${var.processed_bucket_arn}/*",
+      "${var.processed_bucket_arn}",
+      "${var.code_buck_arn}/*"
     ]
   }
 }
