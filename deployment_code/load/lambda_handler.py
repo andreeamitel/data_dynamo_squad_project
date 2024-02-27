@@ -5,6 +5,7 @@ import json
 import logging
 from botocore.exceptions import ClientError
 from pg8000.native import DatabaseError
+from datetime import datetime
 
 logger = logging.getLogger("Logger")
 logger.setLevel(logging.INFO)
@@ -12,13 +13,12 @@ logger.setLevel(logging.INFO)
 
 def lambda_handler(event, context):
     """
-    This function is responsible for periodically
-    scheduling an update of the data warehouse by
-    taking the parquet file from the processed bucket.
+    This function is responsible for periodically scheduling an update of the data warehouse by taking the parquet file from the processed bucket.
 
     Args:
     event:
-        a valid S3 PutObject event
+        a valid S3 PutObject event -
+            see https://docs.aws.amazon.com/AmazonS3/latest/userguide/notification-content-structure.html
     context:
         a valid AWS lambda Python context object - see
             https://docs.aws.amazon.com/lambda/latest/dg/python-context.html
@@ -31,16 +31,12 @@ def lambda_handler(event, context):
 
     try:
         s3 = boto3.client("s3")
-        secretsmanager = boto3.client(
-            "secretsmanager", region_name="eu-west-2"
-        )
-        secret = secretsmanager.get_secret_value(
-            SecretId="database_creds_test")
+        secretsmanager = boto3.client("secretsmanager", region_name="eu-west-2")
+        secret = secretsmanager.get_secret_value(SecretId="load_database_creds")
         secret_string = json.loads(secret["SecretString"])
-
-        bucket_name = secretsmanager.get_secret_value(
-            SecretId="processed_bucket3"
-        )["SecretString"]
+        bucket_name = secretsmanager.get_secret_value(SecretId="processed_bucket3")[
+            "SecretString"
+        ]
 
         last_processed = (
             s3.get_object(
@@ -57,7 +53,7 @@ def lambda_handler(event, context):
         for obj in bucket_contents:
             if last_processed in obj["Key"]:
                 files.append(obj["Key"])
-
+        
         dbapi_con = pg8000.connect(
             host=secret_string["hostname"],
             port=secret_string["port"],
@@ -66,26 +62,38 @@ def lambda_handler(event, context):
             database=secret_string["database"],
         )
 
+        timestamp = str(datetime.now().isoformat()).split("T")
+        date = timestamp[0]
+        time = timestamp[1]
+    
         for file in files:
             table_name = file.split("/")[0]
-            test_parquet_read = wr.s3.read_parquet(
-                f"s3://{bucket_name}/{file}")
+            record_id_col = table_name.split("_")[1] 
+            test_parquet_read = wr.s3.read_parquet(f"s3://{bucket_name}/{file}")
+
+            if "date" not in file:
+                test_parquet_read.insert(0, f"{record_id_col}_record_id", test_parquet_read[f"{test_parquet_read.columns.values[0]}"])
+            test_parquet_read['last_updated_date'] = date
+            test_parquet_read['last_updated_time'] = time
+
+            lists_keys = str(test_parquet_read.columns.values.tolist()[0])
             insert_rows = wr.postgresql.to_sql(
                 df=test_parquet_read,
                 con=dbapi_con,
                 table=table_name,
-                mode="append",
-                schema=secret_string["database"],
+                mode="upsert",
+                schema=secret_string["schema"],
+                upsert_conflict_columns=[lists_keys],
                 use_column_names=True,
             )
             logger.info(
-                f"{insert_rows} rows inserted into {table_name} table"
+                f"Successfully inserted {insert_rows} rows into {table_name} table "
             )
     except ClientError as err:
         response_code = err.response["Error"]["Code"]
         response_msg = err.response["Error"]["Message"]
         logger.error(f"ClientError: {response_code}: {response_msg}")
-    except DatabaseError:
-        logger.error("DatabaseError")
+    except DatabaseError as err:
+        logger.error(f"DatabaseError {err}")
     except Exception as err:
         logger.error(err)

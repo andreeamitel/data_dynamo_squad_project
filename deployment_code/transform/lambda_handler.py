@@ -95,21 +95,11 @@ def lambda_handler(event, context):
                 )
                 fact_sales_order_df = fact_sales_order(sales_df)
                 wr.s3.to_parquet(
-                dim_date_df,
+                fact_sales_order_df,
                 path=f"s3://{processed_bucket}/fact_sales_order/{current_time}.parquet",
                 index=False,
-                )
-
-                # sales_order, dim_date_table = dim_date(updated_data[table])
-                # print("unpacked sales and dates")
-                # python_to_parquet(dim_date_table, bucket, current_time)
-                # print("wrote dim dates to parquet")
-
-                # fact_sales = fact_sales_order(sales_order)
-                # print("did fact sales order")
-                # python_to_parquet(fact_sales, bucket, current_time)
+                )       
                 print("wrote to parquet")
-
             print(counter, "<<< counter")
         s3.put_object(
             Body=f"{current_time}",
