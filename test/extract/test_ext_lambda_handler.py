@@ -58,7 +58,7 @@ def create_object(create_bucket1):
 @pytest.fixture
 def secretmanager(aws_secrets):
     aws_secrets.create_secret(
-        Name="database_creds_test",
+        Name="database_creds_01",
         SecretString='{"hostname":"example_host.com","port": "4321", "database" : "example_database", "username": "project_team_0", "password":"EXAMPLE-PASSWORD"}',
     )
     aws_secrets.create_secret(
