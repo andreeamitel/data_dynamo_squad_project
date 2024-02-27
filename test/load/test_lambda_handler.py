@@ -64,8 +64,8 @@ def create_last_processed_file(create_bucket1):
 @pytest.fixture
 def secretmanager(aws_secrets):
     aws_secrets.create_secret(
-        Name="database_creds_test",
-        SecretString='{"hostname":"example_host.com","port": "4321", "database" : "example_database", "username": "project_team_0", "password":"EXAMPLE-PASSWORD"}',
+        Name="warehouse_test_creds",
+        SecretString='{"hostname":"example_host.com","port": "4321", "database" : "example_database", "username": "project_team_0", "password":"EXAMPLE-PASSWORD", "schema": "test"}',
     )
     aws_secrets.create_secret(
         Name="processed_bucket3",
@@ -169,7 +169,7 @@ def test_ignore_timestamp_database_error(
     mock_to_sql.return_value = 3
     with caplog.at_level(logging.INFO):
         lambda_handler("event", "context")
-        expected = 'DatabaseError'
+        expected = "DatabaseError"
         assert expected in caplog.text
 
 
@@ -183,7 +183,17 @@ def test_ignore_timestamp_sql_error(
     create_last_processed_file,
     caplog,
 ):
-    mock_to_sql.side_effect = Exception({'S': 'ERROR', 'V': 'ERROR', 'C': '22P02', 'M': 'invalid input syntax for type integer: "2.43"', 'F': 'numutils.c', 'L': '323', 'R': 'pg_strtoint32'})
+    mock_to_sql.side_effect = Exception(
+        {
+            "S": "ERROR",
+            "V": "ERROR",
+            "C": "22P02",
+            "M": 'invalid input syntax for type integer: "2.43"',
+            "F": "numutils.c",
+            "L": "323",
+            "R": "pg_strtoint32",
+        }
+    )
     with caplog.at_level(logging.INFO):
         lambda_handler("event", "context")
         expected = "invalid input"

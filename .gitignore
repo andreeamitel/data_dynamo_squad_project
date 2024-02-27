@@ -9,3 +9,4 @@ connection.py
 python2
 *layer2.zip
 */python
+*.terraform.*

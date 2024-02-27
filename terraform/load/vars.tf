@@ -23,3 +23,5 @@ variable "lambda_name" {
   type    = string
   default = "load_lambda"
 }
+variable "load_database_creds" {
+}
