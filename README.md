@@ -2,16 +2,16 @@
 
 This repository contains the code and configurations for a data engineering project aimed creating a data platform that extracts data from an operational database, archives it in a data lake, and makes it available in a remodelled OLAP data warehouse.
 
-__Key Features:__    
+__Key Features:__  return  
 Two S3 buckets are used: one for ingested data and another for processed data.
 Data is structured and immutable within these buckets.   
 
-__Data Ingestion Application__
+__Data Ingestion Application__   
 A Python application continuously ingests tables from the totesys database into the "ingestion" S3 bucket.
 The ingestion process is automatic, follows good security practices, with progress logged to Cloudwatch.
 Email alerts are triggered in case of failures.    
 
-__Data Processing Application__
+__Data Processing Application__   
 A Python application remodels data into a predefined schema suitable for a data warehouse.
 Remodeled data is stored in Parquet format in the "processed" S3 bucket.
 The application triggers automatically, is logged and monitored.
