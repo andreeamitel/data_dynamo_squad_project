@@ -19,5 +19,6 @@ def extract_data(table_name, db_conn, last_ingested_time):
         OR last_updated > '{last_ingested_time}';
         """
     )
+    print("extract data sql worked")
     data = rows[0][0]
     return data

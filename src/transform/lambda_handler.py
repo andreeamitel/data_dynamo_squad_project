@@ -86,7 +86,7 @@ def lambda_handler(event, context):
                 pass
             else:
                 print("sales loop")
-                sales_df = pd.DataFrame(updated_data[table])
+                sales_df = pd.DataFrame(updated_data[table]["sales_order"])
                 dim_date_df = dim_date(sales_df)
                 wr.s3.to_parquet(
                 dim_date_df,

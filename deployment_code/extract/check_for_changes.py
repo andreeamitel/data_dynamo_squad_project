@@ -49,9 +49,10 @@ def check_table_for_last_updated(table_name, last_ingested_time, conn):
 
     times_for_tables = conn.run(
         f"""SELECT last_updated FROM {identifier(table_name)}
-        WHERE created_at > '{literal(last_ingested_time)}'
-        OR last_updated > '{literal(last_ingested_time)}';;"""
+        WHERE created_at > '{last_ingested_time}'
+        OR last_updated > '{last_ingested_time}';;"""
     )
+    print("check_table sql worked")
     if len(times_for_tables) > 0:
         return True
     return False
