@@ -1,13 +1,13 @@
 import boto3
-from src.transform.get_latest_data import get_latest_data
-from src.transform.dim_counterparty import dim_counterparty
-from src.transform.dim_currency import dim_currency
-from src.transform.dim_design import dim_design
-from src.transform.dim_location import dim_location
-from src.transform.dim_staff import dim_staff
-from src.transform.fact_sales_order import fact_sales_order
-from src.transform.python_to_parquet import python_to_parquet
-from src.transform.dim_date import dim_date
+from transform.get_latest_data import get_latest_data
+from transform.dim_counterparty import dim_counterparty
+from transform.dim_currency import dim_currency
+from transform.dim_design import dim_design
+from transform.dim_location import dim_location
+from transform.dim_staff import dim_staff
+from transform.fact_sales_order import fact_sales_order
+from transform.python_to_parquet import python_to_parquet
+from transform.dim_date import dim_date
 from datetime import datetime
 from botocore.exceptions import ClientError
 import logging

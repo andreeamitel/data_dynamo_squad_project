@@ -3,9 +3,9 @@ from botocore.exceptions import ClientError
 import json
 from datetime import datetime
 from pg8000.native import Connection, DatabaseError
-from src.extract.check_for_changes import check_for_changes
-from src.extract.extract_data import extract_data
-from src.extract.conversion_and_write_data import convert_and_write_data
+from extract.check_for_changes import check_for_changes
+from extract.extract_data import extract_data
+from extract.conversion_and_write_data import convert_and_write_data
 import logging
 
 logger = logging.getLogger("Logger")
