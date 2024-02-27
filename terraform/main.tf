@@ -8,7 +8,9 @@ terraform {
 
 variable "secret_var" {
 }
-
+variable "load_cred_secret" {
+  
+}
 module "extract" {
     source = "./extract" 
     database_creds_var = var.secret_var
@@ -27,4 +29,5 @@ module "load" {
   processed_bucket_id = module.transform.processed_bucket_id
   code_buck_id = module.extract.code_bucket_id
   code_buck_arn = module.extract.code_bucket_arn
+  load_database_creds = var.load_cred_secret
 }
