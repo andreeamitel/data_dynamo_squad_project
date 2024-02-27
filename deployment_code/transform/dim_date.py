@@ -5,7 +5,8 @@ import calendar
 
 def dim_date(sales_order):
     """
-    This function takes a dictionary from the design table and return amended  dictionary for the dim_design table.
+    This function takes a dictionary from the design
+    table and return amended  dictionary for the dim_design table.
 
     Args:
     'design' table_list
@@ -38,7 +39,9 @@ def dim_date(sales_order):
     dim_date_table = {"dim_date": []}
     for date in dim_date_set:
         split_date = date.split("-")
-        dt = datetime(int(split_date[0]), int(split_date[1]), int(split_date[2]))
+        dt = datetime(
+            int(split_date[0]), int(split_date[1]), int(split_date[2])
+        )
         dim_date_table["dim_date"].append(
             {
                 "date_id": date,
