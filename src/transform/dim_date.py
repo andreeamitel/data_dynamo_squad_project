@@ -115,3 +115,4 @@ def get_name_of_month(date):
     split_date = date.split("-")
     dt = datetime(int(split_date[0]), int(split_date[1]), int(split_date[2]))
     return dt.strftime("%B")
+

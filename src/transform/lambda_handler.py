@@ -11,7 +11,6 @@ from src.transform.dim_date import dim_date
 from datetime import datetime
 from botocore.exceptions import ClientError
 import logging
-import time
 
 logger = logging.getLogger("Logger")
 logger.setLevel(logging.INFO)
@@ -19,106 +18,88 @@ logger.setLevel(logging.INFO)
 
 def lambda_handler(event, context):
     """
+    ### Functionality:
+    Uses function get_latest_data() to get data from
+    ingestion bucket and converts it to python
+    with the help of unit functions to change data from OLTP to OLAP.
+    This function then puts the processed data into a bucket.
     ### Args:
         event:
-            a valid S3 PutObject event -
-            see https://docs.aws.amazon.com/AmazonS3/latest/userguide/notification-content-structure.html
+            a valid S3 PutObject event
         context:
-            a valid AWS lambda Python context object - see
-            https://docs.aws.amazon.com/lambda/latest/dg/python-context.html
-    ### Functionality:
-    - uses function get_latest_data() to get data from ingestion bucket and convert to python
-    - passed into unit functions to change from OLTP to OLAP
-    - calls python_to_parquet function -  which changes python to parquet and stores in processed bucket
+            a valid AWS lambda Python context object
     """
     try:
         s3 = boto3.client("s3")
-        secrets_manager = boto3.client("secretsmanager")
+        secretsmanager = boto3.client("secretsmanager")
 
         ingestion_bucket_name = event["Records"][0]["s3"]["bucket"]["name"]
         ingestion_timestamp_key = event["Records"][0]["s3"]["object"]["key"]
 
-        ingestion_timestamp_dict = s3.get_object(
+        ingestion_timestamp = s3.get_object(
             Bucket=ingestion_bucket_name, Key=ingestion_timestamp_key
         )
-        ingestion_timestamp = ingestion_timestamp_dict["Body"].read().decode(
-            "utf-8")
+        ingestion_time = ingestion_timestamp["Body"].read().decode("utf-8")
 
-        updated_data = get_latest_data(
-            ingestion_bucket_name, s3, ingestion_timestamp)
-        print("updated_data >>>>>", updated_data)
+        new_data = get_latest_data(ingestion_bucket_name, s3, ingestion_time)
+        print("new_data >>>>>", new_data)
 
-        processed_timestamp = datetime.now().isoformat()
-        processed_bucket_name = secrets_manager.get_secret_value(
-            SecretId="processed_bucket3"
-        )["SecretString"]
+        current_time = datetime.now().isoformat()
+        bucket = secretsmanager.get_secret_value(SecretId="processed_bucket3")[
+            "SecretString"
+        ]
 
-        table_names = [list(table.keys())[0] for table in updated_data]
+        table_names = [list(table.keys())[0] for table in new_data]
         print("table_names >>>>>", table_names)
-        updated_data_dict = {
-            list(table.keys())[0]: table for table in updated_data}
-        print("updated_data_dict >>>>>", updated_data_dict)
+        updated_data = {list(table.keys())[0]: table for table in new_data}
+        print("updated_data >>>>>", updated_data)
         counter = 0
-        for table_name in table_names:
+        for table in table_names:
             counter += 1
-            if table_name == "counterparty":
+            if table == "counterparty":
                 print("counterparty loop")
                 dim_counterparty_table = dim_counterparty(
-                    updated_data_dict["address"], updated_data_dict[table_name]
+                    updated_data["address"], updated_data[table]
                 )
-                python_to_parquet(
-                    dim_counterparty_table, processed_bucket_name, processed_timestamp
-                )
-            elif table_name == "staff":
+                python_to_parquet(dim_counterparty_table, bucket, current_time)
+            elif table == "staff":
                 print("staff loop")
                 dim_staff_table = dim_staff(
-                    updated_data_dict[table_name], updated_data_dict["department"]
+                    updated_data[table], updated_data["department"]
                 )
-                python_to_parquet(
-                    dim_staff_table, processed_bucket_name, processed_timestamp
-                )
-            elif table_name == "currency":
+                python_to_parquet(dim_staff_table, bucket, current_time)
+            elif table == "currency":
                 print("currency loop")
-                dim_currency_table = dim_currency(
-                    updated_data_dict[table_name])
-                python_to_parquet(
-                    dim_currency_table, processed_bucket_name, processed_timestamp
-                )
-            elif table_name == "design":
+                dim_currency_table = dim_currency(updated_data[table])
+                python_to_parquet(dim_currency_table, bucket, current_time)
+            elif table == "design":
                 print("design loop")
-                dim_design_table = dim_design(updated_data_dict[table_name])
-                python_to_parquet(
-                    dim_design_table, processed_bucket_name, processed_timestamp
-                )
-            elif table_name == "address":
+                dim_design_table = dim_design(updated_data[table])
+                python_to_parquet(dim_design_table, bucket, current_time)
+            elif table == "address":
                 print("address loop")
-                dim_location_table = dim_location(
-                    updated_data_dict[table_name])
-                python_to_parquet(
-                    dim_location_table, processed_bucket_name, processed_timestamp
-                )
-            elif table_name == "department":
+                dim_location_table = dim_location(updated_data[table])
+                python_to_parquet(dim_location_table, bucket, current_time)
+            elif table == "department":
                 print("department loop")
                 pass
             else:
                 print("sales loop")
 
-                sales_order, dim_date_table = dim_date(updated_data_dict[table_name])
+                sales_order, dim_date_table = dim_date(updated_data[table])
                 print("unpacked sales and dates")
-                python_to_parquet(dim_date_table, processed_bucket_name, processed_timestamp)
+                python_to_parquet(dim_date_table, bucket, current_time)
                 print("wrote dim dates to parquet")
 
-                fact_sales= fact_sales_order(sales_order)
+                fact_sales = fact_sales_order(sales_order)
                 print("did fact sales order")
-                python_to_parquet(
-                    fact_sales, processed_bucket_name, processed_timestamp
-                )
+                python_to_parquet(fact_sales, bucket, current_time)
                 print("wrote to parquet")
 
             print(counter, "<<< counter")
         s3.put_object(
-            Body=f"{processed_timestamp}",
-            Bucket=processed_bucket_name,
+            Body=f"{current_time}",
+            Bucket=bucket,
             Key="Last_Processed.txt",
         )
         print("end of lambda2")

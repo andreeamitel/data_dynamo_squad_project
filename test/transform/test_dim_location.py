@@ -1,5 +1,7 @@
-from src.transform.dim_location import dim_location
+'''Tests the function dim_location.'''
+
 import pytest
+from src.transform.dim_location import dim_location
 
 
 @pytest.mark.describe("dim_location")

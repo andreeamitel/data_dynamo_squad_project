@@ -1,6 +1,8 @@
-from src.transform.dim_design import dim_design
-import pytest
+'''Tests the function dim_design.'''
+
 import datetime
+import pytest
+from src.transform.dim_design import dim_design
 
 
 @pytest.mark.describe("dim_design")
@@ -27,7 +29,7 @@ def test_returns_a_list_of_dictionary_type():
     }
     result = dim_design(dim_design_test)
     result1 = type(result)
-    result2 = [type(returned_data) is dict for returned_data in result["dim_design"]]
+    result2 = [isinstance(returned_data, dict) for returned_data in result["dim_design"]]
     assert result1 is dict
     assert all(result2) is True
 

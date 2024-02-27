@@ -1,6 +1,7 @@
+'''Tests the function dim_currency.'''
+import pytest
 from src.transform.dim_currency import dim_currency
 from src.transform.dim_currency import dim_currency_to_dataframe
-import pytest
 
 
 @pytest.mark.describe("dim_currency")

@@ -1,5 +1,4 @@
 import json
-from datetime import datetime
 import boto3
 
 
@@ -21,7 +20,7 @@ def convert_and_write_data(
     file_name = f"{table_name}/{new_ingesting_time}.json"
     s3 = boto3.client("s3")
     table_dict = {table_name: list_of_selection}
-    if list_of_selection == None:
+    if list_of_selection is None:
         table_dict = {}
     s3.put_object(
         Body=f"{json.dumps(table_dict)}",

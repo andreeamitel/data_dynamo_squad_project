@@ -158,12 +158,7 @@ def test_check_changes_uses_correct_date(
     create_object,
 ):
     lambda_handler("thing1", "thing2")
-<<<<<<< HEAD
-    mock_check_changes.assert_called_with(mock_conn(), "2022-02-14 16:54:36.774180")
-
-=======
     mock_check_changes.assert_called_with(mock_conn(),"2000-02-14 16:54:36.774180")
->>>>>>> main
 
 @pytest.mark.describe("lambda_handler")
 @pytest.mark.it("Error: ClientError - for bucket")

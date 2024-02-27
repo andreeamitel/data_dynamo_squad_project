@@ -1,7 +1,8 @@
-from src.transform.dim_counterparty import dim_counterparty
+'''Tests the function dim_counterparty.'''
 import datetime
 import pytest
-from pprint import pprint
+from src.transform.dim_counterparty import dim_counterparty
+
 
 
 @pytest.mark.describe("dim_counterparty")
@@ -446,6 +447,7 @@ def test_always_returns_the_same_value():
     }
     dim_counterparty(address_data, counterparty_data)
     dim_counterparty(address_data, counterparty_data)
+    result = dim_counterparty(address_data, counterparty_data)
     expected = {
         "dim_counterparty": [
             {
@@ -483,3 +485,4 @@ def test_always_returns_the_same_value():
             },
         ]
     }
+    assert result == expected

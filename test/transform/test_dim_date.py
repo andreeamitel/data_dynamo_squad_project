@@ -1,5 +1,7 @@
-from src.transform.dim_date import dim_date
+'''Tests the function dim_date.'''
+
 import pytest
+from src.transform.dim_date import dim_date
 
 test_sales_order = {
     "sales_order": [
@@ -60,8 +62,8 @@ def test_returns_empty_list():
 @pytest.mark.describe("dim_date")
 @pytest.mark.it("function returns one item of sales_order table")
 def test_returns_one_item_each_tables():
-    input = {"sales_order": [test_sales_order["sales_order"][0]]}
-    result = dim_date(input)[0]["sales_order"]
+    arg = {"sales_order": [test_sales_order["sales_order"][0]]}
+    result = dim_date(arg)[0]["sales_order"]
     expected = [
         {
             "sales_order_id": 1,
@@ -143,8 +145,8 @@ def test_returns_one_items_each_tables():
 @pytest.mark.describe("dim_date")
 @pytest.mark.it("function returns one item of dim_date table")
 def test_returns_dim_date_schema_single_item():
-    input = {"sales_order": [test_sales_order["sales_order"][2]]}
-    result = dim_date(input)[1]
+    arg = {"sales_order": [test_sales_order["sales_order"][2]]}
+    result = dim_date(arg)[1]
     excepted = {
         "dim_date": [
             {
@@ -188,8 +190,8 @@ def test_returns_dim_date_schema_single_item():
 @pytest.mark.describe("dim_date")
 @pytest.mark.it("function returns items of dim_date table")
 def test_returns_dim_date_schema_multiple_items():
-    input = {"sales_order": test_sales_order["sales_order"]}
-    result = dim_date(input)[1]
+    arg = {"sales_order": test_sales_order["sales_order"]}
+    result = dim_date(arg)[1]
     excepted = {
         "dim_date": [
             {
@@ -254,7 +256,7 @@ def test_returns_dim_date_schema_multiple_items():
 @pytest.mark.describe("dim_date")
 @pytest.mark.it("function returns both sales_order and dim_date tables")
 def test_returns_both_tables():
-    input = {
+    arg = {
         "sales_order": [
             {
                 "sales_order_id": 3,
@@ -272,7 +274,7 @@ def test_returns_both_tables():
             }
         ]
     }
-    sales_order_result, dim_date_result = dim_date(input)
+    sales_order_result, dim_date_result = dim_date(arg)
     dim_date_expected = {
         "dim_date": [
             {
@@ -348,7 +350,7 @@ def test_returns_both_tables():
 @pytest.mark.describe("dim_date")
 @pytest.mark.it("function does not mutate original data")
 def test_mutation_test():
-    input = {
+    arg = {
         "sales_order": [
             {
                 "sales_order_id": 3,
@@ -366,8 +368,8 @@ def test_mutation_test():
             }
         ]
     }
-    dim_date(input)
-    assert input == {
+    dim_date(arg)
+    assert arg == {
         "sales_order": [
             {
                 "sales_order_id": 3,
