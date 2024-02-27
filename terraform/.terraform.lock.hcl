@@ -1,6 +1,5 @@
 # This file is maintained automatically by "terraform init".
 # Manual edits may be lost in future updates.
-
 provider "registry.terraform.io/hashicorp/archive" {
   version = "2.4.2"
   hashes = [
@@ -19,7 +18,6 @@ provider "registry.terraform.io/hashicorp/archive" {
     "zh:febf4b7b5f3ff2adff0573ef6361f09b6638105111644bdebc0e4f575373935f",
   ]
 }
-
 provider "registry.terraform.io/hashicorp/aws" {
   version = "5.38.0"
   hashes = [
@@ -41,7 +39,6 @@ provider "registry.terraform.io/hashicorp/aws" {
     "zh:fd532b707746145d3c6d3507bca2b8d44cc618b3d5006db99426221b71db7da7",
   ]
 }
-
 provider "registry.terraform.io/hashicorp/null" {
   version = "3.2.2"
   hashes = [

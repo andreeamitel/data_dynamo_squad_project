@@ -8,7 +8,7 @@ import json
 import awswrangler as wr
 import logging
 from pg8000.native import DatabaseError
-
+from src.transform.dim_location import dim_location
 
 @pytest.fixture(scope="function")
 def aws_s3():
@@ -49,15 +49,18 @@ def create_last_processed_file(create_bucket1):
         "processed-bucket-20240222143124212400000004",
         "Last_Processed.txt",
     )
+    with open("./test/load/dim_address/2024-02-27T15_35_42.711277.json", "r") as f:
+        file = json.load(f)
+        dim_address = dim_location(file)
+        python_to_parquet(
+            dim_address,
+            "processed-bucket-20240222143124212400000004",
+            "2022-02-14 16:54:36.774180")
+
     s3.upload_file(
-        "test/load/dim_address/2024-02-25T14_01_42.316404.parquet",
+        "test/load/dim_address_copy/2024-02-27T15_35_57.764941.parquet",
         "processed-bucket-20240222143124212400000004",
-        "dim_address/2022-02-14 16:54:36.774180.parquet",
-    )
-    s3.upload_file(
-        "test/load/dim_address_copy/2024-02-25T14_01_42.316404.parquet",
-        "processed-bucket-20240222143124212400000004",
-        "dim_address_copy/2024-02-25T14_01_42.316404.parquet",
+        "dim_null/2024-02-25T14_01_42.316404.parquet",
     )
 
 
@@ -118,7 +121,7 @@ def test_read_one_file(
     mock_to_sql.return_value = 3
     with caplog.at_level(logging.INFO):
         lambda_handler("event", "context")
-        expected = "3 rows inserted into fact_sales_order table"
+        expected = "Successfully inserted 3 rows into fact_sales_order table"
         assert expected in caplog.text
 
 
