@@ -447,6 +447,7 @@ def test_always_returns_the_same_value():
     }
     dim_counterparty(address_data, counterparty_data)
     dim_counterparty(address_data, counterparty_data)
+    result = dim_counterparty(address_data, counterparty_data)
     expected = {
         "dim_counterparty": [
             {
@@ -484,3 +485,4 @@ def test_always_returns_the_same_value():
             },
         ]
     }
+    assert result == expected
