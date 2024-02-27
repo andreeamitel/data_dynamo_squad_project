@@ -118,7 +118,7 @@ def test_read_one_file(
     mock_to_sql.return_value = 3
     with caplog.at_level(logging.INFO):
         lambda_handler("event", "context")
-        expected = "Successfully inserted 3 rows into fact_sales_order table"
+        expected = "3 rows inserted into fact_sales_order table"
         assert expected in caplog.text
 
 
