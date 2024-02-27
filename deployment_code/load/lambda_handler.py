@@ -34,9 +34,10 @@ def lambda_handler(event, context):
         secretsmanager = boto3.client("secretsmanager", region_name="eu-west-2")
         secret = secretsmanager.get_secret_value(SecretId="load_database_creds")
         secret_string = json.loads(secret["SecretString"])
-        bucket_name = secretsmanager.get_secret_value(SecretId="processed_bucket3")[
-            "SecretString"
-        ]
+        bucket_name = "processed-bucket-20240227173729838900000004"
+        # secretsmanager.get_secret_value(SecretId="processed_bucket3")[
+            # "SecretString"
+        # ]
 
         last_processed = (
             s3.get_object(
