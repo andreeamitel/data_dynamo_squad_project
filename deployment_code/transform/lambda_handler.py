@@ -11,7 +11,8 @@ from transform.dim_date import dim_date
 from datetime import datetime
 from botocore.exceptions import ClientError
 import logging
-
+import pandas as pd
+import awswrangler as wr
 logger = logging.getLogger("Logger")
 logger.setLevel(logging.INFO)
 
@@ -45,7 +46,7 @@ def lambda_handler(event, context):
         print("new_data >>>>>", new_data)
 
         current_time = datetime.now().isoformat()
-        bucket = secretsmanager.get_secret_value(SecretId="processed_bucket3")[
+        processed_bucket = secretsmanager.get_secret_value(SecretId="processed_bucket3")[
             "SecretString"
         ]
 
@@ -61,45 +62,58 @@ def lambda_handler(event, context):
                 dim_counterparty_table = dim_counterparty(
                     updated_data["address"], updated_data[table]
                 )
-                python_to_parquet(dim_counterparty_table, bucket, current_time)
+                python_to_parquet(dim_counterparty_table, processed_bucket, current_time)
             elif table == "staff":
                 print("staff loop")
                 dim_staff_table = dim_staff(
                     updated_data[table], updated_data["department"]
                 )
-                python_to_parquet(dim_staff_table, bucket, current_time)
+                python_to_parquet(dim_staff_table, processed_bucket, current_time)
             elif table == "currency":
                 print("currency loop")
                 dim_currency_table = dim_currency(updated_data[table])
-                python_to_parquet(dim_currency_table, bucket, current_time)
+                python_to_parquet(dim_currency_table, processed_bucket, current_time)
             elif table == "design":
                 print("design loop")
                 dim_design_table = dim_design(updated_data[table])
-                python_to_parquet(dim_design_table, bucket, current_time)
+                python_to_parquet(dim_design_table, processed_bucket, current_time)
             elif table == "address":
                 print("address loop")
                 dim_location_table = dim_location(updated_data[table])
-                python_to_parquet(dim_location_table, bucket, current_time)
+                python_to_parquet(dim_location_table, processed_bucket, current_time)
             elif table == "department":
                 print("department loop")
                 pass
             else:
                 print("sales loop")
+                sales_df = pd.DataFrame(updated_data[table])
+                dim_date_df = dim_date(sales_df)
+                wr.s3.to_parquet(
+                dim_date_df,
+                path=f"s3://{processed_bucket}/dim_date/{current_time}.parquet",
+                index=False,
+                )
+                fact_sales_order_df = fact_sales_order(sales_df)
+                wr.s3.to_parquet(
+                dim_date_df,
+                path=f"s3://{processed_bucket}/fact_sales_order/{current_time}.parquet",
+                index=False,
+                )
 
-                sales_order, dim_date_table = dim_date(updated_data[table])
-                print("unpacked sales and dates")
-                python_to_parquet(dim_date_table, bucket, current_time)
-                print("wrote dim dates to parquet")
+                # sales_order, dim_date_table = dim_date(updated_data[table])
+                # print("unpacked sales and dates")
+                # python_to_parquet(dim_date_table, bucket, current_time)
+                # print("wrote dim dates to parquet")
 
-                fact_sales = fact_sales_order(sales_order)
-                print("did fact sales order")
-                python_to_parquet(fact_sales, bucket, current_time)
+                # fact_sales = fact_sales_order(sales_order)
+                # print("did fact sales order")
+                # python_to_parquet(fact_sales, bucket, current_time)
                 print("wrote to parquet")
 
             print(counter, "<<< counter")
         s3.put_object(
             Body=f"{current_time}",
-            Bucket=bucket,
+            Bucket=processed_bucket,
             Key="Last_Processed.txt",
         )
         print("end of lambda2")
