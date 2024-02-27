@@ -1,0 +1,28 @@
+{
+  "dim_currency": [
+    {
+      "currency_record_id": 1,
+      "currency_id": 1,
+      "currency_code": "GBP",
+      "currency_name": "Great British Pounds",
+      "last_updated_date": "2022-11-03",
+      "last_updated_time": "14:20:49.962"
+    },
+    {
+      "currency_record_id": 2,
+      "currency_id": 2,
+      "currency_code": "USD",
+      "currency_name": "United States",
+      "last_updated_date": "2022-11-03",
+      "last_updated_time": "14:20:49.962"
+    },
+    {
+      "currency_record_id": 3,
+      "currency_id": 3,
+      "currency_code": "EUR",
+      "currency_name": "Eurosss",
+      "last_updated_date": "2022-11-03",
+      "last_updated_time": "14:20:49.962"
+    }
+  ]
+}

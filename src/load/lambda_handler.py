@@ -31,9 +31,8 @@ def lambda_handler(event, context):
     try:
         s3 = boto3.client("s3")
         secretsmanager = boto3.client("secretsmanager", region_name="eu-west-2")
-        secret = secretsmanager.get_secret_value(SecretId="database_creds_test")
+        secret = secretsmanager.get_secret_value(SecretId="warehouse_test_creds")
         secret_string = json.loads(secret["SecretString"])
-
         bucket_name = secretsmanager.get_secret_value(SecretId="processed_bucket3")[
             "SecretString"
         ]
@@ -65,12 +64,14 @@ def lambda_handler(event, context):
         for file in files:
             table_name = file.split("/")[0]
             test_parquet_read = wr.s3.read_parquet(f"s3://{bucket_name}/{file}")
+            lists_keys = str(test_parquet_read.columns.values.tolist()[0])
             insert_rows = wr.postgresql.to_sql(
                 df=test_parquet_read,
                 con=dbapi_con,
                 table=table_name,
-                mode="append",
-                schema=secret_string["database"],
+                mode="upsert",
+                schema=secret_string["schema"],
+                upsert_conflict_columns=[lists_keys],
                 use_column_names=True,
             )
             logger.info(
@@ -81,6 +82,6 @@ def lambda_handler(event, context):
         response_msg = err.response["Error"]["Message"]
         logger.error(f"ClientError: {response_code}: {response_msg}")
     except DatabaseError as err:
-        logger.error("DatabaseError")
+        logger.error(f"DatabaseError {err}")
     except Exception as err:
         logger.error(err)
