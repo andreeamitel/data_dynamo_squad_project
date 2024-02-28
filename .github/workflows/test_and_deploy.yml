@@ -2,44 +2,41 @@ name: Test and Deploy
 on:
    - push
 jobs:
-  # run-checks:
-  #   environment: test
-  #   runs-on: ubuntu-latest
-  #   services:
-  #     postgres:
-  #       image: postgis/postgis:10-2.5
-  #       env:
-  #         # must specify password for PG Docker container image, see: https://registry.hub.docker.com/_/postgres?tab=description&page=1&name=10
-  #         POSTGRES_PASSWORD: password
-  #         POSTGRES_DB: test_sales_orders
-  #       ports:
-  #         - 5432:5432
-  #       # needed because the postgres container does not provide a healthcheck
-  #       options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
-  #   steps:
-  #     - name: Checkout Repo
-  #       uses: actions/checkout@v4
-  #     - name: Setup python
-  #       uses: actions/setup-python@v5
-  #       with:
-  #         python-version: '3.9'
-  #     - name: Setup Venv
-  #       run: make requirements
-  #     - name: Import DB seed data
-  #       run: psql -d postgresql://postgres@localhost/test_sales_orders -f currency_test.sql
-  #       working-directory: ./test/
-  #       env:
-  #         PGPASSWORD: password
-  #     - name: Ran all checks
-  #       run: make run-checks
-  #       env:
-  #         PGUSER: postgres
-  #         PGPASSWORD: password
-  #         PGDATABASE: test_sales_orders
-      
+  run-checks:
+    environment: test
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgis/postgis:10-2.5
+        env:
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: test_sales_orders
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+      - name: Setup python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Setup Venv
+        run: make requirements
+      - name: Import DB seed data
+        run: psql -d postgresql://postgres@localhost/test_sales_orders -f currency_test.sql
+        working-directory: ./test/
+        env:
+          PGPASSWORD: password
+      - name: Ran all checks
+        run: make run-checks
+        env:
+          PGUSER: postgres
+          PGPASSWORD: password
+          PGDATABASE: test_sales_orders
   deploy:
     runs-on: ubuntu-latest
-    # needs: run-checks
+    needs: run-checks
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
