@@ -88,6 +88,7 @@ def lambda_handler(event, context):
                 python_to_parquet(dim_date_dict_df, processed_bucket, current_time)
                 fact_sales_order_dict_df = {"fact_sales_order": fact_sales_order(sales_df)}
                 python_to_parquet(fact_sales_order_dict_df, processed_bucket, current_time)
+                print("finished sales wow")
         s3.put_object(
             Body=f"{current_time}",
             Bucket=processed_bucket,
