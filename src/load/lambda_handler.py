@@ -13,12 +13,13 @@ logger.setLevel(logging.INFO)
 
 def lambda_handler(event, context):
     """
-    This function is responsible for periodically scheduling an update of the data warehouse by taking the parquet file from the processed bucket.
+    This function is responsible for periodically scheduling an
+    update of the data warehouse by taking the parquet file
+    from the processed bucket.
 
     Args:
     event:
-        a valid S3 PutObject event -
-            see https://docs.aws.amazon.com/AmazonS3/latest/userguide/notification-content-structure.html
+        a valid S3 PutObject event
     context:
         a valid AWS lambda Python context object - see
             https://docs.aws.amazon.com/lambda/latest/dg/python-context.html
@@ -31,13 +32,16 @@ def lambda_handler(event, context):
 
     try:
         s3 = boto3.client("s3")
-        secretsmanager = boto3.client("secretsmanager", region_name="eu-west-2")
-        secret = secretsmanager.get_secret_value(SecretId="load_database_creds")
+        secretsmanager = boto3.client(
+            "secretsmanager", region_name="eu-west-2"
+            )
+        secret = secretsmanager.get_secret_value(
+            SecretId="load_database_creds"
+            )
         secret_string = json.loads(secret["SecretString"])
-        bucket_name = secretsmanager.get_secret_value(SecretId="processed_bucket3")[
-            "SecretString"
-        ]
-
+        bucket_name = secretsmanager.get_secret_value(
+            SecretId="processed_bucket3"
+            )["SecretString"]
 
         last_processed = (
             s3.get_object(
@@ -67,16 +71,24 @@ def lambda_handler(event, context):
         timestamp = str(datetime.now().isoformat()).split("T")
         date = timestamp[0]
         time = timestamp[1]
-    
+
         for file in files:
             table_name = file.split("/")[0]
-            record_id_col = table_name.split("_")[1] 
-            test_parquet_read = wr.s3.read_parquet(f"s3://{bucket_name}/{file}")
+            record_id_col = table_name.split("_")[1]
+            test_parquet_read = wr.s3.read_parquet(
+                f"s3://{bucket_name}/{file}"
+                )
 
             if "date" not in file:
-                test_parquet_read.insert(0, f"{record_id_col}_record_id", test_parquet_read[f"{test_parquet_read.columns.values[0]}"])
-            test_parquet_read['last_updated_date'] = date
-            test_parquet_read['last_updated_time'] = time
+                test_parquet_read.insert(
+                    0,
+                    f"{record_id_col}_record_id",
+                    test_parquet_read[
+                        f"{test_parquet_read.columns.values[0]}"
+                        ],
+                )
+            test_parquet_read["last_updated_date"] = date
+            test_parquet_read["last_updated_time"] = time
 
             lists_keys = str(test_parquet_read.columns.values.tolist()[0])
             insert_rows = wr.postgresql.to_sql(
@@ -89,7 +101,7 @@ def lambda_handler(event, context):
                 use_column_names=True,
             )
             logger.info(
-                f"Successfully inserted {insert_rows} rows into {table_name} table "
+                f"Inserted {insert_rows} rows into {table_name} table "
             )
     except ClientError as err:
         response_code = err.response["Error"]["Code"]
