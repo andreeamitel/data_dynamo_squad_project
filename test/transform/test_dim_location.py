@@ -84,7 +84,7 @@ def test_returns_dict_with_correct_values():
     expected = {
         "dim_location": [
             {
-                "location_id": 1,
+                "address_id": 1,
                 "address_line_1": "6826 Herzog Via",
                 "address_line_2": None,
                 "district": "Avon",
@@ -94,7 +94,7 @@ def test_returns_dict_with_correct_values():
                 "phone": "1803 637401",
             },
             {
-                "location_id": 2,
+                "address_id": 2,
                 "address_line_1": "179 Alexie Cliffs",
                 "address_line_2": None,
                 "district": None,
