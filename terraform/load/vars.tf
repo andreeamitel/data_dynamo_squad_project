@@ -25,3 +25,7 @@ variable "lambda_name" {
 }
 variable "load_database_creds" {
 }
+
+variable "ingested_lambda_layer" {
+  type = string
+}
