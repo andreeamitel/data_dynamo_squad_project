@@ -36,8 +36,7 @@ jobs:
   #         PGUSER: postgres
   #         PGPASSWORD: password
   #         PGDATABASE: test_sales_orders
-      # - name: make pre-deploment-directory
-      #   run: make run-pre-deploy
+      
   deploy:
     runs-on: ubuntu-latest
     # needs: run-checks
@@ -50,6 +49,8 @@ jobs:
           aws-region: eu-west-2
           aws-access-key-id: ${{secrets.AWS_ACCESS_KEY_ID}}
           aws-secret-access-key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+      - name: make pre-deploment-directory
+        run: make run-pre-deploy
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
       - name: Terraform Init

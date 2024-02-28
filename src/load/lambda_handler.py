@@ -34,7 +34,9 @@ def lambda_handler(event, context):
         secretsmanager = boto3.client("secretsmanager", region_name="eu-west-2")
         secret = secretsmanager.get_secret_value(SecretId="warehouse_test_creds")
         secret_string = json.loads(secret["SecretString"])
-        bucket_name = "processed-bucket-20240227173729838900000004"
+        bucket_name = secretsmanager.get_secret_value(SecretId="processed_bucket3")[
+            "SecretString"
+        ]
 
 
         last_processed = (
