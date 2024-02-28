@@ -1,7 +1,7 @@
 '''Tests the function dim_currency.'''
+import pandas as pd
 import pytest
 from src.transform.dim_currency import dim_currency
-from src.transform.dim_currency import dim_currency_to_dataframe
 
 
 @pytest.mark.describe("dim_currency")
@@ -14,8 +14,8 @@ def test_returns_empty_list_when_given_empty_dict():
 @pytest.mark.describe("dim_currency")
 @pytest.mark.it("function returns a dictionary which has corrrect key")
 def test_returns_dict_with_correct_key():
-    result = dim_currency(
-        {
+
+    currency_df =  {
             "currency": [
                 {
                     "currency_id": 1,
@@ -37,9 +37,11 @@ def test_returns_dict_with_correct_key():
                 },
             ]
         }
-    )
+    df = pd.DataFrame(currency_df["currency"])
+    print(df)
+    result = dim_currency(df)
     expected = list(result.keys())[0]
-    assert expected == "dim_currency"
+    assert expected == "currency"
 
 
 @pytest.mark.describe("dim_currency")
@@ -170,42 +172,3 @@ def test_check_input_not_changed():
         ]
     }
 
-
-@pytest.mark.describe("dim_currency_toDataframe")
-@pytest.mark.it("function returns dataframe with correct types")
-def test_returns_dataframe():
-    result = dim_currency(
-        {
-            "currency": [
-                {
-                    "currency_id": 1,
-                    "currency_code": "GBP",
-                    "created_at": "2022-11-03T14:20:49.962",
-                    "last_updated": "2022-11-03T14:20:49.962",
-                },
-                {
-                    "currency_id": 2,
-                    "currency_code": "USD",
-                    "created_at": "2022-11-03T14:20:49.962",
-                    "last_updated": "2022-11-03T14:20:49.962",
-                },
-                {
-                    "currency_id": 3,
-                    "currency_code": "EUR",
-                    "created_at": "2022-11-03T14:20:49.962",
-                    "last_updated": "2022-11-03T14:20:49.962",
-                },
-            ]
-        }
-    )
-    expected = dim_currency_to_dataframe(result)
-
-    assert expected.to_dict() == {
-        "currency_id": {0: 1, 1: 2, 2: 3},
-        "currency_code": {0: "GBP", 1: "USD", 2: "EUR"},
-        "currency_name": {
-            0: "Great British Pound",
-            1: "United States Dollar",
-            2: "Euro",
-        },
-    }
