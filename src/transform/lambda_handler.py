@@ -119,4 +119,3 @@ def lambda_handler(event, context):
         logger.error(f"ClientError: {response_code}: {response_msg}")
     except Exception as err:
         logger.error(err)
-        print(err)

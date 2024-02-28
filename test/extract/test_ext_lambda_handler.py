@@ -98,7 +98,6 @@ def test_write_txt_file(
         Bucket="ingested-bucket-20240213151611822700000004", Key="Last_Ingested.txt"
     )
     txt_result = result["Body"].read().decode("utf-8")
-    print(txt_result)
     assert txt_result == "2024-02-14 16:54:36.774180"
 
 
