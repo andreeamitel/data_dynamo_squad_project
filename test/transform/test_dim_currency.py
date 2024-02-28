@@ -4,9 +4,8 @@ from src.transform.dim_currency import dim_currency
 
 
 @pytest.mark.describe("dim_currency")
-@pytest.mark.it("function returns a dictionary which has correct columns")
+@pytest.mark.it("function returns a dataframe which has correct columns")
 def test_returns_data_frame_with_correct_columns():
-
     currency_df = {
         "currency": [
             {
@@ -43,7 +42,7 @@ def test_returns_data_frame_with_correct_columns():
 
 
 @pytest.mark.describe("dim_currency")
-@pytest.mark.it("function returns a data frame which has corrrect values")
+@pytest.mark.it("function returns a data frame which has correct values")
 def test_returns_data_frame_with_correct_values():
     currency_df = {
         "currency": [
