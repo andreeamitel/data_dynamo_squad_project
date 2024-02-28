@@ -22,7 +22,7 @@ resource "aws_cloudwatch_metric_alarm" "client_error_alerts" {
   threshold           = 1
   alarm_description   = "This metric monitors any client errors in the processed lambda handler"
   actions_enabled     = "true"
-  alarm_actions       = ["arn:aws:sns:eu-west-2:767397913254:error-alerts"]
+  alarm_actions       = []
 }
 
 
@@ -49,6 +49,6 @@ resource "aws_cloudwatch_metric_alarm" "key_error_alerts" {
   threshold           = 1
   alarm_description   = "This metric monitors any key errors in the process lambda handler"
   actions_enabled     = "true"
-  alarm_actions       = ["arn:aws:sns:eu-west-2:767397913254:error-alerts"]
+  alarm_actions       = []
 }
 
