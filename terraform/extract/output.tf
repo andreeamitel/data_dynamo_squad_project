@@ -12,3 +12,7 @@ output "code_bucket_id" {
 output "code_bucket_arn" {
   value = aws_s3_bucket.code_bucket.arn
   }
+
+output "ingested_lambda_layer" {
+  value = aws_lambda_layer_version.my-lambda-layer.arn
+}
