@@ -1,4 +1,15 @@
 def fact_sales_order(sales_df):
+    """
+    This function takes a sales order dataframe
+    and returns an amended fact_sales_order dataframe.
+
+    Args:
+    'sales_order_dataframe' pandas dataframe
+
+    Returns:
+    fact_sales_order_df pandas dataframe
+
+    """
     sales_copy = sales_df.copy(deep=True)
     sales_copy["created_date"] = sales_copy["created_at"].map(
         lambda x: x.split("T")[0]

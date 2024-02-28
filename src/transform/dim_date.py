@@ -4,15 +4,14 @@ import pandas as pd
 
 def dim_date(sales_order_dataframe):
     """
-    #needs changing
-    This function takes a dictionary from the design table
-    and returns amended  dictionary for the dim_design table.
+    This function takes a sales order dataframe
+    and returns an amended dim_dates dataframe.
 
     Args:
-    'design' table_list
+    'sales_order_dataframe' pandas dataframe
 
     Returns:
-    dim_design table dict
+    dim_date_df pandas dataframe
 
     """
     dates_df = sales_order_dataframe.copy(deep=True)
