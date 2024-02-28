@@ -50,7 +50,7 @@ def check_table_for_last_updated(table_name, last_ingested_time, conn):
     times_for_tables = conn.run(
         f"""SELECT last_updated FROM {identifier(table_name)}
         WHERE created_at > '{last_ingested_time}'
-        OR last_updated > '{last_ingested_time}';;"""
+        OR last_updated > '{last_ingested_time}';"""
     )
 
     if len(times_for_tables) > 0:
