@@ -63,11 +63,14 @@ def lambda_handler(event, context):
                     dim_counterparty_table, processed_bucket, current_time
                 )
             elif table == "staff":
-                dim_staff_table = dim_staff(
-                    updated_data[table], updated_data["department"]
+                dep_df = pd.DataFrame(updated_data['department']['department'])
+                staff_df = pd.DataFrame(updated_data[table]['staff'])
+                dim_staff_df = dim_staff(staff_df, dep_df)
+                wr.s3.to_parquet(
+                dim_staff_df,
+                path=f"s3://{processed_bucket}/dim_staff/{current_time}.parquet",
+                index=False,
                 )
-                python_to_parquet(
-                    dim_staff_table, processed_bucket, current_time)
             elif table == "currency":
                 dim_currency_table = dim_currency(updated_data[table])
                 python_to_parquet(dim_currency_table,
