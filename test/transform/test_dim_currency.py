@@ -1,4 +1,5 @@
-'''Tests the function dim_currency.'''
+"""Tests the function dim_currency."""
+
 import pandas as pd
 import pytest
 from src.transform.dim_currency import dim_currency
@@ -15,33 +16,40 @@ def test_returns_empty_list_when_given_empty_dict():
 @pytest.mark.it("function returns a dictionary which has corrrect key")
 def test_returns_dict_with_correct_key():
 
-    currency_df =  {
-            "currency": [
-                {
-                    "currency_id": 1,
-                    "currency_code": "GBP",
-                    "created_at": "2022-11-03T14:20:49.962",
-                    "last_updated": "2022-11-03T14:20:49.962",
-                },
-                {
-                    "currency_id": 2,
-                    "currency_code": "USD",
-                    "created_at": "2022-11-03T14:20:49.962",
-                    "last_updated": "2022-11-03T14:20:49.962",
-                },
-                {
-                    "currency_id": 3,
-                    "currency_code": "EUR",
-                    "created_at": "2022-11-03T14:20:49.962",
-                    "last_updated": "2022-11-03T14:20:49.962",
-                },
-            ]
-        }
+    currency_df = {
+        "currency": [
+            {
+                "currency_id": 1,
+                "currency_code": "GBP",
+                "created_at": "2022-11-03T14:20:49.962",
+                "last_updated": "2022-11-03T14:20:49.962",
+            },
+            {
+                "currency_id": 2,
+                "currency_code": "USD",
+                "created_at": "2022-11-03T14:20:49.962",
+                "last_updated": "2022-11-03T14:20:49.962",
+            },
+            {
+                "currency_id": 3,
+                "currency_code": "EUR",
+                "created_at": "2022-11-03T14:20:49.962",
+                "last_updated": "2022-11-03T14:20:49.962",
+            },
+        ]
+    }
     df = pd.DataFrame(currency_df["currency"])
     print(df)
     result = dim_currency(df)
-    expected = list(result.keys())[0]
-    assert expected == "currency"
+    bool_list = [
+        column in result
+        for column in [
+            "currency_id",
+            "currency_code",
+            "currency_name",
+        ]
+    ]
+    assert all(bool_list)
 
 
 @pytest.mark.describe("dim_currency")
@@ -171,4 +179,3 @@ def test_check_input_not_changed():
             },
         ]
     }
-
