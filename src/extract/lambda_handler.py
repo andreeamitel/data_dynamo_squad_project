@@ -46,7 +46,8 @@ def lambda_handler(event, context):
         s3 = boto3.client("s3")
         secretsmanager = boto3.client(
             "secretsmanager", region_name="eu-west-2")
-        bucket = secretsmanager.get_secret_value(SecretId="ingestion_bucket_02")[
+        bucket = secretsmanager.get_secret_value(
+            SecretId="ingestion_bucket_02")[
             "SecretString"
         ]
         obj = s3.list_objects_v2(Bucket=bucket)
@@ -77,15 +78,12 @@ def lambda_handler(event, context):
             password=secret_string["password"],
             database=secret_string["database"],
         )
-        print("i have connected to the database")
 
         needs_fetching_tables = check_for_changes(conn, last_ingested_time)
-        print("check for changes worked")
 
         current_time = datetime.now().isoformat()
         for table in needs_fetching_tables:
             table_data = extract_data(table, conn, last_ingested_time)
-            print("extract data worked")
             convert_and_write_data(table_data, table, bucket, current_time)
 
         if len(needs_fetching_tables) > 0:

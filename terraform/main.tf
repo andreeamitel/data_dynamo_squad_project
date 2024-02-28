@@ -30,4 +30,5 @@ module "load" {
   code_buck_id = module.extract.code_bucket_id
   code_buck_arn = module.extract.code_bucket_arn
   load_database_creds = var.load_cred_secret
+  ingested_lambda_layer = module.extract.ingested_lambda_layer
 }

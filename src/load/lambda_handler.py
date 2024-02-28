@@ -24,6 +24,7 @@ def lambda_handler(event, context):
     - event: a valid S3 PutObject event
     - context: Not used
 
+
     Functionality:
     get database connection from secrets manager
     get parquet data from processed bucket
@@ -76,7 +77,6 @@ def lambda_handler(event, context):
             test_parquet_read = wr.s3.read_parquet(
                 f"s3://{bucket_name}/{file}")
             rows = len(test_parquet_read)
-
             if "date" not in file:
                 test_parquet_read.insert(
                     0,

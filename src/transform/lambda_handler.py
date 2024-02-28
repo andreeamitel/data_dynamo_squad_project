@@ -13,6 +13,7 @@ from botocore.exceptions import ClientError
 import logging
 import pandas as pd
 import awswrangler as wr
+
 logger = logging.getLogger("Logger")
 logger.setLevel(logging.INFO)
 
@@ -43,70 +44,67 @@ def lambda_handler(event, context):
         ingestion_time = ingestion_timestamp["Body"].read().decode("utf-8")
 
         new_data = get_latest_data(ingestion_bucket_name, s3, ingestion_time)
-        print("new_data >>>>>", new_data)
 
         current_time = datetime.now().isoformat()
-        processed_bucket = secretsmanager.get_secret_value(SecretId="processed_bucket3")[
-            "SecretString"
-        ]
+        processed_bucket = secretsmanager.get_secret_value(
+            SecretId="processed_bucket3"
+        )["SecretString"]
 
         table_names = [list(table.keys())[0] for table in new_data]
-        print("table_names >>>>>", table_names)
         updated_data = {list(table.keys())[0]: table for table in new_data}
-        print("updated_data >>>>>", updated_data)
         counter = 0
         for table in table_names:
             counter += 1
             if table == "counterparty":
-                print("counterparty loop")
                 dim_counterparty_table = dim_counterparty(
                     updated_data["address"], updated_data[table]
                 )
-                python_to_parquet(dim_counterparty_table, processed_bucket, current_time)
+                python_to_parquet(
+                    dim_counterparty_table, processed_bucket, current_time
+                )
             elif table == "staff":
-                print("staff loop")
                 dim_staff_table = dim_staff(
                     updated_data[table], updated_data["department"]
                 )
-                python_to_parquet(dim_staff_table, processed_bucket, current_time)
+                python_to_parquet(
+                    dim_staff_table, processed_bucket, current_time)
             elif table == "currency":
-                print("currency loop")
                 dim_currency_table = dim_currency(updated_data[table])
-                python_to_parquet(dim_currency_table, processed_bucket, current_time)
+                python_to_parquet(dim_currency_table,
+                                  processed_bucket, current_time)
             elif table == "design":
-                print("design loop")
                 dim_design_table = dim_design(updated_data[table])
-                python_to_parquet(dim_design_table, processed_bucket, current_time)
+                python_to_parquet(dim_design_table,
+                                  processed_bucket, current_time)
             elif table == "address":
-                print("address loop")
                 dim_location_table = dim_location(updated_data[table])
-                python_to_parquet(dim_location_table, processed_bucket, current_time)
+                python_to_parquet(dim_location_table,
+                                  processed_bucket, current_time)
             elif table == "department":
-                print("department loop")
                 pass
             else:
-                print("sales loop")
                 sales_df = pd.DataFrame(updated_data[table]["sales_order"])
                 dim_date_df = dim_date(sales_df)
                 wr.s3.to_parquet(
-                dim_date_df,
-                path=f"s3://{processed_bucket}/dim_date/{current_time}.parquet",
-                index=False,
+                    dim_date_df,
+                    path=f"""
+                    s3://{processed_bucket}/dim_date/{current_time}.parquet
+                    """,
+                    index=False,
                 )
                 fact_sales_order_df = fact_sales_order(sales_df)
                 wr.s3.to_parquet(
-                fact_sales_order_df,
-                path=f"s3://{processed_bucket}/fact_sales_order/{current_time}.parquet",
-                index=False,
-                )       
-                print("wrote to parquet")
-            print(counter, "<<< counter")
+                    fact_sales_order_df,
+                    path=f"""
+                    s3://{processed_bucket}/fact_sales_order/{current_time}.parquet
+                    """,
+                    index=False,
+                )
         s3.put_object(
             Body=f"{current_time}",
             Bucket=processed_bucket,
             Key="Last_Processed.txt",
         )
-        print("end of lambda2")
     except ClientError as err:
         response_code = err.response["Error"]["Code"]
         response_msg = err.response["Error"]["Message"]
@@ -114,4 +112,3 @@ def lambda_handler(event, context):
     except Exception as err:
         logger.error(err)
         print(err)
-        print("ERROR FFS")

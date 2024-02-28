@@ -1,6 +1,8 @@
-import pandas as pd 
+import pandas as pd
 import pytest
 from src.transform.fact_sales_order import fact_sales_order
+
+
 @pytest.mark.describe("fact_sales_order")
 @pytest.mark.it("function returns dataframe with correct columns")
 def test_returns_correct_columns():
@@ -55,11 +57,22 @@ def test_returns_correct_columns():
     bool_list = [
         column_name in result
         for column_name in [
-            "sales_record_id", "sales_order_id", "created_date", "created_time", "last_updated_time", "sales_staff_id", "counterparty_id", "units_sold", "unit_price", "currency_id", "design_id", "agreed_payment_date", "agreed_delivery_date", "agreed_delivery_location_id"
+            "sales_order_id",
+            "created_date",
+            "created_time",
+            "sales_staff_id",
+            "counterparty_record_id",
+            "units_sold",
+            "unit_price",
+            "currency_record_id",
+            "design_record_id",
+            "agreed_payment_date",
+            "agreed_delivery_date",
+            "agreed_delivery_location_id",
         ]
     ]
-    print(result.columns)
     assert all(bool_list)
+
 
 @pytest.mark.describe("fact_sales_order")
 @pytest.mark.it("function returns dataframe with correct values")
@@ -112,6 +125,21 @@ def test_returns_correct_values():
     }
     df = pd.DataFrame(sales_order_dataframe["sales_order"])
     result = fact_sales_order(df)
-    print(result.to_dict())
-
-    assert result.to_dict() == {'sales_record_id': {0: 1, 1: 2, 2: 3}, 'sales_order_id': {0: 1, 1: 2, 2: 3}, 'created_date': {0: '2022-11-03', 1: '2022-11-03', 2: '2022-11-03'}, 'created_time': {0: '14:20:52.186', 1: '14:20:52.186', 2: '14:20:52.188'}, 'last_updated_time': {0: '14:20:52.186', 1: '14:20:52.186', 2: '14:20:52.188'}, 'sales_staff_id': {0: 16, 1: 19, 2: 10}, 'counterparty_id': {0: 18, 1: 8, 2: 4}, 'units_sold': {0: 84754, 1: 42972, 2: 65839}, 'unit_price': {0: 2.43, 1: 3.94, 2: 2.91}, 'currency_id': {0: 3, 1: 2, 2: 3}, 'design_id': {0: 9, 1: 3, 2: 4}, 'agreed_payment_date': {0: '2022-11-03', 1: '2022-11-08', 2: '2022-11-07'}, 'agreed_delivery_date': {0: '2022-11-10', 1: '2022-11-07', 2: '2022-11-06'}, 'agreed_delivery_location_id': {0: 4, 1: 8, 2: 19}}
+    assert result.to_dict() == {
+        "sales_order_id": {0: 1, 1: 2, 2: 3},
+        "created_date": {0: "2022-11-03", 1: "2022-11-03", 2: "2022-11-03"},
+        "created_time":
+        {0: "14:20:52.186", 1: "14:20:52.186", 2: "14:20:52.188"},
+        "sales_staff_id": {0: 16, 1: 19, 2: 10},
+        "counterparty_record_id": {0: 18, 1: 8, 2: 4},
+        "units_sold": {0: 84754, 1: 42972, 2: 65839},
+        "unit_price": {0: 2.43, 1: 3.94, 2: 2.91},
+        "currency_record_id": {0: 3, 1: 2, 2: 3},
+        "design_record_id":
+        {0: 9, 1: 3, 2: 4},
+        "agreed_payment_date":
+        {0: "2022-11-03", 1: "2022-11-08", 2: "2022-11-07"},
+        "agreed_delivery_date":
+        {0: "2022-11-10", 1: "2022-11-07", 2: "2022-11-06"},
+        "agreed_delivery_location_id": {0: 4, 1: 8, 2: 19},
+    }

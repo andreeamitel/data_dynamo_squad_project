@@ -78,7 +78,7 @@ data "aws_iam_policy_document" "secretmanager_get_secret_policy" {
     actions   = ["secretsmanager:GetSecretValue"]
     effect    = "Allow"
     #need arn of new database credentials
-    resources = ["arn:aws:secretsmanager:eu-west-2:767397913254:secret:processed_bucket3-Hiyv5F","${aws_secretsmanager_secret.database_creds_secret_load.arn}", "arn:aws:secretsmanager:eu-west-2:767397913254:secret:load_database_creds-hQdF6I", "arn:aws:secretsmanager:eu-west-2:767397913254:secret:warehouse_test_creds-BrGxvq"]
+    resources = ["${aws_secretsmanager_secret.database_creds_secret_load.arn}"]
   }
 }
 
