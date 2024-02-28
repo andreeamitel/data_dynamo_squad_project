@@ -19,5 +19,7 @@ def dim_currency(currency_df):
     currency_copy["currency_name"] = currency_copy["currency_code"].map(
         currency_code_name
     )
-
+    currency_copy = currency_copy[
+        ["currency_id", "currency_code", "currency_name"]
+        ]
     return currency_copy

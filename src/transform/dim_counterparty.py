@@ -18,7 +18,9 @@ def dim_counterparty(address_df, counterparty_df):
         columns={"legal_address_id": "address_id"}
     )
 
-    dim_counterparty_df = pd.merge(address_copy, counterparty_copy, on="address_id")
+    dim_counterparty_df = pd.merge(
+        address_copy, counterparty_copy, on="address_id"
+        )
 
     dim_counterparty_df = dim_counterparty_df.rename(
         columns={
