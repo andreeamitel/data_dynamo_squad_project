@@ -5,7 +5,7 @@ import boto3
 import awswrangler as wr
 from moto import mock_aws
 from src.transform.python_to_parquet import python_to_parquet
-
+import pandas as pd
 
 @pytest.mark.describe("python_to_parquet")
 @pytest.mark.it("create parquet file in s3")
@@ -31,7 +31,8 @@ def test_creates_parquet():
             }
         ]
     }
-    python_to_parquet(dim_counterparty_data, "processed-test-bucket", "test-folder")
+    dict_dim_counterparty_df = {"dim_counterparty": pd.DataFrame(dim_counterparty_data["dim_counterparty"])}
+    python_to_parquet(dict_dim_counterparty_df, "processed-test-bucket", "test-folder")
     result = s3.list_objects(Bucket="processed-test-bucket")
     key = result["Contents"][0]["Key"]
     assert key == "dim_counterparty/test-folder.parquet"
@@ -61,7 +62,8 @@ def test_check_parquet():
             }
         ]
     }
-    python_to_parquet(dim_counterparty_data, "processed-test-bucket", "test-folder")
+    dict_dim_counterparty_df = {"dim_counterparty": pd.DataFrame(dim_counterparty_data["dim_counterparty"])}
+    python_to_parquet(dict_dim_counterparty_df, "processed-test-bucket", "test-folder")
     result = s3.get_object(
         Bucket="processed-test-bucket", Key="dim_counterparty/test-folder.parquet"
     )

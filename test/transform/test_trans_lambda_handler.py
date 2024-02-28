@@ -7,7 +7,7 @@ from moto import mock_aws
 import pytest
 import boto3
 from src.transform.lambda_handler import lambda_handler
-
+import pandas as pd
 
 
 @pytest.fixture(scope="function")
@@ -41,6 +41,7 @@ def create_bucket2(aws_s3):
 @pytest.fixture
 def create_object(create_bucket1):
     date_time = "2024-02-22T15:41:59.776283"
+    print(date_time)
     boto3.client("s3").put_object(
         Body=f"{date_time}",
         Bucket="ingested-bucket-20240222080432331400000006",
@@ -121,8 +122,8 @@ def test_get_latest_data(
 @pytest.mark.it("test that dim_currency gets called with correct values")
 @patch(
     "src.transform.lambda_handler.get_latest_data",
-    return_value=[{
-            "currency": [
+    return_value={
+            "currency": pd.DataFrame([
                 {
                     "currency_id": 1,
                     "currency_code": "GBP",
@@ -135,9 +136,9 @@ def test_get_latest_data(
                     "created_at": "2022-11-03T14:20:49.962",
                     "last_updated": "2022-11-03T14:20:49.962",
                 },
-            ]
+            ])
         }
-    ]
+    
 )
 @patch("src.transform.lambda_handler.dim_currency")
 @patch("src.transform.lambda_handler.python_to_parquet")
@@ -153,7 +154,7 @@ def test_dim_currency(
 ):
     lambda_handler(test_event, test_context)
     mock_dim_currency.assert_called_once_with(
-        mock_get_latest_data.return_value[0]
+        mock_get_latest_data.return_value["currency"]
     )
 
 
@@ -161,8 +162,8 @@ def test_dim_currency(
 @pytest.mark.it("test that dim_counterparty gets called with correct values")
 @patch(
     "src.transform.lambda_handler.get_latest_data",
-    return_value=[{
-            "counterparty": [
+    return_value={
+            "counterparty": pd.DataFrame([
                 {
                     "counterparty_id": 1,
                     "counterparty_legal_name": "Orcs",
@@ -172,10 +173,9 @@ def test_dim_currency(
                     "created_at": datetime(2022, 11, 3, 15, 20, 49, 962000),
                     "last_updated": datetime(2022, 11, 3, 15, 20, 49, 962000),
                 }
-            ]
-        },
-        
-           { "address": [
+            ])
+        ,
+            "address": pd.DataFrame([
                 {
                     "address_id": 1,
                     "address_line_1": "64 zoo lane",
@@ -188,13 +188,15 @@ def test_dim_currency(
                     "created_at": datetime(2022, 11, 3, 15, 20, 49, 962000),
                     "last_updated": datetime(2022, 11, 3, 15, 20, 49, 962000),
                 }
-            ]
-    }],
+            ])
+    }
 )
 @patch("src.transform.lambda_handler.python_to_parquet")
 @patch("src.transform.lambda_handler.dim_counterparty")
+@patch("src.transform.lambda_handler.dim_location")
 @mock_aws
 def test_dim_counterparty(
+    mock_dim_location,
     mock_dim_counterparty,
     mock_python_to_parquet,
     mock_get_latest_data,
@@ -205,8 +207,8 @@ def test_dim_counterparty(
 ):
     lambda_handler(test_event, test_context)
     mock_dim_counterparty.assert_called_once_with(
-        mock_get_latest_data.return_value[1],
-        mock_get_latest_data.return_value[0],
+        mock_get_latest_data.return_value["address"],
+        mock_get_latest_data.return_value["counterparty"],
     )
 
 
@@ -214,8 +216,8 @@ def test_dim_counterparty(
 @pytest.mark.it("test that python to parquet gets called with correct variables for address")
 @patch(
     "src.transform.lambda_handler.get_latest_data",
-    return_value=[ {
-            "address": [
+    return_value= {
+            "address": pd.DataFrame([
                 {
                     "address_id": 1,
                     "address_line_1": "6826 Herzog Via",
@@ -240,14 +242,14 @@ def test_dim_counterparty(
                     "created_at": "2022-11-03T14:20:49.962",
                     "last_updated": "2022-11-03T14:20:49.962",
                 },
-            ]
-        }])
+            ])
+        })
 @patch("src.transform.lambda_handler.python_to_parquet")
 @patch(
     "src.transform.lambda_handler.dim_location",
     return_value=(
-       {
-        "dim_location": [
+       
+        pd.DataFrame([
             {
                 "location_id": 1,
                 "address_line_1": "6826 Herzog Via",
@@ -268,7 +270,7 @@ def test_dim_counterparty(
                 "country": "San Marino",
                 "phone": "9621 880720",
             },
-        ]})
+        ]))
 )
 @patch("src.transform.lambda_handler.datetime")
 @mock_aws
@@ -285,7 +287,7 @@ def test_location_parquet(
     mock_date.now().isoformat.return_value = "2024-02-22T16:41:59.776283"
     lambda_handler(test_event, test_context)
     mock_python_to_parquet.assert_called_with(
-        mock_dim_location.return_value, "processed_bucket123", "2024-02-22T16:41:59.776283"
+        {"dim_location": mock_dim_location.return_value}, "processed_bucket123", "2024-02-22T16:41:59.776283"
     )
 
 
