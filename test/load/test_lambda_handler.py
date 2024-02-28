@@ -3,9 +3,8 @@ from src.transform.python_to_parquet import python_to_parquet
 import pytest
 import boto3
 from moto import mock_aws
-from unittest.mock import patch, Mock
+from unittest.mock import patch
 import json
-import awswrangler as wr
 import logging
 from pg8000.native import DatabaseError
 from src.transform.dim_location import dim_location
@@ -25,7 +24,7 @@ def aws_secrets():
 @pytest.fixture
 def create_bucket1(aws_s3):
     boto3.client("s3").create_bucket(
-        Bucket="processed-bucket-20240227173729838900000004",
+        Bucket="processed-bucket",
         CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
     )
 
@@ -36,7 +35,7 @@ def create_parquet_file(create_bucket1):
         file = json.load(f)
         python_to_parquet(
             file,
-            "processed-bucket-20240227173729838900000004",
+            "processed-bucket",
             "2022-02-14 16:54:36.774180",
         )
 
@@ -46,7 +45,7 @@ def create_last_processed_file(create_bucket1):
     s3 = boto3.client("s3")
     s3.upload_file(
         "./test/load/Last_Processed.txt",
-        "processed-bucket-20240227173729838900000004",
+        "processed-bucket",
         "Last_Processed.txt",
     )
     with open("./test/load/dim_address/2024-02-27T15_35_42.711277.json", "r") as f:
@@ -54,12 +53,12 @@ def create_last_processed_file(create_bucket1):
         dim_address = dim_location(file)
         python_to_parquet(
             dim_address,
-            "processed-bucket-20240227173729838900000004",
+            "processed-bucket",
             "2022-02-14 16:54:36.774180")
 
     s3.upload_file(
         "test/load/dim_address_copy/2024-02-27T15_35_57.764941.parquet",
-        "processed-bucket-20240227173729838900000004",
+        "processed-bucket",
         "dim_null/2024-02-25T14_01_42.316404.parquet",
     )
 
@@ -67,19 +66,29 @@ def create_last_processed_file(create_bucket1):
 @pytest.fixture
 def secretmanager(aws_secrets):
     aws_secrets.create_secret(
-        Name="warehouse_test_creds",
+        Name="load_database_creds",
         SecretString='{"hostname":"example_host.com","port": "4321", "database" : "example_database", "username": "project_team_0", "password":"EXAMPLE-PASSWORD", "schema": "test"}',
     )
-    aws_secrets.create_secret(
-        Name="processed_bucket3",
-        SecretString="processed-bucket-20240227173729838900000004",
-    )
-
 
 @pytest.fixture
 def mock_conn():
     with patch("src.load.lambda_handler.pg8000.connect") as conn:
         yield conn
+
+event = {
+    "Records": [
+        {
+            "s3": {
+                "bucket": {
+                    "name": "processed-bucket",
+                },
+                "object": {
+                    "key": "Last_Processed.txt",
+                },
+            },
+        }
+    ]
+}
 
 
 @pytest.mark.describe("lambda_handler")
@@ -96,8 +105,7 @@ def test_database_conn(
     create_parquet_file,
     create_last_processed_file,
 ):
-    mock_to_sql.return_value = 3
-    lambda_handler("thing1", "thing2")
+    lambda_handler(event, "thing2")
     mock_conn.assert_called_with(
         host="example_host.com",
         port="4321",
@@ -118,9 +126,9 @@ def test_read_one_file(
     mock_conn,
     caplog,
 ):
-    mock_to_sql.return_value = 3
+    
     with caplog.at_level(logging.INFO):
-        lambda_handler("event", "context")
+        lambda_handler(event, "context")
         expected = "Successfully inserted 3 rows into fact_sales_order table"
         assert expected in caplog.text
 
@@ -136,9 +144,8 @@ def test_ignore_timestamp(
     mock_conn,
     caplog,
 ):
-    mock_to_sql.return_value = 3
     with caplog.at_level(logging.INFO):
-        lambda_handler("event", "context")
+        lambda_handler(event, "thing2")
         expected = "Successfully inserted 3 rows into dim_address_copy table"
         assert expected not in caplog.text
 
@@ -149,9 +156,8 @@ def test_ignore_timestamp(
 def test_client_error(
     mock_to_sql, create_parquet_file, create_last_processed_file, mock_conn, caplog
 ):
-    mock_to_sql.return_value = 3
     with caplog.at_level(logging.INFO):
-        lambda_handler("event", "context")
+        lambda_handler(event, "thing2")
         expected = "ClientError: ResourceNotFoundException: Secrets Manager can't find the specified secret."
         assert expected in caplog.text
 
@@ -169,9 +175,9 @@ def test_ignore_timestamp_database_error(
     caplog,
 ):
     mock_fail_conn.side_effect = DatabaseError()
-    mock_to_sql.return_value = 3
+    
     with caplog.at_level(logging.INFO):
-        lambda_handler("event", "context")
+        lambda_handler(event, "thing2")
         expected = "DatabaseError"
         assert expected in caplog.text
 
@@ -198,6 +204,6 @@ def test_ignore_timestamp_sql_error(
         }
     )
     with caplog.at_level(logging.INFO):
-        lambda_handler("event", "context")
+        lambda_handler(event, "thing2")
         expected = "invalid input"
         assert expected in caplog.text

@@ -1,11 +1,14 @@
-import boto3
-import pg8000
-import awswrangler as wr
+"""Contains lambda_handler function
+to upload to totesys database"""
+
 import json
 import logging
-from botocore.exceptions import ClientError
-from pg8000.native import DatabaseError
 from datetime import datetime
+import boto3
+import awswrangler as wr
+from botocore.exceptions import ClientError
+import pg8000
+from pg8000.native import DatabaseError
 
 logger = logging.getLogger("Logger")
 logger.setLevel(logging.INFO)
@@ -13,15 +16,13 @@ logger.setLevel(logging.INFO)
 
 def lambda_handler(event, context):
     """
-    This function is responsible for periodically scheduling an update of the data warehouse by taking the parquet file from the processed bucket.
+    This function is responsible for periodically\n
+    scheduling an update of the data warehouse by taking\n
+    the parquet file from the processed bucket.
 
     Args:
-    event:
-        a valid S3 PutObject event -
-            see https://docs.aws.amazon.com/AmazonS3/latest/userguide/notification-content-structure.html
-    context:
-        a valid AWS lambda Python context object - see
-            https://docs.aws.amazon.com/lambda/latest/dg/python-context.html
+    - event: a valid S3 PutObject event
+    - context: Not used
 
     Functionality:
     get database connection from secrets manager
@@ -31,23 +32,24 @@ def lambda_handler(event, context):
 
     try:
         s3 = boto3.client("s3")
-        secretsmanager = boto3.client("secretsmanager", region_name="eu-west-2")
-        secret = secretsmanager.get_secret_value(SecretId="warehouse_test_creds")
+        secretsmanager = boto3.client(
+            "secretsmanager",
+            region_name="eu-west-2"
+            )
+        secret = secretsmanager.get_secret_value(
+            SecretId="load_database_creds")
         secret_string = json.loads(secret["SecretString"])
-        bucket_name = secretsmanager.get_secret_value(SecretId="processed_bucket3")[
-            "SecretString"
-        ]
-
+        bucket_name = event["Records"][0]["s3"]["bucket"]["name"]
+        timestamp_key = event["Records"][0]["s3"]["object"]["key"]
 
         last_processed = (
             s3.get_object(
                 Bucket=bucket_name,
-                Key="Last_Processed.txt",
+                Key=timestamp_key,
             )["Body"]
             .read()
             .decode("UTF-8")
         )
-
         bucket_contents = s3.list_objects_v2(Bucket=bucket_name)["Contents"]
 
         files = []
@@ -55,7 +57,7 @@ def lambda_handler(event, context):
             if last_processed in obj["Key"]:
                 files.append(obj["Key"])
         files.sort()
-        print(files)
+
         dbapi_con = pg8000.connect(
             host=secret_string["hostname"],
             port=secret_string["port"],
@@ -67,19 +69,26 @@ def lambda_handler(event, context):
         timestamp = str(datetime.now().isoformat()).split("T")
         date = timestamp[0]
         time = timestamp[1]
-    
+
         for file in files:
             table_name = file.split("/")[0]
-            record_id_col = table_name.split("_")[1] 
-            test_parquet_read = wr.s3.read_parquet(f"s3://{bucket_name}/{file}")
+            record_id_col = table_name.split("_")[1]
+            test_parquet_read = wr.s3.read_parquet(
+                f"s3://{bucket_name}/{file}")
+            rows = len(test_parquet_read)
 
             if "date" not in file:
-                test_parquet_read.insert(0, f"{record_id_col}_record_id", test_parquet_read[f"{test_parquet_read.columns.values[0]}"])
+                test_parquet_read.insert(
+                    0,
+                    f"{record_id_col}_record_id",
+                    test_parquet_read[
+                        f"{test_parquet_read.columns.values[0]}"]
+                    )
             test_parquet_read['last_updated_date'] = date
             test_parquet_read['last_updated_time'] = time
 
             lists_keys = str(test_parquet_read.columns.values.tolist()[0])
-            insert_rows = wr.postgresql.to_sql(
+            wr.postgresql.to_sql(
                 df=test_parquet_read,
                 con=dbapi_con,
                 table=table_name,
@@ -89,7 +98,7 @@ def lambda_handler(event, context):
                 use_column_names=True,
             )
             logger.info(
-                f"Successfully inserted {insert_rows} rows into {table_name} table "
+                f"Successfully inserted {rows} rows into {table_name} table."
             )
     except ClientError as err:
         response_code = err.response["Error"]["Code"]
