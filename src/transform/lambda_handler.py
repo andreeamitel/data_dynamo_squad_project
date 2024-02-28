@@ -94,6 +94,7 @@ def lambda_handler(event, context):
             Bucket=processed_bucket,
             Key="Last_Processed.txt",
         )
+        print("everything done i hope")
 
     except ClientError as err:
         response_code = err.response["Error"]["Code"]
