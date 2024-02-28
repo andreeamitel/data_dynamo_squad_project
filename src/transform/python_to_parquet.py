@@ -3,7 +3,7 @@ import awswrangler as wr
 import warnings
 
 
-def python_to_parquet(table_data, bucket_name, timestamp_key):
+def python_to_parquet(dict_df, bucket_name, timestamp_key):
     """
     Arg:
     - table_data - new data created from unit functions in correct schema,
@@ -21,10 +21,9 @@ def python_to_parquet(table_data, bucket_name, timestamp_key):
         category=FutureWarning,
         module="awswrangler",
     )
-    table_name = list(table_data.keys())[0]
-    dataframe = pd.DataFrame(table_data[table_name])
+    table_name = list(dict_df.keys())[0]
     wr.s3.to_parquet(
-        dataframe,
+        dict_df[table_name],
         path=f"s3://{bucket_name}/{table_name}/{timestamp_key}.parquet",
         index=False,
     )
