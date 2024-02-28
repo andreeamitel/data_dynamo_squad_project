@@ -46,7 +46,8 @@ def lambda_handler(event, context):
         s3 = boto3.client("s3")
         secretsmanager = boto3.client(
             "secretsmanager", region_name="eu-west-2")
-        bucket = secretsmanager.get_secret_value(SecretId="ingestion_bucket_02")[
+        bucket = secretsmanager.get_secret_value(
+            SecretId="ingestion_bucket_02")[
             "SecretString"
         ]
         obj = s3.list_objects_v2(Bucket=bucket)
