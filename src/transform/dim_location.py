@@ -1,24 +1,29 @@
-import copy
+def dim_location(address_df):
+    """
+    This function takes one dataframe,
+    address and returns
+    dim_location dataframe.
 
-
-def dim_location(address_table_data):
-    if address_table_data == {}:
-        return {}
-    location_dict = copy.deepcopy(address_table_data)
-    dim_loca = {"dim_location": []}
-
-    for address in location_dict["address"]:
-        dim_loca["dim_location"].append(
-            {
-                "address_id": address["address_id"],
-                "address_line_1": address["address_line_1"],
-                "address_line_2": address["address_line_2"],
-                "district": address["district"],
-                "city": address["city"],
-                "postal_code": address["postal_code"],
-                "country": address["country"],
-                "phone": address["phone"],
-            }
-        )
-
-    return dim_loca
+    Args:
+    'address' dataframe
+    Returns:
+    dim_location dataframe
+    """
+    dim_location_df = address_df.copy(deep=True)
+    dim_location_df = dim_location_df.drop(
+        columns=["created_at", "last_updated"])
+    dim_location_df = dim_location_df.rename(
+        columns={"address_id": "location_id"}
+    )
+    dim_location_df = dim_location_df[
+        ["location_id",
+         "address_line_1",
+         "address_line_2",
+         "district",
+         "city",
+         "postal_code",
+         "country",
+         "phone"
+         ]
+    ]
+    return dim_location_df

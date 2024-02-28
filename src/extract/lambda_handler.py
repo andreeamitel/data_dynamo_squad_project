@@ -99,4 +99,3 @@ def lambda_handler(event, context):
         logger.error(f"KeyError: {err}")
     except DatabaseError as err:
         logger.error(f"DatabaseError : {err}")
-
