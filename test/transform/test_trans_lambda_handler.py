@@ -52,7 +52,7 @@ def create_object(create_bucket1):
 @pytest.fixture
 def secretmanager(aws_secrets):
     aws_secrets.create_secret(
-        Name="processed_bucket", SecretString="processed_bucket123"
+        Name="processed_bucket3", SecretString="processed_bucket123"
     )
 
 
@@ -162,8 +162,7 @@ def test_dim_currency(
 @pytest.mark.it("test that dim_counterparty gets called with correct values")
 @patch(
     "src.transform.lambda_handler.get_latest_data",
-    return_value={
-        "counterparty": {
+    return_value=[{
             "counterparty": [
                 {
                     "counterparty_id": 1,
@@ -176,8 +175,8 @@ def test_dim_currency(
                 }
             ]
         },
-        "address": {
-            "address": [
+        
+           { "address": [
                 {
                     "address_id": 1,
                     "address_line_1": "64 zoo lane",
@@ -191,8 +190,7 @@ def test_dim_currency(
                     "last_updated": datetime(2022, 11, 3, 15, 20, 49, 962000),
                 }
             ]
-        },
-    },
+    }],
 )
 @patch("src.transform.lambda_handler.python_to_parquet")
 @patch("src.transform.lambda_handler.dim_counterparty")
@@ -208,84 +206,76 @@ def test_dim_counterparty(
 ):
     lambda_handler(test_event, test_context)
     mock_dim_counterparty.assert_called_once_with(
-        mock_get_latest_data.return_value["counterparty"],
-        mock_get_latest_data.return_value["address"],
+        mock_get_latest_data.return_value[1],
+        mock_get_latest_data.return_value[0],
     )
 
 
 @pytest.mark.describe("lambda_handler")
-@pytest.mark.it("test that python gets called with correct variables for fact sales")
+@pytest.mark.it("test that python to parquet gets called with correct variables for address")
 @patch(
     "src.transform.lambda_handler.get_latest_data",
-    return_value={
-        "sales_order": {
-            "sales_order": [
+    return_value=[ {
+            "address": [
                 {
-                    "sales_order_id": 1,
-                    "created_at": "2022-11-03T14:20:52.186",
-                    "last_updated": "2022-11-03T14:20:52.186",
-                    "design_id": 9,
-                    "staff_id": 16,
-                    "counterparty_id": 18,
-                    "units_sold": 84754,
-                    "unit_price": 2.43,
-                    "currency_id": 3,
-                    "agreed_delivery_date": "2022-11-10",
-                    "agreed_payment_date": "2022-11-03",
-                    "agreed_delivery_location_id": 4,
-                }
+                    "address_id": 1,
+                    "address_line_1": "6826 Herzog Via",
+                    "address_line_2": None,
+                    "district": "Avon",
+                    "city": "New Patienceburgh",
+                    "postal_code": "28441",
+                    "country": "Turkey",
+                    "phone": "1803 637401",
+                    "created_at": "2022-11-03T14:20:49.962",
+                    "last_updated": "2022-11-03T14:20:49.962",
+                },
+                {
+                    "address_id": 2,
+                    "address_line_1": "179 Alexie Cliffs",
+                    "address_line_2": None,
+                    "district": None,
+                    "city": "Aliso Viejo",
+                    "postal_code": "99305-7380",
+                    "country": "San Marino",
+                    "phone": "9621 880720",
+                    "created_at": "2022-11-03T14:20:49.962",
+                    "last_updated": "2022-11-03T14:20:49.962",
+                },
             ]
-        }
-    },
-)
+        }])
 @patch("src.transform.lambda_handler.python_to_parquet")
 @patch(
-    "src.transform.lambda_handler.fact_sales_order",
+    "src.transform.lambda_handler.dim_location",
     return_value=(
-        {
-            "fact_sales": {
-                "sales_order": [
-                    {
-                        "sales_record_id": 1,
-                        "sales_order_id": 1,
-                        "created_date": "2022-11-03",
-                        "created_time": "14:20:52.186",
-                        "last_updated_date": "2022-11-03",
-                        "last_updated_time": "14:20:52.186",
-                        "design_id": 9,
-                        "sales_staff_id": 16,
-                        "counterparty_id": 18,
-                        "units_sold": 84754,
-                        "unit_price": 2.43,
-                        "currency_id": 3,
-                        "agreed_delivery_date": "2022-11-10",
-                        "agreed_payment_date": "2022-11-03",
-                        "agreed_delivery_location_id": 4,
-                    }
-                ]
-            }
-        },
-        {
-            "dim_date": [
-                {
-                    "date_id": "2022-11-03",
-                    "year": 2022,
-                    "month": 11,
-                    "day": 3,
-                    "day_of_week": 4,
-                    "day_name": "Thursday",
-                    "month_name": "November",
-                    "quarter": 4,
-                }
-            ]
-        },
-    ),
+       {
+        "dim_location": [
+            {
+                "location_id": 1,
+                "address_line_1": "6826 Herzog Via",
+                "address_line_2": None,
+                "district": "Avon",
+                "city": "New Patienceburgh",
+                "postal_code": "28441",
+                "country": "Turkey",
+                "phone": "1803 637401",
+            },
+            {
+                "location_id": 2,
+                "address_line_1": "179 Alexie Cliffs",
+                "address_line_2": None,
+                "district": None,
+                "city": "Aliso Viejo",
+                "postal_code": "99305-7380",
+                "country": "San Marino",
+                "phone": "9621 880720",
+            },
+        ]})
 )
 @patch("src.transform.lambda_handler.datetime")
 @mock_aws
-def test_fact_sales_parquet(
+def test_location_parquet(
     mock_date,
-    mock_fact_sales,
+    mock_dim_location,
     mock_python_to_parquet,
     mock_get_latest_data,
     create_bucket1,
@@ -295,9 +285,8 @@ def test_fact_sales_parquet(
 ):
     mock_date.now().isoformat.return_value = "2024-02-22T16:41:59.776283"
     lambda_handler(test_event, test_context)
-    fact_sales, dim_dates = mock_fact_sales.return_value
     mock_python_to_parquet.assert_called_with(
-        dim_dates, "processed_bucket123", "2024-02-22T16:41:59.776283"
+        mock_dim_location.return_value, "processed_bucket123", "2024-02-22T16:41:59.776283"
     )
 
 
