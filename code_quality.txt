@@ -1,0 +1,119 @@
+************* Module extract.extract_data
+src/extract/extract_data.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module extract.conversion_and_write_data
+src/extract/conversion_and_write_data.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module extract.lambda_handler
+src/extract/lambda_handler.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+src/extract/lambda_handler.py:6:0: E0401: Unable to import 'src.extract.check_for_changes' (import-error)
+src/extract/lambda_handler.py:7:0: E0401: Unable to import 'src.extract.extract_data' (import-error)
+src/extract/lambda_handler.py:8:0: E0401: Unable to import 'src.extract.conversion_and_write_data' (import-error)
+src/extract/lambda_handler.py:15:0: R0914: Too many local variables (19/15) (too-many-locals)
+src/extract/lambda_handler.py:99:8: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+src/extract/lambda_handler.py:101:8: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+src/extract/lambda_handler.py:15:19: W0613: Unused argument 'event' (unused-argument)
+src/extract/lambda_handler.py:15:26: W0613: Unused argument 'context' (unused-argument)
+src/extract/lambda_handler.py:3:0: C0411: standard import "json" should be placed before third party imports "boto3", "botocore.exceptions.ClientError" (wrong-import-order)
+src/extract/lambda_handler.py:4:0: C0411: standard import "datetime.datetime" should be placed before third party imports "boto3", "botocore.exceptions.ClientError" (wrong-import-order)
+src/extract/lambda_handler.py:9:0: C0411: standard import "logging" should be placed before third party imports "boto3", "botocore.exceptions.ClientError", "pg8000.native.Connection" and first party imports "src.extract.check_for_changes.check_for_changes", "src.extract.extract_data.extract_data", "src.extract.conversion_and_write_data.convert_and_write_data"  (wrong-import-order)
+************* Module extract.check_for_changes
+src/extract/check_for_changes.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+src/extract/check_for_changes.py:1:0: W0611: Unused literal imported from pg8000.native (unused-import)
+************* Module transform.dim_counterparty
+src/transform/dim_counterparty.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module transform.dim_date
+src/transform/dim_date.py:8:0: C0301: Line too long (117/100) (line-too-long)
+src/transform/dim_date.py:118:0: C0305: Trailing newlines (trailing-newlines)
+src/transform/dim_date.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+src/transform/dim_date.py:58:0: C0116: Missing function or method docstring (missing-function-docstring)
+src/transform/dim_date.py:92:54: W0108: Lambda may not be necessary (unnecessary-lambda)
+src/transform/dim_date.py:93:51: W0108: Lambda may not be necessary (unnecessary-lambda)
+src/transform/dim_date.py:94:53: W0108: Lambda may not be necessary (unnecessary-lambda)
+src/transform/dim_date.py:102:0: C0116: Missing function or method docstring (missing-function-docstring)
+src/transform/dim_date.py:108:0: C0116: Missing function or method docstring (missing-function-docstring)
+src/transform/dim_date.py:114:0: C0116: Missing function or method docstring (missing-function-docstring)
+************* Module transform.fact_sales_order
+src/transform/fact_sales_order.py:18:0: C0303: Trailing whitespace (trailing-whitespace)
+src/transform/fact_sales_order.py:30:0: C0303: Trailing whitespace (trailing-whitespace)
+src/transform/fact_sales_order.py:31:0: C0303: Trailing whitespace (trailing-whitespace)
+src/transform/fact_sales_order.py:39:0: C0301: Line too long (190/100) (line-too-long)
+src/transform/fact_sales_order.py:40:0: C0301: Line too long (271/100) (line-too-long)
+src/transform/fact_sales_order.py:41:0: C0304: Final newline missing (missing-final-newline)
+src/transform/fact_sales_order.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+src/transform/fact_sales_order.py:34:0: C0116: Missing function or method docstring (missing-function-docstring)
+src/transform/fact_sales_order.py:1:0: W0611: Unused pandas imported as pd (unused-import)
+************* Module transform.dim_design
+src/transform/dim_design.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module transform.dim_location
+src/transform/dim_location.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+src/transform/dim_location.py:4:0: C0116: Missing function or method docstring (missing-function-docstring)
+************* Module transform.get_latest_data
+src/transform/get_latest_data.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+src/transform/get_latest_data.py:4:0: C0116: Missing function or method docstring (missing-function-docstring)
+************* Module transform.lambda_handler
+src/transform/lambda_handler.py:101:17: C0303: Trailing whitespace (trailing-whitespace)
+src/transform/lambda_handler.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+src/transform/lambda_handler.py:2:0: E0401: Unable to import 'src.transform.get_latest_data' (import-error)
+src/transform/lambda_handler.py:3:0: E0401: Unable to import 'src.transform.dim_counterparty' (import-error)
+src/transform/lambda_handler.py:4:0: E0401: Unable to import 'src.transform.dim_currency' (import-error)
+src/transform/lambda_handler.py:5:0: E0401: Unable to import 'src.transform.dim_design' (import-error)
+src/transform/lambda_handler.py:6:0: E0401: Unable to import 'src.transform.dim_location' (import-error)
+src/transform/lambda_handler.py:7:0: E0401: Unable to import 'src.transform.dim_staff' (import-error)
+src/transform/lambda_handler.py:8:0: E0401: Unable to import 'src.transform.fact_sales_order' (import-error)
+src/transform/lambda_handler.py:9:0: E0401: Unable to import 'src.transform.python_to_parquet' (import-error)
+src/transform/lambda_handler.py:10:0: E0401: Unable to import 'src.transform.dim_date' (import-error)
+src/transform/lambda_handler.py:20:0: R0914: Too many local variables (26/15) (too-many-locals)
+src/transform/lambda_handler.py:114:11: W0718: Catching too general exception Exception (broad-exception-caught)
+src/transform/lambda_handler.py:86:16: W0107: Unnecessary pass statement (unnecessary-pass)
+src/transform/lambda_handler.py:113:8: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+src/transform/lambda_handler.py:20:0: R0915: Too many statements (61/50) (too-many-statements)
+src/transform/lambda_handler.py:20:26: W0613: Unused argument 'context' (unused-argument)
+src/transform/lambda_handler.py:11:0: C0411: standard import "datetime.datetime" should be placed before third party import "boto3" and first party imports "src.transform.get_latest_data.get_latest_data", "src.transform.dim_counterparty.dim_counterparty", "src.transform.dim_currency.dim_currency" (...) "src.transform.fact_sales_order.fact_sales_order", "src.transform.python_to_parquet.python_to_parquet", "src.transform.dim_date.dim_date"  (wrong-import-order)
+src/transform/lambda_handler.py:12:0: C0411: third party import "botocore.exceptions.ClientError" should be placed before first party imports "src.transform.get_latest_data.get_latest_data", "src.transform.dim_counterparty.dim_counterparty", "src.transform.dim_currency.dim_currency" (...) "src.transform.fact_sales_order.fact_sales_order", "src.transform.python_to_parquet.python_to_parquet", "src.transform.dim_date.dim_date"  (wrong-import-order)
+src/transform/lambda_handler.py:13:0: C0411: standard import "logging" should be placed before third party imports "boto3", "botocore.exceptions.ClientError" and first party imports "src.transform.get_latest_data.get_latest_data", "src.transform.dim_counterparty.dim_counterparty", "src.transform.dim_currency.dim_currency" (...) "src.transform.fact_sales_order.fact_sales_order", "src.transform.python_to_parquet.python_to_parquet", "src.transform.dim_date.dim_date"  (wrong-import-order)
+src/transform/lambda_handler.py:14:0: C0411: third party import "pandas" should be placed before first party imports "src.transform.get_latest_data.get_latest_data", "src.transform.dim_counterparty.dim_counterparty", "src.transform.dim_currency.dim_currency" (...) "src.transform.fact_sales_order.fact_sales_order", "src.transform.python_to_parquet.python_to_parquet", "src.transform.dim_date.dim_date"  (wrong-import-order)
+src/transform/lambda_handler.py:15:0: C0411: third party import "awswrangler" should be placed before first party imports "src.transform.get_latest_data.get_latest_data", "src.transform.dim_counterparty.dim_counterparty", "src.transform.dim_currency.dim_currency" (...) "src.transform.fact_sales_order.fact_sales_order", "src.transform.python_to_parquet.python_to_parquet", "src.transform.dim_date.dim_date"  (wrong-import-order)
+************* Module transform.dim_staff
+src/transform/dim_staff.py:28:0: C0304: Final newline missing (missing-final-newline)
+src/transform/dim_staff.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+src/transform/dim_staff.py:4:0: C0116: Missing function or method docstring (missing-function-docstring)
+src/transform/dim_staff.py:7:4: W0621: Redefining name 'dim_staff' from outer scope (line 4) (redefined-outer-name)
+src/transform/dim_staff.py:2:0: W0611: Unused pandas imported as pd (unused-import)
+************* Module transform.dim_currency
+src/transform/dim_currency.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+src/transform/dim_currency.py:5:0: C0116: Missing function or method docstring (missing-function-docstring)
+src/transform/dim_currency.py:29:0: C0116: Missing function or method docstring (missing-function-docstring)
+************* Module transform.python_to_parquet
+src/transform/python_to_parquet.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+src/transform/python_to_parquet.py:3:0: C0411: standard import "warnings" should be placed before third party imports "pandas", "awswrangler" (wrong-import-order)
+************* Module load.lambda_handler
+src/load/lambda_handler.py:16:0: C0301: Line too long (146/100) (line-too-long)
+src/load/lambda_handler.py:21:0: C0301: Line too long (105/100) (line-too-long)
+src/load/lambda_handler.py:70:0: C0303: Trailing whitespace (trailing-whitespace)
+src/load/lambda_handler.py:73:52: C0303: Trailing whitespace (trailing-whitespace)
+src/load/lambda_handler.py:78:22: C0303: Trailing whitespace (trailing-whitespace)
+src/load/lambda_handler.py:105:0: C0304: Final newline missing (missing-final-newline)
+src/load/lambda_handler.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+src/load/lambda_handler.py:14:0: R0914: Too many local variables (24/15) (too-many-locals)
+src/load/lambda_handler.py:104:11: W0718: Catching too general exception Exception (broad-exception-caught)
+src/load/lambda_handler.py:95:12: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+src/load/lambda_handler.py:101:8: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+src/load/lambda_handler.py:103:8: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+src/load/lambda_handler.py:14:19: W0613: Unused argument 'event' (unused-argument)
+src/load/lambda_handler.py:14:26: W0613: Unused argument 'context' (unused-argument)
+src/load/lambda_handler.py:4:0: C0411: standard import "json" should be placed before third party imports "boto3", "pg8000", "awswrangler" (wrong-import-order)
+src/load/lambda_handler.py:5:0: C0411: standard import "logging" should be placed before third party imports "boto3", "pg8000", "awswrangler" (wrong-import-order)
+src/load/lambda_handler.py:8:0: C0411: standard import "datetime.datetime" should be placed before third party imports "boto3", "pg8000", "awswrangler", "botocore.exceptions.ClientError", "pg8000.native.DatabaseError" (wrong-import-order)
+src/load/lambda_handler.py:1:0: R0801: Similar lines in 2 files
+==extract.lambda_handler:[73:79]
+==load.lambda_handler:[59:66]
+            host=secret_string["hostname"],
+            port=secret_string["port"],
+            user=secret_string["username"],
+            password=secret_string["password"],
+            database=secret_string["database"],
+        )
+ (duplicate-code)
+
+------------------------------------------------------------------
+Your code has been rated at 5.46/10 (previous run: 5.46/10, +0.00)
+
