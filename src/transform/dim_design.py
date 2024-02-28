@@ -1,20 +1,14 @@
-import copy
-
-
-def dim_design(table_dict):
+def dim_design(design_df):
     """
-    This function takes a dictionary from the design table
-    and return amended  dictionary for the dim_design table.
+    This function takes the design dataframe
+    and returns amended dim_design dataframe.
 
     Args:
-    'design' table_list
+    'design_df' - pandas dataframe
 
     Returns:
-    dim_design table dict
-
+    dim_design_df - pandas dataframe with ammendments
     """
-    dim_design_table = copy.deepcopy(table_dict["design"])
-    for design in dim_design_table:
-        del design["created_at"]
-        del design["last_updated"]
-    return {"dim_design": dim_design_table}
+    design_copy = design_df.copy(deep=True)
+    design_copy = design_copy.drop(columns=["last_updated", "created_at"])
+    return design_copy
