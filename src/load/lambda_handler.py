@@ -3,6 +3,7 @@ to upload to totesys database"""
 
 import json
 import logging
+import warnings
 from datetime import datetime
 import boto3
 import awswrangler as wr
@@ -12,7 +13,6 @@ from pg8000.native import DatabaseError
 
 logger = logging.getLogger("Logger")
 logger.setLevel(logging.INFO)
-
 
 def lambda_handler(event, context):
     """
@@ -30,8 +30,13 @@ def lambda_handler(event, context):
     get parquet data from processed bucket
     load data to RDS
     """
-
     try:
+        warnings.filterwarnings(
+            "ignore",
+            message="promote has been superseded by promote_options='default'.",
+            category=FutureWarning,
+            module="awswrangler",
+            )
         s3 = boto3.client("s3")
         secretsmanager = boto3.client(
             "secretsmanager",
