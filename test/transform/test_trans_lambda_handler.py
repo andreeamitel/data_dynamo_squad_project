@@ -41,7 +41,6 @@ def create_bucket2(aws_s3):
 @pytest.fixture
 def create_object(create_bucket1):
     date_time = "2024-02-22T15:41:59.776283"
-    print(date_time)
     boto3.client("s3").put_object(
         Body=f"{date_time}",
         Bucket="ingested-bucket-20240222080432331400000006",
