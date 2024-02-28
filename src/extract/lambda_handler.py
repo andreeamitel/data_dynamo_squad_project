@@ -97,7 +97,6 @@ def lambda_handler(event, context):
         logger.error(f"ClientError: {response_code}: {response_msg}")
     except KeyError as err:
         logger.error(f"KeyError: {err}")
-        print(err)
     except DatabaseError as err:
-        logger.error("DatabaseError")
-        print(err)
+        logger.error(f"DatabaseError : {err}")
+

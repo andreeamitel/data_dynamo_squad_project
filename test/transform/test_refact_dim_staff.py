@@ -113,7 +113,6 @@ def test_returns_correct_values():
     df_staff = pd.DataFrame(test_staff_data["staff"])
     df_department = pd.DataFrame(test_department_data["department"])
     result = dim_staff(df_staff, df_department)
-    print(result.to_dict())
     assert result.to_dict() == {
         "staff_id": {0: 1, 1: 2},
         "first_name": {0: "Jeremie", 1: "Jeremie"},
