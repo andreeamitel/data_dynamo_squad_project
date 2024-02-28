@@ -82,7 +82,6 @@ def test_returns_correct_values():
     }
     design_df = pd.DataFrame(design_test["design"])
     result = dim_design(design_df)
-    print(result.to_dict())
     assert result.to_dict() == {
         "design_id": {0: 1, 1: 2, 2: 3},
         "design_name": {0: "design", 1: "design2", 2: "design3"},
