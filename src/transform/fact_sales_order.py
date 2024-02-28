@@ -1,7 +1,11 @@
 def fact_sales_order(sales_df):
     sales_copy = sales_df.copy(deep=True)
-    sales_copy["created_date"] = sales_copy["created_at"].map(lambda x: x.split("T")[0])
-    sales_copy["created_time"] = sales_copy["created_at"].map(lambda x: x.split("T")[1])
+    sales_copy["created_date"] = sales_copy["created_at"].map(
+        lambda x: x.split("T")[0]
+        )
+    sales_copy["created_time"] = sales_copy["created_at"].map(
+        lambda x: x.split("T")[1]
+        )
     sales_copy = sales_copy.drop(columns=["created_at", "last_updated"])
     sales_copy = sales_copy.rename(
         columns={

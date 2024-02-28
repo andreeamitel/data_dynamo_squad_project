@@ -1,6 +1,3 @@
-"""Contains lambda_handler function
-to upload to totesys database"""
-
 import json
 import logging
 import warnings
@@ -13,6 +10,7 @@ from pg8000.native import DatabaseError
 
 logger = logging.getLogger("Logger")
 logger.setLevel(logging.INFO)
+
 
 def lambda_handler(event, context):
     """
@@ -33,7 +31,9 @@ def lambda_handler(event, context):
     try:
         warnings.filterwarnings(
             "ignore",
-            message="promote has been superseded by promote_options='default'.",
+            message="""
+            promote has been superseded by promote_options='default'.
+            """,
             category=FutureWarning,
             module="awswrangler",
             )
