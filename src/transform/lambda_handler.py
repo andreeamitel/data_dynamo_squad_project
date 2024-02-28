@@ -33,7 +33,7 @@ def lambda_handler(event, context):
     """
     try:
         s3 = boto3.client("s3")
-        secretsmanager = boto3.client("secretsmanager")
+        secretsmanager = boto3.client("secretsmanager", region_name="eu-west-2")
 
         ingestion_bucket_name = event["Records"][0]["s3"]["bucket"]["name"]
         ingestion_timestamp_key = event["Records"][0]["s3"]["object"]["key"]
