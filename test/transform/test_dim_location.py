@@ -39,7 +39,7 @@ def test_returns_dataframe():
     bool_list = [
         column in result
         for column in [
-            "location_id",
+            "address_id",
             "address_line_1",
             "address_line_2",
             "district",
@@ -86,7 +86,7 @@ def test_returns_dataframe_with_correct_values():
     df = pd.DataFrame(address_df["address"])
     result = dim_location(df)
     assert result.to_dict() == {
-        "location_id": {0:1, 1:2},
+        "address_id": {0:1, 1:2},
         "address_line_1" :{0:"6826 Herzog Via", 1:"179 Alexie Cliffs"},
         "address_line_2" :{0:None, 1:None},
         "district" :{0:"Avon", 1:None},
