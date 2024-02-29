@@ -1,13 +1,10 @@
 from src.load.lambda_handler import lambda_handler
-from src.transform.python_to_parquet import python_to_parquet
+import logging
 import pytest
 import boto3
 from moto import mock_aws
 from unittest.mock import patch
-import json
-import logging
 from pg8000.native import DatabaseError
-from src.transform.dim_location import dim_location
 
 @pytest.fixture(scope="function")
 def aws_s3():
@@ -31,13 +28,12 @@ def create_bucket1(aws_s3):
 
 @pytest.fixture
 def create_parquet_file(create_bucket1):
-    with open("./test/load/sales_order.json", "r") as f:
-        file = json.load(f)
-        python_to_parquet(
-            file,
-            "processed-bucket",
-            "2022-02-14 16:54:36.774180",
-        )
+    s3 = boto3.client("s3")
+    s3.upload_file(
+        "test/load/2024-02-27T17_46_46.226025.parquet",
+        "processed-bucket",
+        "dim_address/2022-02-14 16:54:36.774180.parquet",
+    )
 
 
 @pytest.fixture
@@ -48,13 +44,6 @@ def create_last_processed_file(create_bucket1):
         "processed-bucket",
         "Last_Processed.txt",
     )
-    with open("./test/load/dim_address/2024-02-27T15_35_42.711277.json", "r") as f:
-        file = json.load(f)
-        dim_address = dim_location(file)
-        python_to_parquet(
-            dim_address,
-            "processed-bucket",
-            "2022-02-14 16:54:36.774180")
 
     s3.upload_file(
         "test/load/dim_address_copy/2024-02-27T15_35_57.764941.parquet",
@@ -129,7 +118,7 @@ def test_read_one_file(
     
     with caplog.at_level(logging.INFO):
         lambda_handler(event, "context")
-        expected = "Successfully inserted 3 rows into fact_sales_order table"
+        expected = "Successfully inserted 489 rows into dim_address"
         assert expected in caplog.text
 
 
@@ -146,7 +135,7 @@ def test_ignore_timestamp(
 ):
     with caplog.at_level(logging.INFO):
         lambda_handler(event, "thing2")
-        expected = "Successfully inserted 3 rows into dim_address_copy table"
+        expected = "Successfully inserted 3 rows into dim_address_copy table."
         assert expected not in caplog.text
 
 

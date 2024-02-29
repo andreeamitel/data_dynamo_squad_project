@@ -28,15 +28,13 @@ def lambda_handler(event, context):
     get parquet data from processed bucket
     load data to RDS
     """
+    warnings.filterwarnings(
+        "ignore",
+        message="promote has been superseded by promote_options='default'.",
+        category=FutureWarning,
+        module="awswrangler",
+        )
     try:
-        warnings.filterwarnings(
-            "ignore",
-            message="""
-            promote has been superseded by promote_options='default'.
-            """,
-            category=FutureWarning,
-            module="awswrangler",
-            )
         s3 = boto3.client("s3")
         secretsmanager = boto3.client(
             "secretsmanager",
